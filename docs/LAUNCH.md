@@ -4,6 +4,35 @@ This runbook covers deploying the website, connecting the domain, and setting up
 
 ---
 
+## Current state (verified October 6, 2026)
+
+**DNS** is hosted at GoDaddy (nameservers `ns69` and `ns70.domaincontrol.com`).
+
+**Website (Vercel project `fluxline-solutions`):**
+- `A @` → `216.198.79.1`
+- `CNAME www` → `81ebb3581a4aed96.vercel-dns-017.com`
+- `www` redirects (308) to the apex.
+- These are the project-specific values shown in Vercel → Settings → Domains. They replaced GoDaddy Website Builder.
+
+**Email: Microsoft 365, provisioned through GoDaddy** (tenant `NETORGFT21197997.onmicrosoft.com`). All of these were already present:
+
+| Record | Value |
+| --- | --- |
+| MX | `fluxlinesolutions-com.mail.protection.outlook.com` (priority 0), the only MX |
+| TXT | `NETORGFT21197997.onmicrosoft.com` (tenant verification) |
+| DKIM | `selector1` / `selector2._domainkey` CNAMEs to `…netorgft21197997.p-v1.dkim.mail.microsoft` |
+| Outlook/Teams | `autodiscover`, `sip`, `lyncdiscover`, `msoid`, and the SRV records `_sip._tls` and `_sipfederationtls._tcp` |
+| SPF | `v=spf1 include:secureserver.net -all` (GoDaddy's value; see section 5) |
+| DMARC | `v=DMARC1; p=quarantine; adkim=r; aspf=r; rua=mailto:dmarc_rua@onsecureserver.net;` (GoDaddy's reporting mailbox) |
+
+**Test message results:** a message from cristhian@fluxlinesolutions.com to Gmail was checked via the headers. SPF, DKIM, and DMARC all **passed**. DKIM was `d=fluxlinesolutions.com`, `s=selector1`, so it is enabled and aligned. The message still landed in Spam. That is reputation (a brand-new domain plus a near-empty test message), not authentication.
+
+**Decision:** keep DMARC at `p=quarantine`. Enforcement is already live and legitimate mail passes with alignment, so dropping to `p=none` would only weaken protection. Before launch, verify that Resend notifications pass DKIM with `d=fluxlinesolutions.com`.
+
+**Vercel environment variables already set:** `LEAD_NOTIFICATION_EMAIL` and `LEAD_FROM_EMAIL`. Still required: `RESEND_API_KEY`.
+
+---
+
 ## 1. Environment variables (Vercel → Project → Settings → Environment Variables)
 
 | Name | Required | Environments | Value |
@@ -71,7 +100,7 @@ One licensed mailbox is enough. `sales@` and `contact@` should be **aliases** on
 | Type | Host | Value | Notes |
 | --- | --- | --- | --- |
 | MX | `@` | **Copy from the admin center.** It's tenant-specific, e.g. `…mail.protection.outlook.com` or the newer `…mx.microsoft` format. | Priority as shown (usually 0). This must be the **only** MX on the root. Any registrar default MX must be removed, and only after the Microsoft MX exists. |
-| TXT (SPF) | `@` | `v=spf1 include:spf.protection.outlook.com -all` | Microsoft's documented value. There must be exactly **one** `v=spf1` record on the root. If one already exists, merge into it rather than adding a second. Resend does **not** need to be in the root SPF (it uses `send.`). |
+| TXT (SPF) | `@` | `v=spf1 include:spf.protection.outlook.com -all` | Microsoft's documented value. *This domain currently uses GoDaddy's `include:secureserver.net`. That passes, but it also authorizes GoDaddy's shared servers, so edit the existing record to this value rather than adding a second one.* There must be exactly **one** `v=spf1` record on the root. If one already exists, merge into it rather than adding a second. Resend does **not** need to be in the root SPF (it uses `send.`). |
 | CNAME | `autodiscover` | `autodiscover.outlook.com` | Lets Outlook configure itself. Confirm against the value shown in the admin center. |
 
 5. **YOU:** Create the user `cristhian@fluxlinesolutions.com` (Cristhian Garcia) and assign the license.
@@ -85,6 +114,8 @@ One licensed mailbox is enough. `sales@` and `contact@` should be **aliases** on
 4. Once they resolve (minutes to a few hours), toggle DKIM to **Enabled** in the same screen.
 
 ## 7. DMARC
+
+> **This domain:** DMARC is already at `p=quarantine` and passing (see "Current state"). The steps below apply to a fresh domain, or if you ever need to step back down to monitoring while you add a new sending service.
 
 Start in monitoring mode. Publish one `TXT` record at host `_dmarc`:
 

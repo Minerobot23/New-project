@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+/*
+ * Fluxline palette: warm neutral paper, deep ink, one restrained teal accent.
+ * The site is intentionally light-only; a B2B credibility site reads best with a single, controlled palette.
+ */
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --color-paper: #fafaf8;
+  --color-surface: #ffffff;
+  --color-sunken: #f3f3ef;
+  --color-line: #e4e4de;
+  --color-line-strong: #d3d3cb;
+
+  --color-ink: #0f1a24;
+  --color-ink-soft: #3b4652;
+  --color-muted: #5c6670;
+
+  --color-accent: #0e6b5c;
+  --color-accent-strong: #0a5246;
+  --color-accent-soft: #e6f1ee;
+
+  --color-night: #0d1720;
+  --color-night-line: #22303c;
+
+  --color-danger: #b42318;
+  --color-danger-soft: #fef3f2;
+}
+
+html {
+  background-color: var(--color-paper);
+  color-scheme: light;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-feature-settings: "ss01", "cv11";
+  text-rendering: optimizeLegibility;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Keep anchored sections clear of the sticky header. */
+section[id] {
+  scroll-margin-top: 5rem;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+::selection {
+  background-color: var(--color-accent-soft);
+  color: var(--color-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

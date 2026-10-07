@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, BadgeCheck, CalendarClock, CreditCard, Flame, MapPin, Menu, Phone, ShieldCheck, Snowflake, Wind, Wrench, X } from "lucide-react";
+import { Menu, Phone, X } from "lucide-react";
 import type { DemoProps } from "../types";
-import { DemoButton, NonResponsive, Stars } from "./shared";
+import { DemoButton, NonResponsive } from "./shared";
+import { DemoPhoto } from "./photo";
+import { hvacBody, hvacDisplay } from "./fonts";
 import { DatedPhoto, HvacScene } from "./scenes";
 
 const PHONE = "(516) 555-0142";
@@ -77,205 +79,243 @@ function Before({ mobile, onAction }: DemoProps) {
   );
 }
 
-const services = [
-  { icon: Snowflake, title: "AC Repair & Installation", body: "Fast diagnosis, honest options, and installs sized for your home." },
-  { icon: Flame, title: "Heating & Furnaces", body: "Furnace and boiler repair, replacement, and seasonal tune-ups." },
-  { icon: Wind, title: "Heat Pumps & Ductless", body: "Efficient year-round comfort, including room-by-room ductless systems." },
-  { icon: Wrench, title: "Maintenance Plans", body: "Priority scheduling and two seasonal visits to prevent breakdowns." },
-];
+const SERVICES = [
+  ["AC repair", "Same-day diagnosis on most calls. Upfront price before we start.", "Service call $89"],
+  ["Furnace & boiler repair", "Gas, oil, and electric. Most parts on the truck.", "Service call $89"],
+  ["New AC & heating systems", "Sized for your house with a load calculation, not a guess.", "Free in-home estimate"],
+  ["Heat pumps & ductless", "Whole-home or room-by-room. Rebate paperwork handled.", "Free in-home estimate"],
+  ["Maintenance plan", "Spring AC + fall heating tune-up, priority scheduling.", "$19 / month"],
+] as const;
 
-const areas = ["Huntington", "Northport", "Port Washington", "Manhasset", "Oyster Bay", "Glen Cove", "Syosset", "Roslyn"];
+const AREAS = ["Huntington", "Northport", "Port Washington", "Manhasset", "Oyster Bay", "Glen Cove", "Syosset", "Roslyn", "Cold Spring Harbor", "Greenlawn"];
+
+const NAVY = "#12284a";
+const ORANGE = "#e2571b";
 
 function After({ mobile: m, onAction }: DemoProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const estimate = "open a short estimate request form (name, phone, and what's going on)";
   const call = `start a phone call to ${PHONE}`;
-  const pad = m ? "px-5" : "px-12";
+  const pad = m ? "px-5" : "px-14";
+  const display = hvacDisplay.className;
 
   return (
-    <div className="relative min-h-full bg-white text-[#14243a]" style={{ fontFamily: "var(--font-geist-sans), system-ui, sans-serif" }}>
-      <div className={`flex items-center justify-between bg-[#0f2742] py-2 text-[12px] text-white/90 ${pad}`}>
-        <span className="flex items-center gap-1.5">
-          <ShieldCheck aria-hidden="true" className="size-3.5 text-[#ff8a3d]" />
-          24/7 emergency service
-        </span>
-        {!m && (
-          <DemoButton action={call} onAction={onAction} className="font-semibold">
-            Call {PHONE}
-          </DemoButton>
-        )}
+    <div className={`relative min-h-full bg-white text-[#1d2939] ${hvacBody.className}`}>
+      <div className={`flex items-center justify-between py-2 text-[13px] text-white ${pad}`} style={{ background: ORANGE }}>
+        <span className="font-semibold">No heat or no AC? We&apos;re answering 24/7.</span>
+        {!m && <span className="opacity-90">Serving the North Shore since 2004</span>}
       </div>
 
-      <header className={`sticky top-0 z-10 flex items-center justify-between border-b border-[#e6ebf1] bg-white/95 py-3.5 backdrop-blur ${pad}`}>
-        <div className="flex items-center gap-2.5">
-          <span className="flex size-9 items-center justify-center rounded-lg bg-[#0f2742] text-white">
-            <Snowflake aria-hidden="true" className="size-5" />
-          </span>
-          <div className="leading-tight">
-            <p className="text-[15px] font-bold tracking-tight">North Shore</p>
-            <p className="text-[11px] font-medium text-[#5b6b80]">Heating &amp; Cooling</p>
-          </div>
+      <header className={`sticky top-0 z-10 flex items-center justify-between border-b border-[#e3e7ee] bg-white ${pad} ${m ? "py-3" : "py-4"}`}>
+        <div className="leading-none">
+          <p className={`${display} text-[24px] font-extrabold uppercase tracking-tight`} style={{ color: NAVY }}>
+            North Shore
+          </p>
+          <p className={`${display} mt-0.5 text-[13px] font-semibold uppercase tracking-[0.18em]`} style={{ color: ORANGE }}>
+            Heating &amp; Cooling
+          </p>
         </div>
         {m ? (
-          <div className="flex items-center gap-2">
-            <DemoButton action={call} onAction={onAction} label="Call" className="flex size-10 items-center justify-center rounded-full bg-[#fff1e8] text-[#e2601a]">
-              <Phone aria-hidden="true" className="size-[18px]" />
+          <div className="flex items-center gap-1">
+            <DemoButton action={call} onAction={onAction} className="flex items-center gap-1.5 rounded-sm px-3.5 py-2 text-[14px] font-bold text-white" style={{ background: ORANGE }}>
+              <Phone aria-hidden="true" className="size-4" /> Call
             </DemoButton>
-            <button type="button" aria-label={menuOpen ? "Close demo menu" : "Open demo menu"} onClick={() => setMenuOpen((v) => !v)} className="flex size-10 items-center justify-center rounded-full bg-[#f1f4f8]">
-              {menuOpen ? <X aria-hidden="true" className="size-5" /> : <Menu aria-hidden="true" className="size-5" />}
+            <button type="button" aria-label={menuOpen ? "Close demo menu" : "Open demo menu"} onClick={() => setMenuOpen((v) => !v)} className="flex size-10 items-center justify-center">
+              {menuOpen ? <X aria-hidden="true" className="size-6" /> : <Menu aria-hidden="true" className="size-6" />}
             </button>
           </div>
         ) : (
-          <div className="flex items-center gap-7 text-[14px] font-medium text-[#33465e]">
-            {["Services", "Financing", "Service Areas", "Reviews"].map((item) => (
-              <DemoButton key={item} action={`scroll to the ${item} section`} onAction={onAction} className="hover:text-[#0f2742]">
-                {item}
-              </DemoButton>
-            ))}
-            <DemoButton action={estimate} onAction={onAction} className="rounded-lg bg-[#e2601a] px-4 py-2.5 font-semibold text-white">
-              Request an Estimate
+          <div className="flex items-center gap-8">
+            <nav className="flex gap-6 text-[15px] font-medium">
+              {["Cooling", "Heating", "Maintenance", "Financing", "About"].map((item) => (
+                <DemoButton key={item} action={`open the ${item} page`} onAction={onAction} className="hover:underline">
+                  {item}
+                </DemoButton>
+              ))}
+            </nav>
+            <DemoButton action={call} onAction={onAction} className="text-right leading-tight">
+              <span className="block text-[11px] font-medium uppercase tracking-wide text-[#5d6b80]">Call or text</span>
+              <span className={`${display} block text-[24px] font-bold`} style={{ color: NAVY }}>
+                {PHONE}
+              </span>
             </DemoButton>
           </div>
         )}
       </header>
       {m && menuOpen && (
-        <div className="border-b border-[#e6ebf1] bg-white px-5 py-2">
-          {["Services", "Financing", "Service Areas", "Reviews"].map((item) => (
-            <DemoButton key={item} action={`scroll to the ${item} section`} onAction={onAction} className="block w-full border-b border-[#f0f2f5] py-3 text-left text-[16px] font-medium last:border-0">
+        <nav className="border-b border-[#e3e7ee] bg-white px-5">
+          {["Cooling", "Heating", "Maintenance", "Financing", "About"].map((item) => (
+            <DemoButton key={item} action={`open the ${item} page`} onAction={onAction} className="block w-full border-b border-[#eef1f5] py-3.5 text-left text-[17px] font-medium last:border-0">
               {item}
             </DemoButton>
           ))}
+        </nav>
+      )}
+
+      <section className="relative">
+        <DemoPhoto
+          photo="hvac-hero"
+          alt="HVAC technician servicing an outdoor air conditioning unit"
+          sizes="1200px"
+          position="60% 40%"
+          className={m ? "h-[300px]" : "h-[470px]"}
+          fallback={<HvacScene cover className="block h-full w-full" />}
+        />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(90deg, ${NAVY}f2 0%, ${NAVY}cc ${m ? "100%" : "45%"}, transparent ${m ? "100%" : "75%"})` }} />
+        <div className={`absolute inset-0 flex flex-col justify-center text-white ${pad}`}>
+          <h1 className={`${display} max-w-[560px] font-extrabold uppercase leading-[0.95] ${m ? "text-[40px]" : "text-[68px]"}`}>
+            Heating &amp; AC repair, done right the first time.
+          </h1>
+          <p className={`mt-4 max-w-[460px] text-white/85 ${m ? "text-[15px]" : "text-[18px]"}`}>
+            Licensed technicians in Huntington, Northport &amp; the North Shore. You get the price before we pick up a tool.
+          </p>
+          {!m && (
+            <div className="mt-7 flex gap-3">
+              <DemoButton action={estimate} onAction={onAction} className="rounded-sm px-6 py-4 text-[16px] font-bold text-white" style={{ background: ORANGE }}>
+                Get a free estimate
+              </DemoButton>
+              <DemoButton action={call} onAction={onAction} className="rounded-sm border-2 border-white/80 px-6 py-[14px] text-[16px] font-bold">
+                Call {PHONE}
+              </DemoButton>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {m && (
+        <div className="grid grid-cols-2 gap-2 px-5 py-4">
+          <DemoButton action={call} onAction={onAction} className="rounded-sm border-2 py-3 text-[15px] font-bold" style={{ borderColor: NAVY, color: NAVY }}>
+            Call now
+          </DemoButton>
+          <DemoButton action={estimate} onAction={onAction} className="rounded-sm py-3 text-[15px] font-bold text-white" style={{ background: ORANGE }}>
+            Free estimate
+          </DemoButton>
         </div>
       )}
 
-      <section className={`grid items-center gap-8 bg-gradient-to-b from-[#f5f8fc] to-white ${pad} ${m ? "py-8" : "grid-cols-[1.1fr_1fr] py-14"}`}>
+      <section className={`grid border-b border-[#e3e7ee] ${m ? "grid-cols-2 gap-y-3 px-5 py-5" : "grid-cols-4 px-14 py-6"}`}>
+        {[
+          ["4.9", "Google rating · 380 reviews"],
+          ["Same day", "on most repair calls"],
+          ["Upfront", "flat-rate pricing"],
+          ["NYS licensed", "& fully insured"],
+        ].map(([big, small]) => (
+          <div key={big} className={m ? "" : "border-l border-[#e3e7ee] pl-5 first:border-0 first:pl-0"}>
+            <p className={`${display} text-[24px] font-bold leading-none`} style={{ color: NAVY }}>
+              {big}
+            </p>
+            <p className="mt-1 text-[13px] text-[#5d6b80]">{small}</p>
+          </div>
+        ))}
+      </section>
+
+      <section className={`grid gap-10 ${pad} ${m ? "py-10" : "grid-cols-[1fr_1.2fr] py-16"}`}>
         <div>
-          <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#e2601a]">Heating &amp; cooling · Long Island North Shore</p>
-          <p className={`mt-3 font-bold leading-[1.08] tracking-tight ${m ? "text-[30px]" : "text-[46px]"}`}>
-            Comfort restored. Fast, honest HVAC service.
+          <h2 className={`${display} font-bold uppercase leading-none ${m ? "text-[32px]" : "text-[44px]"}`} style={{ color: NAVY }}>
+            What we fix &amp; install
+          </h2>
+          <p className="mt-4 max-w-[420px] text-[16px] leading-relaxed text-[#46546a]">
+            We work on every major brand. If it can be repaired for a fair price, we&apos;ll tell you before we talk about replacing
+            it.
           </p>
-          <p className={`mt-4 leading-relaxed text-[#4a5b70] ${m ? "text-[15px]" : "text-[17px]"}`}>
-            Repairs, replacements, and maintenance from licensed technicians, with upfront pricing before any work begins.
-          </p>
-          <div className={`mt-6 flex gap-3 ${m ? "flex-col" : ""}`}>
-            <DemoButton action={estimate} onAction={onAction} className="flex items-center justify-center gap-2 rounded-lg bg-[#e2601a] px-5 py-3.5 text-[15px] font-semibold text-white">
-              <CalendarClock aria-hidden="true" className="size-4" /> Request an Estimate
-            </DemoButton>
-            <DemoButton action={call} onAction={onAction} className="flex items-center justify-center gap-2 rounded-lg border border-[#cdd6e1] bg-white px-5 py-3.5 text-[15px] font-semibold">
-              <Phone aria-hidden="true" className="size-4" /> {PHONE}
-            </DemoButton>
-          </div>
-          <ul className={`mt-6 flex flex-wrap gap-x-5 gap-y-2 text-[13px] font-medium text-[#33465e]`}>
-            {["Licensed & insured", "Upfront pricing", "Same-day appointments"].map((item) => (
-              <li key={item} className="flex items-center gap-1.5">
-                <BadgeCheck aria-hidden="true" className="size-4 text-[#1f8a5b]" /> {item}
-              </li>
-            ))}
-          </ul>
+          <DemoPhoto
+            photo="hvac-tech"
+            alt="Technician checking refrigerant pressure on a condenser"
+            sizes="500px"
+            className={`mt-6 rounded-sm ${m ? "h-[200px]" : "h-[260px]"}`}
+            fallback={<HvacScene cover className="block h-full w-full" />}
+          />
         </div>
-        <div className="relative">
-          <div className="overflow-hidden rounded-2xl shadow-[0_20px_40px_-20px_rgba(15,39,66,0.45)]">
-            <HvacScene className="block h-auto w-full" />
-          </div>
-          <div className="absolute -bottom-4 left-4 flex items-center gap-2 rounded-xl bg-white px-3.5 py-2.5 shadow-lg">
-            <Stars />
-            <span className="text-[12px] font-semibold">4.9 · 380+ reviews</span>
-          </div>
-        </div>
-      </section>
-
-      <section className={`${pad} ${m ? "pt-8" : "pt-6"}`}>
-        <div className={`flex items-center justify-between gap-4 rounded-xl bg-[#0f2742] p-5 text-white ${m ? "flex-col items-start" : ""}`}>
-          <div>
-            <p className="text-[16px] font-semibold">No heat or no AC right now?</p>
-            <p className="text-[13px] text-white/75">Emergency service is available 24/7, including weekends and holidays.</p>
-          </div>
-          <DemoButton action={call} onAction={onAction} className="flex shrink-0 items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-[14px] font-semibold text-[#0f2742]">
-            <Phone aria-hidden="true" className="size-4" /> Call now
-          </DemoButton>
-        </div>
-      </section>
-
-      <section className={`${pad} py-12`}>
-        <p className={`font-bold tracking-tight ${m ? "text-[24px]" : "text-[30px]"}`}>What can we help with?</p>
-        <div className={`mt-6 grid gap-4 ${m ? "" : "grid-cols-4"}`}>
-          {services.map(({ icon: Icon, title, body }) => (
-            <DemoButton key={title} action={`open the ${title} service page`} onAction={onAction} className="group rounded-xl border border-[#e6ebf1] p-5 text-left transition-shadow hover:shadow-md">
-              <span className="flex size-10 items-center justify-center rounded-lg bg-[#fff1e8] text-[#e2601a]">
-                <Icon aria-hidden="true" className="size-5" />
-              </span>
-              <p className="mt-4 text-[15px] font-semibold">{title}</p>
-              <p className="mt-1.5 text-[13px] leading-relaxed text-[#5b6b80]">{body}</p>
-              <span className="mt-3 inline-flex items-center gap-1 text-[13px] font-semibold text-[#e2601a]">
-                Request service <ArrowRight aria-hidden="true" className="size-3.5" />
-              </span>
-            </DemoButton>
-          ))}
-        </div>
-      </section>
-
-      <section className={`grid gap-4 ${pad} pb-12 ${m ? "" : "grid-cols-[1fr_1.4fr]"}`}>
-        <div className="rounded-xl border border-[#e6ebf1] bg-[#f7f9fc] p-6">
-          <CreditCard aria-hidden="true" className="size-6 text-[#0f2742]" />
-          <p className="mt-3 text-[17px] font-semibold">Flexible financing on new systems</p>
-          <p className="mt-1.5 text-[13px] leading-relaxed text-[#5b6b80]">Monthly payment options are available on approved credit, so a replacement doesn&apos;t have to wait.</p>
-          <DemoButton action="open financing details and a pre-qualification link" onAction={onAction} className="mt-4 text-[13px] font-semibold text-[#e2601a]">
-            See financing options →
-          </DemoButton>
-        </div>
-        <div className="rounded-xl border border-[#e6ebf1] p-6">
-          <div className="flex items-center justify-between">
-            <p className="text-[17px] font-semibold">What homeowners say</p>
-            <Stars />
-          </div>
-          <div className={`mt-4 grid gap-4 ${m ? "" : "grid-cols-2"}`}>
-            {[
-              ["Showed up the same afternoon our AC died, explained the options, and had it running by dinner.", "Maria T., Huntington"],
-              ["Clear quote, no pressure, and the install crew left the basement cleaner than they found it.", "Dev P., Northport"],
-            ].map(([quote, name]) => (
-              <figure key={name} className="text-[13px] leading-relaxed text-[#33465e]">
-                <blockquote>&ldquo;{quote}&rdquo;</blockquote>
-                <figcaption className="mt-2 text-[12px] font-semibold text-[#14243a]">{name}</figcaption>
-              </figure>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className={`border-t border-[#e6ebf1] ${pad} py-10`}>
-        <p className="flex items-center gap-2 text-[17px] font-semibold">
-          <MapPin aria-hidden="true" className="size-5 text-[#e2601a]" /> Proudly serving the North Shore
-        </p>
-        <ul className="mt-4 flex flex-wrap gap-2">
-          {areas.map((area) => (
-            <li key={area} className="rounded-full border border-[#e6ebf1] bg-[#f7f9fc] px-3 py-1.5 text-[13px] font-medium">
-              {area}
+        <ul className="divide-y divide-[#e3e7ee] border-y border-[#e3e7ee]">
+          {SERVICES.map(([name, body, price]) => (
+            <li key={name}>
+              <DemoButton action={`open the ${name} page`} onAction={onAction} className="flex w-full items-start justify-between gap-4 py-5 text-left">
+                <span>
+                  <span className="block text-[18px] font-semibold" style={{ color: NAVY }}>
+                    {name}
+                  </span>
+                  <span className="mt-1 block text-[14px] text-[#5d6b80]">{body}</span>
+                </span>
+                <span className="shrink-0 pt-1 text-[13px] font-semibold" style={{ color: ORANGE }}>
+                  {price} →
+                </span>
+              </DemoButton>
             </li>
           ))}
         </ul>
       </section>
 
-      <section className={`${pad} pb-14`}>
-        <div className={`rounded-2xl bg-[#0f2742] p-7 text-white ${m ? "" : "flex items-center justify-between"}`}>
+      <section className={pad}>
+        <div className={`border-2 border-dashed p-6 ${m ? "" : "flex items-center justify-between"}`} style={{ borderColor: ORANGE, background: "#fff6f1" }}>
           <div>
-            <p className={`font-bold tracking-tight ${m ? "text-[22px]" : "text-[28px]"}`}>Get a free estimate</p>
-            <p className="mt-1 text-[14px] text-white/75">Tell us what&apos;s going on. We usually reply within the hour during business hours.</p>
+            <p className={`${display} text-[28px] font-bold uppercase leading-none`} style={{ color: NAVY }}>
+              New system? Pay monthly.
+            </p>
+            <p className="mt-2 text-[15px] text-[#46546a]">Financing on approved credit, with options from 12 to 84 months.</p>
           </div>
-          <DemoButton action={estimate} onAction={onAction} className={`rounded-lg bg-[#e2601a] px-5 py-3.5 text-[15px] font-semibold ${m ? "mt-5 w-full" : ""}`}>
-            Request an Estimate
+          <DemoButton action="open financing details and a 2-minute pre-qualification" onAction={onAction} className={`text-[15px] font-bold underline underline-offset-4 ${m ? "mt-4" : ""}`} style={{ color: ORANGE }}>
+            See if you pre-qualify
           </DemoButton>
         </div>
       </section>
 
-      <footer className={`bg-[#0b1d31] ${pad} py-6 text-[12px] text-white/60`}>North Shore Heating &amp; Cooling · Fictional business for demonstration</footer>
+      <section className={`${pad} ${m ? "py-10" : "py-16"}`}>
+        <div className={`grid gap-8 ${m ? "" : "grid-cols-3"}`}>
+          {[
+            ["Our AC quit on the hottest day of July. They were here by 3 and it was running by dinner. Explained everything, no upsell.", "Maria T.", "Huntington"],
+            ["Got three quotes for a new furnace. North Shore's was clear, not the cheapest, but the install was spotless.", "Dev P.", "Northport"],
+            ["The maintenance plan pays for itself. They found a cracked heat exchanger before it became a problem.", "Linda K.", "Syosset"],
+          ].map(([quote, name, town]) => (
+            <figure key={name}>
+              <p className="text-[15px] tracking-[2px]" style={{ color: ORANGE }}>
+                ★★★★★
+              </p>
+              <blockquote className="mt-2 text-[16px] leading-relaxed">&ldquo;{quote}&rdquo;</blockquote>
+              <figcaption className="mt-3 text-[13px] font-semibold text-[#5d6b80]">
+                {name}, {town}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      <section className={`text-white ${pad} ${m ? "py-10" : "py-14"}`} style={{ background: NAVY }}>
+        <div className={`grid gap-10 ${m ? "" : "grid-cols-2"}`}>
+          <div>
+            <h2 className={`${display} font-bold uppercase leading-none ${m ? "text-[30px]" : "text-[40px]"}`}>Towns we serve</h2>
+            <p className="mt-4 text-[15px] leading-relaxed text-white/80">{AREAS.join(" · ")}</p>
+            <p className="mt-4 text-[13px] text-white/60">Not on the list? Call us. We probably cover you.</p>
+          </div>
+          <div className="bg-white p-6 text-[#1d2939]">
+            <p className={`${display} text-[26px] font-bold uppercase leading-none`} style={{ color: NAVY }}>
+              Request a free estimate
+            </p>
+            <div className="mt-4 grid gap-2.5">
+              {["Your name", "Phone number", "What's going on? (e.g. AC not cooling)"].map((field) => (
+                <div key={field} className="border border-[#cfd6e0] px-3 py-3 text-[14px] text-[#6b778a]">
+                  {field}
+                </div>
+              ))}
+            </div>
+            <DemoButton action={estimate} onAction={onAction} className="mt-4 w-full py-3.5 text-[16px] font-bold text-white" style={{ background: ORANGE }}>
+              Send request
+            </DemoButton>
+            <p className="mt-2 text-[12px] text-[#6b778a]">We reply within an hour, 7am–7pm.</p>
+          </div>
+        </div>
+      </section>
+
+      <footer className={`bg-[#0c1b33] text-[12px] text-white/55 ${pad} py-6 ${m ? "pb-24" : ""}`}>
+        North Shore Heating &amp; Cooling · Fictional business for demonstration · NYS Lic. #DEMO-0000
+      </footer>
 
       {m && (
-        <div className="sticky bottom-0 z-10 grid grid-cols-2 gap-2 border-t border-[#e6ebf1] bg-white/95 p-3 backdrop-blur">
-          <DemoButton action={call} onAction={onAction} className="flex items-center justify-center gap-1.5 rounded-lg border border-[#cdd6e1] py-3 text-[14px] font-semibold">
+        <div className="sticky bottom-0 z-10 grid grid-cols-2 border-t border-[#e3e7ee] bg-white">
+          <DemoButton action={call} onAction={onAction} className="flex items-center justify-center gap-1.5 py-4 text-[15px] font-bold" style={{ color: NAVY }}>
             <Phone aria-hidden="true" className="size-4" /> Call
           </DemoButton>
-          <DemoButton action={estimate} onAction={onAction} className="rounded-lg bg-[#e2601a] py-3 text-[14px] font-semibold text-white">
-            Free Estimate
+          <DemoButton action={estimate} onAction={onAction} className="py-4 text-[15px] font-bold text-white" style={{ background: ORANGE }}>
+            Free estimate
           </DemoButton>
         </div>
       )}

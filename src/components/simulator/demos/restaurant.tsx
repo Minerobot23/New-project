@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { CalendarDays, Clock, MapPin, Navigation, Phone, ShoppingBag, UtensilsCrossed } from "lucide-react";
+import { ChevronDown, Menu } from "lucide-react";
 import type { DemoProps } from "../types";
 import { DemoButton, NonResponsive } from "./shared";
+import { DemoPhoto } from "./photo";
+import { verBody, verDisplay } from "./fonts";
 import { DatedPhoto, PlatesScene } from "./scenes";
 
 export default function RestaurantDemo(props: DemoProps) {
@@ -73,177 +75,233 @@ function Before({ mobile, onAction }: DemoProps) {
 
 const MENU = {
   Antipasti: [
-    ["Burrata", "Heirloom tomato, basil oil, grilled bread", "16"],
-    ["Fritto Misto", "Calamari, shrimp, lemon aioli", "19"],
-    ["Arancini", "Saffron risotto, fontina, pomodoro", "13"],
+    ["Burrata", "heirloom tomatoes, basil oil, grilled sourdough", "16"],
+    ["Fritto misto", "calamari, shrimp, lemon, aioli", "19"],
+    ["Arancini", "saffron risotto, fontina, pomodoro", "13"],
+    ["Vitello tonnato", "thin veal, tuna sauce, capers", "18"],
   ],
   Pasta: [
-    ["Tagliatelle Bolognese", "Slow-cooked beef and pork ragù", "26"],
-    ["Cacio e Pepe", "Tonnarelli, pecorino, black pepper", "22"],
-    ["Ravioli di Zucca", "Butternut squash, brown butter, sage", "24"],
+    ["Tagliatelle al ragù", "slow-cooked beef and pork, parmigiano", "26"],
+    ["Cacio e pepe", "tonnarelli, pecorino romano, black pepper", "22"],
+    ["Ravioli di zucca", "butternut squash, brown butter, sage, amaretti", "24"],
+    ["Linguine alle vongole", "littleneck clams, garlic, white wine, chili", "29"],
   ],
   Secondi: [
-    ["Pollo al Mattone", "Brick-pressed chicken, salsa verde", "29"],
-    ["Branzino", "Whole roasted, lemon, capers", "36"],
-    ["Bistecca", "Dry-aged strip, rosemary potatoes", "44"],
+    ["Pollo al mattone", "brick-pressed half chicken, salsa verde", "29"],
+    ["Branzino", "whole roasted, lemon, capers, olives", "36"],
+    ["Bistecca", "dry-aged strip, rosemary potatoes", "44"],
   ],
   Dolci: [
-    ["Tiramisù", "Espresso, mascarpone, cocoa", "11"],
-    ["Panna Cotta", "Vanilla bean, seasonal fruit", "10"],
+    ["Tiramisù", "espresso, mascarpone, cocoa", "11"],
+    ["Panna cotta", "vanilla bean, seasonal fruit", "10"],
+    ["Affogato", "fior di latte gelato, espresso", "9"],
   ],
 } as const;
 
 type Course = keyof typeof MENU;
 
+const WINE = "#7c1d2a";
+const INK = "#2a211c";
+const CREAM = "#f7f1e7";
+
 function After({ mobile: m, onAction }: DemoProps) {
   const [course, setCourse] = useState<Course>("Pasta");
-  const pad = m ? "px-5" : "px-12";
-  const reserve = "open a reservation picker (party size, date, time) without leaving the site";
+  const pad = m ? "px-5" : "px-16";
+  const reserve = "check availability and confirm the table without leaving the site";
   const order = "open online ordering for pickup or delivery";
-  const serif = { fontFamily: "ui-serif, Georgia, 'Times New Roman', serif" };
+  const display = verDisplay.className;
+
+  const select = (label: string, value: string) => (
+    <DemoButton action={`open the ${label.toLowerCase()} picker`} onAction={onAction} className="flex flex-1 flex-col items-start border-r border-[#d9cdb9] px-4 py-2.5 text-left last:border-r-0">
+      <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#8a7a68]">{label}</span>
+      <span className="mt-0.5 flex w-full items-center justify-between text-[15px]">
+        {value} <ChevronDown aria-hidden="true" className="size-3.5 text-[#8a7a68]" />
+      </span>
+    </DemoButton>
+  );
 
   return (
-    <div className="relative min-h-full bg-[#fbf7f0] text-[#2a2420]" style={{ fontFamily: "var(--font-geist-sans), system-ui, sans-serif" }}>
-      <header className={`sticky top-0 z-10 flex items-center justify-between border-b border-[#eadfce] bg-[#fbf7f0]/95 py-3.5 backdrop-blur ${pad}`}>
-        <p className="text-[22px] tracking-tight" style={serif}>
-          Casa Verona
-        </p>
+    <div className={`relative min-h-full ${verBody.className}`} style={{ background: CREAM, color: INK }}>
+      <header className={`sticky top-0 z-10 border-b border-[#e3d8c6] ${pad} ${m ? "py-3" : "py-5"}`} style={{ background: CREAM }}>
         {m ? (
-          <DemoButton action={reserve} onAction={onAction} className="rounded-full bg-[#7a1f2b] px-4 py-2 text-[13px] font-semibold text-white">
-            Reserve
-          </DemoButton>
+          <div className="flex items-center justify-between">
+            <Menu aria-hidden="true" className="size-6" />
+            <p className={`${display} text-[28px] font-semibold italic leading-none`}>Casa Verona</p>
+            <DemoButton action={reserve} onAction={onAction} className="text-[13px] font-bold uppercase tracking-[0.12em]" style={{ color: WINE }}>
+              Book
+            </DemoButton>
+          </div>
         ) : (
-          <div className="flex items-center gap-7 text-[14px] font-medium">
-            {["Menu", "Private Dining", "Catering", "Visit"].map((item) => (
-              <DemoButton key={item} action={`scroll to ${item}`} onAction={onAction}>
-                {item}
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center">
+            <nav className="flex gap-7 text-[13px] font-bold uppercase tracking-[0.14em]">
+              {["Menu", "Wine", "Private dining", "Visit"].map((item) => (
+                <DemoButton key={item} action={`scroll to ${item.toLowerCase()}`} onAction={onAction}>
+                  {item}
+                </DemoButton>
+              ))}
+            </nav>
+            <p className={`${display} text-[40px] font-semibold italic leading-none`}>Casa Verona</p>
+            <div className="flex items-center justify-end gap-6 text-[13px] font-bold uppercase tracking-[0.14em]">
+              <DemoButton action={order} onAction={onAction}>Order pickup</DemoButton>
+              <DemoButton action={reserve} onAction={onAction} className="px-5 py-3 text-white" style={{ background: WINE }}>
+                Reserve
               </DemoButton>
-            ))}
-            <DemoButton action={order} onAction={onAction} className="rounded-full border border-[#2a2420]/20 px-4 py-2">
-              Order Online
-            </DemoButton>
-            <DemoButton action={reserve} onAction={onAction} className="rounded-full bg-[#7a1f2b] px-4 py-2 font-semibold text-white">
-              Reserve a Table
-            </DemoButton>
+            </div>
           </div>
         )}
       </header>
 
-      <section className="relative">
-        <PlatesScene cover className={`block w-full ${m ? "h-[260px]" : "h-[420px]"}`} />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1c120c]/85 via-[#1c120c]/35 to-transparent" />
-        <div className={`absolute inset-x-0 bottom-0 ${pad} ${m ? "pb-6" : "pb-12"} text-white`}>
-          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#f3d8a6]">Northern Italian kitchen &amp; wine bar</p>
-          <p className={`mt-2 leading-[1.05] ${m ? "text-[32px]" : "text-[54px]"}`} style={serif}>
-            Handmade pasta.
-            <br />
-            Long tables. Good company.
-          </p>
-        </div>
-      </section>
+      <DemoPhoto
+        photo="verona-hero"
+        alt="Plates of fresh pasta and antipasti on a wooden trattoria table"
+        sizes="1200px"
+        className={m ? "h-[260px]" : "h-[440px]"}
+        fallback={<PlatesScene cover className="block h-full w-full" />}
+      />
 
-      <section className={`${pad} ${m ? "py-5" : "py-6"}`}>
-        <div className={`grid gap-2.5 ${m ? "grid-cols-1" : "grid-cols-3"}`}>
-          <DemoButton action={reserve} onAction={onAction} className="flex items-center justify-center gap-2 rounded-xl bg-[#7a1f2b] py-3.5 text-[15px] font-semibold text-white">
-            <CalendarDays aria-hidden="true" className="size-4" /> Reserve a Table
-          </DemoButton>
-          <DemoButton action="jump to the menu below" onAction={onAction} className="flex items-center justify-center gap-2 rounded-xl border border-[#2a2420]/15 bg-white py-3.5 text-[15px] font-semibold">
-            <UtensilsCrossed aria-hidden="true" className="size-4" /> View Menu
-          </DemoButton>
-          <DemoButton action={order} onAction={onAction} className="flex items-center justify-center gap-2 rounded-xl border border-[#2a2420]/15 bg-white py-3.5 text-[15px] font-semibold">
-            <ShoppingBag aria-hidden="true" className="size-4" /> Order Online
-          </DemoButton>
-        </div>
-        <div className={`mt-4 grid gap-3 rounded-xl border border-[#eadfce] bg-white p-4 text-[13px] ${m ? "" : "grid-cols-3"}`}>
-          <p className="flex items-start gap-2">
-            <Clock aria-hidden="true" className="mt-0.5 size-4 text-[#7a1f2b]" />
-            <span>
-              <strong className="block">Open today</strong>
-              Lunch 12–3 · Dinner 5–10
-            </span>
-          </p>
-          <p className="flex items-start gap-2">
-            <MapPin aria-hidden="true" className="mt-0.5 size-4 text-[#7a1f2b]" />
-            <span>
-              <strong className="block">142 Main Street</strong>
-              Free parking behind the building
-            </span>
-          </p>
-          <DemoButton action="open turn-by-turn directions in the visitor's maps app" onAction={onAction} className="flex items-center gap-2 text-left font-semibold text-[#7a1f2b]">
-            <Navigation aria-hidden="true" className="size-4" /> Get directions
-          </DemoButton>
-        </div>
-      </section>
-
-      <section className={`${pad} py-8`}>
-        <p className={`${m ? "text-[26px]" : "text-[34px]"}`} style={serif}>
-          The menu
+      <section className={`text-center ${pad} ${m ? "pt-8" : "pt-14"}`}>
+        <p className="text-[12px] font-bold uppercase tracking-[0.2em]" style={{ color: WINE }}>
+          Trattoria &amp; wine bar · 142 Main Street
         </p>
-        <div role="tablist" aria-label="Menu courses" className="mt-4 flex gap-1 overflow-x-auto border-b border-[#eadfce]">
-          {(Object.keys(MENU) as Course[]).map((name) => (
-            <button
-              key={name}
-              type="button"
-              role="tab"
-              aria-selected={course === name}
-              onClick={() => setCourse(name)}
-              className={`-mb-px shrink-0 border-b-2 px-3 py-2.5 text-[14px] font-medium transition-colors ${
-                course === name ? "border-[#7a1f2b] text-[#7a1f2b]" : "border-transparent text-[#6f6155]"
-              }`}
-            >
-              {name}
-            </button>
-          ))}
-        </div>
-        <ul role="tabpanel" aria-label={course} className={`mt-2 grid ${m ? "" : "grid-cols-2 gap-x-10"}`}>
-          {MENU[course].map(([dish, description, price]) => (
-            <li key={dish} className="flex items-baseline justify-between gap-4 border-b border-dashed border-[#eadfce] py-3.5">
-              <span>
-                <span className="block text-[15px] font-semibold">{dish}</span>
-                <span className="block text-[13px] text-[#6f6155]">{description}</span>
-              </span>
-              <span className="text-[15px] font-semibold">${price}</span>
-            </li>
-          ))}
-        </ul>
+        <h1 className={`${display} mx-auto mt-3 max-w-[760px] font-medium leading-[1.02] ${m ? "text-[40px]" : "text-[64px]"}`}>
+          Pasta made by hand every morning. Dinner six nights a week.
+        </h1>
       </section>
 
-      <section className={`grid gap-4 ${pad} pb-10 ${m ? "" : "grid-cols-2"}`}>
-        {[
-          ["Private Dining", "A private room for up to 40 guests, with set menus for birthdays, rehearsal dinners, and work events.", "open the private dining inquiry form"],
-          ["Catering & Events", "Trays of our most-loved dishes for offices, parties, and holidays, ready for pickup or delivery.", "open the catering menu and order form"],
-        ].map(([title, body, action]) => (
-          <div key={title} className="rounded-xl bg-[#2a2420] p-6 text-[#f6efe4]">
-            <p className="text-[20px]" style={serif}>
-              {title}
+      <section className={`${pad} ${m ? "py-7" : "py-10"}`}>
+        <div className={`mx-auto max-w-[820px] border border-[#d9cdb9] bg-[#fffdf8] ${m ? "" : "flex"}`}>
+          <div className={`flex ${m ? "border-b border-[#d9cdb9]" : "flex-1"}`}>
+            {select("Party", "2 guests")}
+            {select("Date", "Tonight")}
+            {select("Time", "7:30 pm")}
+          </div>
+          <DemoButton action={reserve} onAction={onAction} className={`px-8 text-[14px] font-bold uppercase tracking-[0.14em] text-white ${m ? "w-full py-4" : ""}`} style={{ background: WINE }}>
+            Find a table
+          </DemoButton>
+        </div>
+        <p className="mt-4 text-center text-[15px]">
+          Eating at home tonight?{" "}
+          <DemoButton action={order} onAction={onAction} className="font-bold underline underline-offset-4" style={{ color: WINE }}>
+            Order pickup or delivery
+          </DemoButton>
+        </p>
+      </section>
+
+      <section className={`border-y border-[#e3d8c6] ${pad} ${m ? "py-7" : "py-10"}`}>
+        <div className={`mx-auto grid max-w-[920px] gap-8 ${m ? "" : "grid-cols-3"}`}>
+          <div>
+            <p className={`${display} text-[24px] italic`}>Hours</p>
+            <table className="mt-2 w-full text-[14px]">
+              <tbody>
+                {[
+                  ["Tue – Thu", "5 – 10 pm"],
+                  ["Fri – Sat", "5 – 11 pm"],
+                  ["Sunday", "4 – 9 pm"],
+                  ["Monday", "Closed"],
+                ].map(([day, time]) => (
+                  <tr key={day}>
+                    <td className="py-0.5 pr-4">{day}</td>
+                    <td className="py-0.5 text-right">{time}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <p className={`${display} text-[24px] italic`}>Find us</p>
+            <p className="mt-2 text-[14px] leading-relaxed">
+              142 Main Street
+              <br />
+              Free parking in the lot behind the building
             </p>
-            <p className="mt-2 text-[13px] leading-relaxed text-[#d8ccbb]">{body}</p>
-            <DemoButton action={action} onAction={onAction} className="mt-4 text-[13px] font-semibold text-[#f3d8a6]">
-              Inquire →
+            <DemoButton action="open turn-by-turn directions in the visitor's maps app" onAction={onAction} className="mt-2 text-[14px] font-bold underline underline-offset-4" style={{ color: WINE }}>
+              Get directions
             </DemoButton>
           </div>
-        ))}
+          <div>
+            <p className={`${display} text-[24px] italic`}>Call</p>
+            <DemoButton action="call the restaurant" onAction={onAction} className="mt-2 text-[18px] font-bold">
+              (516) 555-0163
+            </DemoButton>
+            <p className="mt-1 text-[14px] text-[#6f6155]">Parties of 8+ please call ahead.</p>
+          </div>
+        </div>
       </section>
 
-      <footer className={`flex items-center justify-between border-t border-[#eadfce] ${pad} py-6 text-[12px] text-[#6f6155] ${m ? "pb-24" : ""}`}>
-        <span>Casa Verona · Fictional restaurant for demonstration</span>
-        <span className="flex items-center gap-3">
-          <DemoButton action="call the restaurant" onAction={onAction} label="Call the restaurant">
-            <Phone aria-hidden="true" className="size-4" />
-          </DemoButton>
-          <DemoButton action="open Instagram" onAction={onAction}>
-            Instagram
-          </DemoButton>
-        </span>
+      <section className={`${pad} ${m ? "py-10" : "py-16"}`}>
+        <div className="mx-auto max-w-[820px]">
+          <div className="text-center">
+            <p className={`${display} font-medium ${m ? "text-[40px]" : "text-[56px]"}`}>Menu</p>
+            <p className="text-[14px] italic text-[#6f6155]">Dinner · changes with the season</p>
+          </div>
+          <div role="tablist" aria-label="Menu courses" className="mt-6 flex justify-center gap-5 overflow-x-auto">
+            {(Object.keys(MENU) as Course[]).map((name) => (
+              <button
+                key={name}
+                type="button"
+                role="tab"
+                aria-selected={course === name}
+                onClick={() => setCourse(name)}
+                className={`${display} shrink-0 border-b-2 pb-1 text-[22px] italic transition-colors`}
+                style={{ borderColor: course === name ? WINE : "transparent", color: course === name ? WINE : "#7a6b5d" }}
+              >
+                {name}
+              </button>
+            ))}
+          </div>
+          <ul role="tabpanel" aria-label={course} className={`mt-8 grid gap-x-14 gap-y-6 ${m ? "" : "grid-cols-2"}`}>
+            {MENU[course].map(([dish, description, price]) => (
+              <li key={dish}>
+                <p className="flex items-baseline gap-2 text-[17px] font-bold">
+                  <span>{dish}</span>
+                  <span aria-hidden="true" className="flex-1 translate-y-[-4px] border-b border-dotted border-[#b9a98f]" />
+                  <span>{price}</span>
+                </p>
+                <p className="mt-0.5 text-[14px] italic text-[#6f6155]">{description}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className={`grid gap-3 ${pad} ${m ? "grid-cols-2" : "grid-cols-3"}`}>
+        <DemoPhoto photo="verona-pasta" alt="Tagliatelle with ragù" sizes="400px" className={`${m ? "h-[160px]" : "h-[280px]"}`} fallback={<PlatesScene cover className="block h-full w-full" />} />
+        <DemoPhoto photo="verona-wine" alt="Glasses of red wine at the bar" sizes="400px" className={`${m ? "h-[160px]" : "h-[280px]"}`} fallback={<PlatesScene cover className="block h-full w-full" />} />
+        {!m && <DemoPhoto photo="verona-room" alt="Candlelit dining room" sizes="400px" className="h-[280px]" fallback={<PlatesScene cover className="block h-full w-full" />} />}
+      </section>
+
+      <section className={`${pad} ${m ? "py-10" : "py-16"}`}>
+        <div className={`mx-auto grid max-w-[980px] items-center gap-8 ${m ? "" : "grid-cols-2"}`}>
+          <DemoPhoto photo="verona-room" alt="Private dining room set for a dinner party" sizes="500px" className={m ? "h-[200px]" : "h-[320px]"} fallback={<PlatesScene cover className="block h-full w-full" />} />
+          <div>
+            <p className="text-[12px] font-bold uppercase tracking-[0.2em]" style={{ color: WINE }}>
+              Private dining &amp; catering
+            </p>
+            <p className={`${display} mt-2 font-medium leading-none ${m ? "text-[34px]" : "text-[44px]"}`}>La Sala, for up to 40 guests</p>
+            <p className="mt-4 text-[15px] leading-relaxed">
+              Birthdays, rehearsal dinners, and work dinners, with family-style or set menus. We also cater trays of our most-loved
+              dishes for pickup.
+            </p>
+            <DemoButton action="open the private dining inquiry form" onAction={onAction} className="mt-5 border px-5 py-3 text-[13px] font-bold uppercase tracking-[0.14em]" style={{ borderColor: INK }}>
+              Plan an event
+            </DemoButton>
+          </div>
+        </div>
+      </section>
+
+      <footer className={`text-[13px] text-[#e9dfcf] ${pad} py-8 ${m ? "pb-24" : ""}`} style={{ background: INK }}>
+        <p className={`${display} text-[26px] italic text-white`}>Casa Verona</p>
+        <p className="mt-2">142 Main Street · (516) 555-0163 · Instagram @casaverona</p>
+        <p className="mt-1 text-[#b9ab97]">Fictional restaurant for demonstration</p>
       </footer>
 
       {m && (
-        <div className="sticky bottom-0 z-10 grid grid-cols-2 gap-2 border-t border-[#eadfce] bg-[#fbf7f0]/95 p-3 backdrop-blur">
-          <DemoButton action={order} onAction={onAction} className="rounded-lg border border-[#2a2420]/20 py-3 text-[14px] font-semibold">
-            Order Online
+        <div className="sticky bottom-0 z-10 grid grid-cols-2 border-t border-[#d9cdb9]" style={{ background: CREAM }}>
+          <DemoButton action={order} onAction={onAction} className="py-4 text-[13px] font-bold uppercase tracking-[0.12em]">
+            Order pickup
           </DemoButton>
-          <DemoButton action={reserve} onAction={onAction} className="rounded-lg bg-[#7a1f2b] py-3 text-[14px] font-semibold text-white">
-            Reserve a Table
+          <DemoButton action={reserve} onAction={onAction} className="py-4 text-[13px] font-bold uppercase tracking-[0.12em] text-white" style={{ background: WINE }}>
+            Reserve
           </DemoButton>
         </div>
       )}

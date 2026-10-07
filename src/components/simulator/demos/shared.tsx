@@ -8,7 +8,9 @@ export function DemoButton({
   className = "",
   children,
   label,
+  style,
 }: {
+  style?: React.CSSProperties;
   action: string;
   onAction: (description: string) => void;
   className?: string;
@@ -16,7 +18,7 @@ export function DemoButton({
   label?: string;
 }) {
   return (
-    <button type="button" aria-label={label} onClick={() => onAction(action)} className={className}>
+    <button type="button" aria-label={label} onClick={() => onAction(action)} className={className} style={style}>
       {children}
     </button>
   );

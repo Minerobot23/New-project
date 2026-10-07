@@ -1,8 +1,10 @@
 "use client";
 
-import { CalendarHeart, Clock, MapPin, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { DemoProps } from "../types";
-import { DemoButton, Stars } from "./shared";
+import { DemoButton } from "./shared";
+import { DemoPhoto } from "./photo";
+import { lumenBody, lumenDisplay } from "./fonts";
 import { DatedPhoto, SalonScene } from "./scenes";
 
 export default function SalonDemo(props: DemoProps) {
@@ -50,160 +52,194 @@ const SERVICES = [
   {
     group: "Hair",
     items: [
-      ["Cut & Style", "Consultation, wash, precision cut, and blowout", "65"],
-      ["Single-Process Color", "Root touch-up or all-over color", "110"],
-      ["Balayage", "Hand-painted, lived-in dimension", "220"],
+      ["Cut & finish", "60 min", "65"],
+      ["Single-process color", "90 min", "110"],
+      ["Balayage", "3 hr", "220"],
+      ["Gloss / toner", "45 min", "55"],
     ],
   },
   {
     group: "Skin",
     items: [
-      ["Signature Facial", "Cleanse, exfoliation, extractions, and mask", "95"],
-      ["Hydrating Facial", "Deep hydration for dull or dry skin", "140"],
+      ["Signature facial", "60 min", "95"],
+      ["Hydrating facial", "75 min", "140"],
     ],
   },
   {
-    group: "Brows & Lashes",
+    group: "Brows & lashes",
     items: [
-      ["Brow Shaping", "Wax or thread with tint option", "30"],
-      ["Lash Lift & Tint", "Natural lift that lasts weeks", "85"],
+      ["Brow shaping & tint", "30 min", "45"],
+      ["Lash lift & tint", "60 min", "85"],
     ],
   },
 ] as const;
 
 const TEAM = [
-  ["AR", "Ana R.", "Color specialist"],
-  ["JM", "Jules M.", "Cuts & styling"],
-  ["SK", "Sofia K.", "Licensed esthetician"],
+  ["Ana Ruiz", "Color & balayage"],
+  ["Jules Marin", "Precision cuts, curly hair"],
+  ["Sofia Kane", "Licensed esthetician"],
 ];
 
-const GALLERY = ["#d9b8a6", "#b98f7e", "#e8d3c6", "#a4796a", "#cfae9c", "#8f6a5d"];
+const CHARCOAL = "#26211f";
+const CLAY = "#8a5a45";
+const BONE = "#faf7f3";
 
 function After({ mobile: m, onAction }: DemoProps) {
-  const pad = m ? "px-5" : "px-12";
-  const book = "open online booking: pick a service, a team member, and an open time";
-  const serif = { fontFamily: "ui-serif, Georgia, 'Times New Roman', serif" };
+  const pad = m ? "px-6" : "px-16";
+  const book = "open online booking: choose a service, a person, and an open time";
+  const display = lumenDisplay.className;
 
   return (
-    <div className="relative min-h-full bg-[#fbf8f5] text-[#2e2623]" style={{ fontFamily: "var(--font-geist-sans), system-ui, sans-serif" }}>
-      <header className={`sticky top-0 z-10 flex items-center justify-between border-b border-[#efe6df] bg-[#fbf8f5]/95 py-3.5 backdrop-blur ${pad}`}>
-        <p className="text-[22px] tracking-tight" style={serif}>
-          Lumen <span className="text-[13px] tracking-[0.2em] text-[#85624f]">HAIR &amp; SKIN</span>
-        </p>
-        <div className="flex items-center gap-6 text-[14px] font-medium">
-          {!m &&
-            ["Services", "Gallery", "Team", "Visit"].map((item) => (
-              <DemoButton key={item} action={`scroll to ${item}`} onAction={onAction}>
+    <div className={`relative min-h-full ${lumenBody.className}`} style={{ background: BONE, color: CHARCOAL }}>
+      <header className={`sticky top-0 z-10 flex items-center justify-between ${pad} ${m ? "py-4" : "py-6"}`} style={{ background: `${BONE}f2` }}>
+        <p className={`${display} text-[28px] font-light lowercase tracking-tight`}>lumen</p>
+        {!m && (
+          <nav className="flex gap-9 text-[14px] lowercase text-[#5c514c]">
+            {["Services", "Work", "Team", "Visit"].map((item) => (
+              <DemoButton key={item} action={`scroll to ${item.toLowerCase()}`} onAction={onAction} className="hover:text-black">
                 {item}
               </DemoButton>
             ))}
-          <DemoButton action={book} onAction={onAction} className="rounded-full bg-[#2e2623] px-4 py-2 text-[13px] font-semibold text-white">
-            Book{m ? "" : " Appointment"}
-          </DemoButton>
-        </div>
+          </nav>
+        )}
+        <DemoButton action={book} onAction={onAction} className="rounded-full border px-5 py-2 text-[14px] lowercase" style={{ borderColor: CHARCOAL }}>
+          book
+        </DemoButton>
       </header>
 
-      <section className={`grid items-center gap-8 ${pad} ${m ? "py-8" : "grid-cols-[1fr_1fr] py-14"}`}>
-        <div>
-          <p className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#85624f]">
-            <Sparkles aria-hidden="true" className="size-3.5" /> Hair, color &amp; skin studio
+      <section className={`grid items-end gap-10 ${pad} ${m ? "pb-10 pt-2" : "grid-cols-[1.1fr_1fr] pb-20 pt-10"}`}>
+        {m && (
+          <DemoPhoto photo="lumen-hero" alt="Stylist finishing a client's hair in a bright studio" sizes="390px" position="50% 30%" className="h-[380px]" fallback={<SalonScene cover className="block h-full w-full" />} />
+        )}
+        <div className={m ? "" : "pb-6"}>
+          <h1 className={`${display} font-light leading-[1.02] tracking-[-0.02em] ${m ? "text-[42px]" : "text-[76px]"}`}>
+            Color, cuts &amp; skin care, with time to do it properly.
+          </h1>
+          <p className={`mt-6 max-w-[420px] leading-relaxed text-[#5c514c] ${m ? "text-[15px]" : "text-[17px]"}`}>
+            A small studio on Harbor Lane. Every first visit starts with a real consultation, so you leave with something that suits
+            you and is easy to live with.
           </p>
-          <p className={`mt-3 leading-[1.05] ${m ? "text-[34px]" : "text-[52px]"}`} style={serif}>
-            Thoughtful color. Healthy skin. Unhurried appointments.
-          </p>
-          <p className="mt-4 text-[15px] leading-relaxed text-[#6b5a52]">
-            Every visit starts with a real consultation, so you leave with something that suits you and is easy to live with.
-          </p>
-          <DemoButton action={book} onAction={onAction} className={`mt-6 flex items-center justify-center gap-2 rounded-full bg-[#2e2623] px-6 py-3.5 text-[15px] font-semibold text-white ${m ? "w-full" : ""}`}>
-            <CalendarHeart aria-hidden="true" className="size-4" /> Book Appointment
+          <DemoButton action={book} onAction={onAction} className="group mt-8 inline-flex items-center gap-3 text-[16px]">
+            <span className="border-b pb-0.5" style={{ borderColor: CHARCOAL }}>
+              Book an appointment
+            </span>
+            <ArrowRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-1" />
           </DemoButton>
-          <p className="mt-4 flex items-center gap-2 text-[13px] text-[#6b5a52]">
-            <Stars color="#b07a5f" /> Loved by regulars · 210+ reviews
-          </p>
         </div>
-        <div className="overflow-hidden rounded-[28px]">
-          <SalonScene className="block h-auto w-full" />
-        </div>
+        {!m && (
+          <div className="relative h-[560px]">
+            <DemoPhoto photo="lumen-hero" alt="Stylist finishing a client's hair in a bright studio" sizes="420px" position="50% 30%" className="absolute right-0 top-0 h-[480px] w-[78%]" fallback={<SalonScene cover className="block h-full w-full" />} />
+            <DemoPhoto photo="lumen-color" alt="Close-up of a soft balayage color" sizes="260px" className="absolute bottom-0 left-0 h-[240px] w-[44%] border-[10px] border-[#faf7f3]" fallback={<SalonScene cover className="block h-full w-full" />} />
+          </div>
+        )}
       </section>
 
-      <section className={`${pad} py-10`}>
-        <p className={`${m ? "text-[26px]" : "text-[34px]"}`} style={serif}>
-          Services &amp; starting prices
+      <section className={pad}>
+        <p className="border-y border-[#e6ddd5] py-5 text-center text-[15px] text-[#5c514c]">
+          New to Lumen? Your first appointment includes a free 15-minute consultation.
         </p>
-        <div className={`mt-6 grid gap-6 ${m ? "" : "grid-cols-3"}`}>
-          {SERVICES.map(({ group, items }) => (
-            <div key={group} className="rounded-2xl border border-[#efe6df] bg-white p-5">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#85624f]">{group}</p>
-              <ul className="mt-3 divide-y divide-[#f3ece6]">
-                {items.map(([name, description, price]) => (
-                  <li key={name} className="flex items-baseline justify-between gap-3 py-3">
-                    <span>
-                      <span className="block text-[14px] font-semibold">{name}</span>
-                      <span className="block text-[12px] text-[#73635b]">{description}</span>
-                    </span>
-                    <span className="shrink-0 text-[13px] font-semibold">from ${price}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
       </section>
 
-      <section className={`${pad} pb-10`}>
-        <p className={`${m ? "text-[24px]" : "text-[30px]"}`} style={serif}>
-          Recent work
-        </p>
-        <div className={`mt-5 grid gap-2 ${m ? "grid-cols-3" : "grid-cols-6"}`}>
-          {GALLERY.map((color, index) => (
-            <div
-              key={color}
-              role="img"
-              aria-label={`Gallery photo ${index + 1} (illustrative)`}
-              className="aspect-[4/5] rounded-xl"
-              style={{ background: `linear-gradient(160deg, ${color}, #f3e7de)` }}
-            />
-          ))}
-        </div>
-      </section>
-
-      <section className={`grid gap-6 ${pad} pb-12 ${m ? "" : "grid-cols-[1.2fr_1fr]"}`}>
-        <div>
-          <p className={`${m ? "text-[24px]" : "text-[30px]"}`} style={serif}>
-            Meet the team
-          </p>
-          <ul className="mt-5 grid grid-cols-3 gap-3">
-            {TEAM.map(([initials, name, role]) => (
-              <li key={name} className="text-center">
-                <span className="mx-auto flex size-16 items-center justify-center rounded-full bg-[#e8d3c6] text-[16px] font-semibold text-[#6b4a3c]">{initials}</span>
-                <p className="mt-2 text-[13px] font-semibold">{name}</p>
-                <p className="text-[11px] text-[#73635b]">{role}</p>
-              </li>
+      <section className={`${pad} ${m ? "py-12" : "py-20"}`}>
+        <div className={`grid gap-12 ${m ? "" : "grid-cols-[0.8fr_2fr]"}`}>
+          <div>
+            <h2 className={`${display} font-light leading-none ${m ? "text-[36px]" : "text-[48px]"}`}>Services</h2>
+            <p className="mt-4 max-w-[260px] text-[14px] leading-relaxed text-[#6b5f59]">
+              Prices are starting points. Your stylist confirms the price at your consultation, before anything begins.
+            </p>
+          </div>
+          <div className={`grid gap-10 ${m ? "" : "grid-cols-2"}`}>
+            {SERVICES.map(({ group, items }) => (
+              <div key={group}>
+                <p className={`${display} text-[22px] italic`} style={{ color: CLAY }}>
+                  {group}
+                </p>
+                <ul className="mt-3">
+                  {items.map(([name, duration, price]) => (
+                    <li key={name}>
+                      <DemoButton action={`start booking a ${name.toLowerCase()}`} onAction={onAction} className="flex w-full items-baseline justify-between gap-3 border-b border-[#e6ddd5] py-3.5 text-left">
+                        <span className="text-[15px]">{name}</span>
+                        <span className="shrink-0 text-[13px] text-[#6b5f59]">
+                          {duration} · from ${price}
+                        </span>
+                      </DemoButton>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
-          </ul>
-          <figure className="mt-6 rounded-2xl bg-white p-5 text-[13px] leading-relaxed">
-            <Stars color="#b07a5f" />
-            <blockquote className="mt-2">&ldquo;Ana listened, explained what my hair could realistically do, and the color is exactly what I wanted.&rdquo;</blockquote>
-            <figcaption className="mt-2 text-[12px] font-semibold">Priya S.</figcaption>
-          </figure>
-        </div>
-        <div className="rounded-2xl bg-[#2e2623] p-6 text-[#f3e7de]">
-          <p className="text-[20px]" style={serif}>
-            Visit the studio
-          </p>
-          <p className="mt-4 flex items-start gap-2 text-[13px]">
-            <MapPin aria-hidden="true" className="mt-0.5 size-4" /> 18 Harbor Lane, second floor · street parking out front
-          </p>
-          <p className="mt-3 flex items-start gap-2 text-[13px]">
-            <Clock aria-hidden="true" className="mt-0.5 size-4" /> Tue–Fri 10–7 · Sat 9–5 · Sun–Mon closed
-          </p>
-          <DemoButton action={book} onAction={onAction} className="mt-6 w-full rounded-full bg-[#f3e7de] py-3 text-[14px] font-semibold text-[#2e2623]">
-            Book Appointment
-          </DemoButton>
+          </div>
         </div>
       </section>
 
-      <footer className={`border-t border-[#efe6df] ${pad} py-6 text-[12px] text-[#73635b]`}>Lumen Hair &amp; Skin Studio · Fictional business for demonstration</footer>
+      <section className={`${pad} pb-16`}>
+        <div className={`grid gap-4 ${m ? "grid-cols-2" : "grid-cols-[1.3fr_1fr_1fr]"}`}>
+          <DemoPhoto photo="lumen-color" alt="Lived-in blonde balayage" sizes="420px" className={m ? "col-span-2 h-[260px]" : "row-span-2 h-[520px]"} fallback={<SalonScene cover className="block h-full w-full" />} />
+          <DemoPhoto photo="lumen-skin" alt="Esthetician applying a facial treatment" sizes="300px" className={m ? "h-[180px]" : "h-[252px]"} fallback={<SalonScene cover className="block h-full w-full" />} />
+          <DemoPhoto photo="lumen-interior" alt="The studio's styling stations with natural light" sizes="300px" className={m ? "h-[180px]" : "h-[252px]"} fallback={<SalonScene cover className="block h-full w-full" />} />
+          {!m && (
+            <div className="col-span-2 flex flex-col justify-end p-2">
+              <p className={`${display} text-[30px] font-light italic leading-snug`}>
+                &ldquo;Ana told me honestly what my hair could do, and the color is exactly what I wanted.&rdquo;
+              </p>
+              <p className="mt-3 text-[13px] text-[#6b5f59]">Priya S., client since 2023</p>
+            </div>
+          )}
+        </div>
+        {m && (
+          <div className="mt-8">
+            <p className={`${display} text-[24px] font-light italic leading-snug`}>
+              &ldquo;Ana told me honestly what my hair could do, and the color is exactly what I wanted.&rdquo;
+            </p>
+            <p className="mt-3 text-[13px] text-[#6b5f59]">Priya S., client since 2023</p>
+          </div>
+        )}
+      </section>
+
+      <section className={`border-t border-[#e6ddd5] ${pad} ${m ? "py-12" : "py-16"}`}>
+        <div className={`grid gap-12 ${m ? "" : "grid-cols-2"}`}>
+          <div>
+            <h2 className={`${display} font-light leading-none ${m ? "text-[34px]" : "text-[44px]"}`}>The team</h2>
+            <ul className="mt-6">
+              {TEAM.map(([name, role]) => (
+                <li key={name} className="flex items-baseline justify-between border-b border-[#e6ddd5] py-4">
+                  <span>
+                    <span className="block text-[16px]">{name}</span>
+                    <span className="block text-[13px] text-[#6b5f59]">{role}</span>
+                  </span>
+                  <DemoButton action={`book directly with ${name.split(" ")[0]}`} onAction={onAction} className="text-[13px] underline underline-offset-4" style={{ color: CLAY }}>
+                    book with {name.split(" ")[0]}
+                  </DemoButton>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h2 className={`${display} font-light leading-none ${m ? "text-[34px]" : "text-[44px]"}`}>Visit</h2>
+            <p className="mt-6 text-[15px] leading-relaxed">
+              18 Harbor Lane, second floor
+              <br />
+              Street parking out front
+            </p>
+            <p className="mt-4 text-[15px] leading-relaxed text-[#5c514c]">
+              Tue–Fri 10–7 · Sat 9–5
+              <br />
+              Sun &amp; Mon closed
+            </p>
+            <DemoButton action="open directions in the visitor's maps app" onAction={onAction} className="mt-4 text-[14px] underline underline-offset-4">
+              Get directions
+            </DemoButton>
+          </div>
+        </div>
+      </section>
+
+      <footer className={`border-t border-[#e6ddd5] text-[12px] text-[#6b5f59] ${pad} py-6 pb-20`}>Lumen Hair &amp; Skin Studio · Fictional business for demonstration</footer>
+
+      <div className={`pointer-events-none sticky bottom-0 z-10 flex ${m ? "justify-center pb-4" : "justify-end px-8 pb-6"}`}>
+        <DemoButton action={book} onAction={onAction} className="pointer-events-auto rounded-full px-7 py-3.5 text-[15px] text-white shadow-lg" style={{ background: CHARCOAL }}>
+          Book an appointment
+        </DemoButton>
+      </div>
     </div>
   );
 }

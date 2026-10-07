@@ -10,6 +10,7 @@ import { ClosingCta } from "@/components/shared/closing-cta";
 import { JsonLd } from "@/components/seo/json-ld";
 import { TrackPageView } from "@/components/analytics/track-page-view";
 import type { LocationPage } from "@/content/locations";
+import { LOCATION_IMAGES } from "@/lib/images";
 import { pageMetadata, serviceSchema } from "@/lib/seo";
 import { CALL_CTA_LABEL, CALL_PATH, industryLinks, locationLinks, site } from "@/lib/site";
 
@@ -34,7 +35,7 @@ export function LocationPageTemplate({ page }: { page: LocationPage }) {
           areaServed: [`${page.place}, NY`],
         })}
       />
-      <PageHeader crumbs={[{ name: `Web Design ${page.place}`, path: page.path }]} eyebrow={`Web design · ${page.place}`} title={page.h1} intro={<p>{page.intro}</p>}>
+      <PageHeader crumbs={[{ name: `Web Design ${page.place}`, path: page.path }]} eyebrow={`Web design · ${page.place}`} title={page.h1} intro={<p>{page.intro}</p>} image={LOCATION_IMAGES[page.path]}>
         <p className="mt-5 max-w-2xl text-sm leading-relaxed text-muted">
           Whether your business is in {listFormat.format(page.communities)}, we can help. {site.serviceArea}
         </p>

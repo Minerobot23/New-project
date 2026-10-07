@@ -2,6 +2,8 @@ import Link from "next/link";
 import { ArrowRight, Gauge, Handshake, MousePointerClick, Smartphone } from "lucide-react";
 import { Hero } from "@/components/home/hero";
 import { Problems } from "@/components/home/problems";
+import { PhoneFirst } from "@/components/home/phone-first";
+import { ConceptCards } from "@/components/shared/concept-cards";
 import { SimulatorSection } from "@/components/simulator/simulator-section";
 import { IndustriesGrid } from "@/components/shared/industries-grid";
 import { Process } from "@/components/shared/process";
@@ -75,6 +77,7 @@ export default function HomePage() {
       <Hero />
       <SimulatorSection />
       <Problems />
+      <PhoneFirst />
 
       <section aria-labelledby="build-title" className="border-y border-line bg-surface py-20 sm:py-24">
         <Container className="max-w-7xl">
@@ -101,7 +104,31 @@ export default function HomePage() {
         </Container>
       </section>
 
-      <section aria-labelledby="industries-title" className="py-20 sm:py-24">
+      <section aria-labelledby="concepts-title" className="py-20 sm:py-24">
+        <Container className="max-w-7xl">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <SectionHeading
+              id="concepts-title"
+              eyebrow="Concept work"
+              title="Four businesses, four different websites."
+              intro={
+                <p>
+                  Interactive Concept Demos for fictional businesses, each designed around how its customers actually decide. Open
+                  one to compare the Before and After on desktop and mobile.
+                </p>
+              }
+            />
+            <Link href="/work" className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-accent hover:text-accent-strong">
+              All work <ArrowRight aria-hidden="true" className="size-4" />
+            </Link>
+          </div>
+          <div className="mt-12">
+            <ConceptCards />
+          </div>
+        </Container>
+      </section>
+
+      <section aria-labelledby="industries-title" className="border-t border-line py-20 sm:py-24">
         <Container className="max-w-7xl">
           <SectionHeading
             id="industries-title"

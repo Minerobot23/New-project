@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
- * Fluxline palette: warm neutral paper, deep ink, one restrained teal accent.
+ * Fluxline palette: warm neutral paper, deep ink, one restrained blue accent (matches the logo).
  * The site is intentionally light-only; a B2B credibility site reads best with a single, controlled palette.
  */
 @theme {
@@ -18,9 +18,9 @@
   --color-ink-soft: #3b4652;
   --color-muted: #5c6670;
 
-  --color-accent: #0e6b5c;
-  --color-accent-strong: #0a5246;
-  --color-accent-soft: #e6f1ee;
+  --color-accent: #1d5bd8;
+  --color-accent-strong: #1747ad;
+  --color-accent-soft: #e8effd;
 
   --color-night: #0d1720;
   --color-night-line: #22303c;

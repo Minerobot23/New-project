@@ -11,6 +11,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { TrackPageView } from "@/components/analytics/track-page-view";
 import { SERVICE_GROUPS } from "@/content/services";
 import { pageMetadata, serviceSchema } from "@/lib/seo";
+import { PHOTOS } from "@/lib/images";
 import { CALL_CTA_LABEL, CALL_PATH } from "@/lib/site";
 
 const description =
@@ -64,6 +65,7 @@ export default function ServicesPage() {
             what your business actually needs.
           </p>
         }
+        image={PHOTOS.deskNight}
       >
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <ButtonLink href={CALL_PATH} size="lg" withArrow>

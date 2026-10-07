@@ -5,12 +5,24 @@ import type { ReactNode } from "react";
  * Photography used by the concept demos. Files live in /public/demo/ (optimized WebP).
  * Until a photo exists, the slot renders its illustrated fallback so the demo never breaks.
  */
-export const DEMO_PHOTOS: Partial<Record<DemoPhotoKey, string>> = {};
+export const DEMO_PHOTOS: Partial<Record<DemoPhotoKey, string>> = {
+  "hvac-hero": "/demo/hvac-hero.webp",
+  "hvac-tech": "/demo/hvac-tech.webp",
+  "verona-hero": "/demo/verona-hero.webp",
+  "verona-pasta": "/demo/verona-pasta.webp",
+  "verona-wine": "/demo/verona-wine.webp",
+  "verona-room": "/demo/verona-room.webp",
+  "lumen-hero": "/demo/lumen-hero.webp",
+  "lumen-color": "/demo/lumen-color.webp",
+  "lumen-skin": "/demo/lumen-skin.webp",
+  "lumen-interior": "/demo/lumen-interior.webp",
+  "auto-hero": "/demo/auto-hero.webp",
+  "auto-brakes": "/demo/auto-brakes.webp",
+};
 
 export type DemoPhotoKey =
   | "hvac-hero"
   | "hvac-tech"
-  | "hvac-install"
   | "verona-hero"
   | "verona-pasta"
   | "verona-room"

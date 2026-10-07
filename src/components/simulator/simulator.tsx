@@ -109,7 +109,7 @@ export function WebsiteSimulator({ industries = INDUSTRY_ORDER, initialIndustry 
     <div aria-live="polite" className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center p-3">
       {note && (
         <div className="sim-note pointer-events-auto flex max-w-md items-start gap-2.5 rounded-lg bg-ink/95 px-3.5 py-2.5 text-[13px] leading-snug text-white shadow-lg">
-          <Info aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-emerald-300" />
+          <Info aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-[#6ea8ff]" />
           <span>
             <span className="font-semibold">Concept demo:</span> on a real site, this would {note}.
           </span>
@@ -138,7 +138,7 @@ export function WebsiteSimulator({ industries = INDUSTRY_ORDER, initialIndustry 
                   selected ? "border-ink bg-ink text-white" : "border-line-strong bg-surface text-ink-soft hover:border-ink/40 hover:text-ink"
                 }`}
               >
-                <Icon aria-hidden="true" className={`size-[18px] shrink-0 ${selected ? "text-emerald-300" : "text-accent"}`} />
+                <Icon aria-hidden="true" className={`size-[18px] shrink-0 ${selected ? "text-[#6ea8ff]" : "text-accent"}`} />
                 {INDUSTRY_DEMOS[id].label}
               </button>
             );

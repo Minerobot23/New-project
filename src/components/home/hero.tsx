@@ -1,6 +1,8 @@
 import { CalendarCheck, MapPin, MessageSquareText, Phone, ShoppingBag, UtensilsCrossed } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";
+import { DeviceShowcase } from "@/components/shared/device-showcase";
+import { SHOWCASE } from "@/lib/images";
 import { CALL_CTA_LABEL, CALL_PATH } from "@/lib/site";
 
 const outcomes = [
@@ -14,24 +16,28 @@ const outcomes = [
 
 export function Hero() {
   return (
-    <section aria-labelledby="hero-title" className="relative overflow-hidden" data-track-location="hero">
+    <section aria-labelledby="hero-title" className="relative overflow-hidden bg-night text-white" data-track-location="hero">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--color-line)_1px,transparent_1px)] bg-[size:72px_100%] opacity-40 [mask-image:linear-gradient(to_bottom,black,transparent_85%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_70%_at_85%_30%,rgba(47,124,255,0.28),transparent_70%),radial-gradient(40%_50%_at_0%_100%,rgba(47,124,255,0.12),transparent_70%)]"
       />
-      <Container className="relative grid max-w-7xl gap-12 py-16 sm:py-20 lg:grid-cols-[1.35fr_1fr] lg:items-center lg:gap-16 lg:py-28">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:72px_100%] [mask-image:linear-gradient(to_bottom,black,transparent_80%)]"
+      />
+      <Container className="relative grid max-w-7xl gap-12 pb-16 pt-14 sm:pb-20 sm:pt-20 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-10 lg:pb-24 lg:pt-24">
         <div>
-          <p className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-xs font-medium text-ink-soft">
-            <span aria-hidden="true" className="size-1.5 rounded-full bg-accent" />
-            Web design &amp; development for businesses
+          <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/80">
+            <span aria-hidden="true" className="size-1.5 rounded-full bg-[#2f7cff]" />
+            Websites · Design · Growth
           </p>
           <h1
             id="hero-title"
-            className="mt-6 text-balance text-[2.6rem] font-semibold leading-[1.03] tracking-tight text-ink sm:text-6xl lg:text-[4.1rem]"
+            className="mt-6 text-balance text-[2.6rem] font-semibold leading-[1.03] tracking-tight sm:text-6xl lg:text-[4rem]"
           >
-            Websites Built to Turn Visitors Into Customers.
+            Websites Built to Turn Visitors Into <span className="text-[#6ea8ff]">Customers.</span>
           </h1>
-          <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-ink-soft">
+          <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-white/75">
             Fluxline Solutions designs fast, modern websites for businesses that want to look better online and turn more visitors
             into calls, reservations, appointments, and customers.
           </p>
@@ -39,25 +45,32 @@ export function Hero() {
             <ButtonLink href={CALL_PATH} size="lg" withArrow>
               {CALL_CTA_LABEL}
             </ButtonLink>
-            <ButtonLink href="/#simulator" size="lg" variant="secondary">
+            <ButtonLink href="/#simulator" size="lg" variant="ghost-inverse">
               See the Difference
             </ButtonLink>
           </div>
-          <p className="mt-6 text-sm text-muted">Modern design. Mobile-first. Built around your business.</p>
-        </div>
-
-        <div className="rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(15,26,36,0.04),0_12px_32px_-16px_rgba(15,26,36,0.16)] sm:p-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Every page is built around a next step</p>
-          <ul className="mt-5 grid grid-cols-2 gap-2.5">
+          <ul aria-label="Built around the next step" className="mt-10 flex flex-wrap gap-2">
             {outcomes.map(({ icon: Icon, label }) => (
-              <li key={label} className="flex items-center gap-2.5 rounded-lg border border-line bg-paper px-3 py-3 text-sm font-medium text-ink">
-                <Icon aria-hidden="true" className="size-4 shrink-0 text-accent" />
+              <li
+                key={label}
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[13px] text-white/80"
+              >
+                <Icon aria-hidden="true" className="size-3.5 text-[#6ea8ff]" />
                 {label}
               </li>
             ))}
           </ul>
-          <p className="mt-5 border-t border-line pt-4 text-sm leading-relaxed text-ink-soft">
-            Your business deserves a website as good as the business behind it.
+        </div>
+
+        <div className="relative">
+          <DeviceShowcase
+            desktop={SHOWCASE.restaurant.desktop}
+            mobile={SHOWCASE.home.mobile}
+            alt="Redesigned concept websites: an Italian restaurant homepage on a laptop and an HVAC company homepage on a phone"
+            eager
+          />
+          <p className="mt-4 text-center text-xs text-white/50 lg:text-right">
+            Interactive Concept Demos for fictional businesses. Explore them below.
           </p>
         </div>
       </Container>

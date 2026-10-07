@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
@@ -5,6 +6,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { CheckPromo } from "@/components/shared/check-promo";
 import { ClosingCta } from "@/components/shared/closing-cta";
 import { ARTICLES, type ArticleCategory } from "@/content/resources/registry";
+import { ARTICLE_IMAGES } from "@/lib/images";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -33,23 +35,40 @@ export default function ResourcesPage() {
                 {category}
               </h2>
               <ul className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {ARTICLES.filter((article) => article.category === category).map((article) => (
-                  <li key={article.slug}>
-                    <Link
-                      href={`/resources/${article.slug}`}
-                      className="group flex h-full flex-col rounded-xl border border-line bg-surface p-6 transition-colors hover:border-ink/30"
-                    >
-                      <span className="text-lg font-semibold leading-snug text-ink">{article.title}</span>
-                      <span className="mt-3 flex-1 text-[15px] leading-relaxed text-ink-soft">{article.description}</span>
-                      <span className="mt-5 flex items-center justify-between text-sm">
-                        <span className="text-muted">{article.readingMinutes} min read</span>
-                        <span className="inline-flex items-center gap-1 font-semibold text-accent">
-                          Read <ArrowRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-0.5" />
+                {ARTICLES.filter((article) => article.category === category).map((article) => {
+                  const cover = ARTICLE_IMAGES[article.slug];
+                  return (
+                    <li key={article.slug}>
+                      <Link
+                        href={`/resources/${article.slug}`}
+                        className="group flex h-full flex-col overflow-hidden rounded-xl border border-line bg-surface transition-colors hover:border-ink/30"
+                      >
+                        {cover && (
+                          <span className="relative block aspect-[16/9] overflow-hidden bg-sunken">
+                            <Image
+                              src={cover.src}
+                              alt=""
+                              fill
+                              sizes="(min-width: 1024px) 400px, (min-width: 768px) 50vw, 100vw"
+                              placeholder="blur"
+                              className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                            />
+                          </span>
+                        )}
+                        <span className="flex flex-1 flex-col p-6">
+                          <span className="text-lg font-semibold leading-snug text-ink">{article.title}</span>
+                          <span className="mt-3 flex-1 text-[15px] leading-relaxed text-ink-soft">{article.description}</span>
+                          <span className="mt-5 flex items-center justify-between text-sm">
+                            <span className="text-muted">{article.readingMinutes} min read</span>
+                            <span className="inline-flex items-center gap-1 font-semibold text-accent">
+                              Read <ArrowRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-0.5" />
+                            </span>
+                          </span>
                         </span>
-                      </span>
-                    </Link>
-                  </li>
-                ))}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </section>
           ))}

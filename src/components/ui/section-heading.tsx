@@ -22,7 +22,7 @@ export function SectionHeading({
     <div className={`max-w-2xl ${align === "center" ? "mx-auto text-center" : ""}`}>
       {eyebrow && (
         <p
-          className={`text-xs font-semibold uppercase tracking-[0.14em] ${dark ? "text-emerald-300/90" : "text-accent"}`}
+          className={`text-xs font-semibold uppercase tracking-[0.14em] ${dark ? "text-[#6ea8ff]" : "text-accent"}`}
         >
           {eyebrow}
         </p>

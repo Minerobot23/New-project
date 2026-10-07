@@ -1,37 +1,42 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Car, Droplets, Hammer, House, Scissors, Store, ThermometerSnowflake, UtensilsCrossed, type LucideIcon } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { INDUSTRY_IMAGES } from "@/lib/images";
 import { industryLinks } from "@/lib/site";
-
-const ICONS: Record<string, LucideIcon> = {
-  "/websites-for-contractors": Hammer,
-  "/websites-for-hvac-companies": ThermometerSnowflake,
-  "/websites-for-plumbers": Droplets,
-  "/websites-for-roofers": House,
-  "/websites-for-restaurants": UtensilsCrossed,
-  "/websites-for-salons": Scissors,
-  "/websites-for-auto-repair-shops": Car,
-  "/websites-for-local-businesses": Store,
-};
 
 export function IndustriesGrid({ exclude }: { exclude?: string }) {
   const links = industryLinks.filter((link) => link.href !== exclude);
   return (
-    <ul className="grid grid-cols-2 gap-3 md:grid-cols-4">
+    <ul className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
       {links.map((link) => {
-        const Icon = ICONS[link.href] ?? Store;
+        const image = INDUSTRY_IMAGES[link.href];
         return (
           <li key={link.href}>
             <Link
               href={link.href}
-              className="group flex h-full flex-col justify-between gap-6 rounded-xl border border-line bg-surface p-4 transition-colors hover:border-ink/30 sm:p-5"
+              className="group relative flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-xl bg-night p-4 text-white sm:aspect-[4/4.4] sm:p-5"
             >
-              <span className="flex items-start justify-between">
-                <span className="flex size-10 items-center justify-center rounded-lg bg-accent-soft text-accent">
-                  <Icon aria-hidden="true" className="size-5" />
-                </span>
-                <ArrowUpRight aria-hidden="true" className="size-4 text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink" />
+              {image && (
+                <Image
+                  src={image.src}
+                  alt=""
+                  fill
+                  sizes="(min-width: 768px) 25vw, 50vw"
+                  placeholder="blur"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                />
+              )}
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-[#0b1420] via-[#0b1420]/55 to-transparent"
+              />
+              <span className="relative flex items-end justify-between gap-2">
+                <span className="text-[15px] font-semibold leading-snug sm:text-base">Websites for {link.label}</span>
+                <ArrowUpRight
+                  aria-hidden="true"
+                  className="size-4 shrink-0 text-white/70 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white"
+                />
               </span>
-              <span className="text-[15px] font-medium leading-snug text-ink">Websites for {link.label}</span>
             </Link>
           </li>
         );

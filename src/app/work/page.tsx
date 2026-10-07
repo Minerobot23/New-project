@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { PageHeader } from "@/components/shared/page-header";
 import { ClosingCta } from "@/components/shared/closing-cta";
 import { TrackPageView } from "@/components/analytics/track-page-view";
-import { CASE_STUDIES, CONCEPT_PROJECTS } from "@/content/work";
+import { ConceptCards } from "@/components/shared/concept-cards";
+import { CASE_STUDIES } from "@/content/work";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -61,23 +61,9 @@ export default function WorkPage() {
             Each one is a fictional business with a realistic Before and a redesigned After that you can explore on desktop and
             mobile.
           </p>
-          <ul className="mt-8 grid gap-4 md:grid-cols-2">
-            {CONCEPT_PROJECTS.map((project) => (
-              <li key={project.name}>
-                <Link href={project.href} className="group flex h-full flex-col rounded-xl border border-line bg-surface p-6 transition-colors hover:border-ink/30">
-                  <span className="w-fit rounded-full border border-line px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-accent">
-                    Concept Project
-                  </span>
-                  <span className="mt-4 text-lg font-semibold text-ink">{project.name}</span>
-                  <span className="text-sm text-muted">Fictional {project.kind}</span>
-                  <span className="mt-3 flex-1 text-[15px] leading-relaxed text-ink-soft">{project.focus}</span>
-                  <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-accent">
-                    Explore the Before &amp; After <ArrowRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-0.5" />
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <div className="mt-8">
+            <ConceptCards />
+          </div>
         </Container>
       </section>
 

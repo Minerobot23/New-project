@@ -1,21 +1,20 @@
 import Link from "next/link";
+import { brandFont } from "@/components/brand/fonts";
+import { LOGO_BLUE, LogoMark } from "@/components/brand/logo-mark";
 
-/** Text wordmark used until a designed logo exists. */
+/** Fluxline Solutions logo: F mark, FLUX + LINE wordmark, and spaced SOLUTIONS. */
 export function Wordmark({ tone = "dark" }: { tone?: "dark" | "light" }) {
-  const dark = tone === "dark";
+  const light = tone === "light";
   return (
-    <Link
-      href="/"
-      className={`inline-flex items-center gap-2 text-[19px] font-semibold tracking-tight ${dark ? "text-ink" : "text-white"}`}
-    >
-      <span aria-hidden="true" className="flex h-5 items-end gap-[3px]">
-        <span className="h-2 w-[3px] rounded-[1px] bg-accent/45" />
-        <span className="h-3.5 w-[3px] rounded-[1px] bg-accent/70" />
-        <span className="h-5 w-[3px] rounded-[1px] bg-accent" />
-      </span>
-      <span>
-        Fluxline{" "}
-        <span className={`font-normal ${dark ? "text-muted" : "text-slate-400"}`}>Solutions</span>
+    <Link href="/" className={`inline-flex items-center gap-2 ${brandFont.className}`}>
+      <LogoMark tone={tone} className="size-8" />
+      <span className="flex flex-col leading-none">
+        <span className={`text-[19px] font-bold tracking-[0.01em] ${light ? "text-white" : "text-ink"}`}>
+          FLUX<span style={{ color: light ? LOGO_BLUE : "#1d5bd8" }}>LINE</span>
+        </span>
+        <span className={`mt-[3px] text-[7.5px] font-semibold tracking-[0.62em] ${light ? "text-slate-300" : "text-ink-soft"}`}>
+          SOLUTIONS
+        </span>
       </span>
     </Link>
   );

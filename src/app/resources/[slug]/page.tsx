@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/container";
@@ -6,6 +7,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { ClosingCta } from "@/components/shared/closing-cta";
 import { ARTICLES, getArticle } from "@/content/resources/registry";
 import { ARTICLE_BODIES } from "@/content/resources/bodies";
+import { ARTICLE_IMAGES } from "@/lib/images";
 import { articleSchema, pageMetadata } from "@/lib/seo";
 import { site } from "@/lib/site";
 
@@ -34,6 +36,7 @@ export default async function ArticlePage({ params }: PageProps<"/resources/[slu
   const path = `/resources/${slug}`;
   const related = ARTICLES.filter((item) => item.slug !== slug && item.category === article.category).slice(0, 3);
   const updated = article.updated ?? article.published;
+  const cover = ARTICLE_IMAGES[slug];
 
   return (
     <>
@@ -63,6 +66,13 @@ export default async function ArticlePage({ params }: PageProps<"/resources/[slu
             </p>
           </Container>
         </header>
+        {cover && (
+          <Container className="max-w-4xl pt-10 sm:pt-12">
+            <div className="relative aspect-[2/1] overflow-hidden rounded-2xl bg-sunken">
+              <Image src={cover.src} alt={cover.alt} fill sizes="(min-width: 960px) 896px, 100vw" placeholder="blur" loading="eager" className="object-cover" />
+            </div>
+          </Container>
+        )}
         <Container className="max-w-3xl py-12 sm:py-14">
           <div className="prose-article">
             <Body />

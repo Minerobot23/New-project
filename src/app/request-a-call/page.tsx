@@ -1,8 +1,10 @@
+import Image from "next/image";
 import { Clock, MessageSquare, PhoneCall } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { RequestCallForm } from "@/components/forms/request-call-form";
 import { pageMetadata } from "@/lib/seo";
+import { PHOTOS } from "@/lib/images";
 import { site } from "@/lib/site";
 
 export const metadata = pageMetadata({
@@ -44,6 +46,9 @@ export default function RequestCallPage() {
             <p className="mt-5 max-w-md text-lg leading-relaxed text-ink-soft">
               Tell us a little about your business. We&apos;ll follow up to coordinate a time to talk.
             </p>
+            <div className="relative mt-8 hidden aspect-[16/9] overflow-hidden rounded-xl bg-sunken sm:block">
+              <Image src={PHOTOS.ownerCall.src} alt={PHOTOS.ownerCall.alt} fill sizes="(min-width: 1024px) 40vw, 90vw" placeholder="blur" className="object-cover" />
+            </div>
             <ul className="mt-10 hidden space-y-6 sm:block">
               {expectations.map(({ icon: Icon, title, body }) => (
                 <li key={title} className="flex gap-4">

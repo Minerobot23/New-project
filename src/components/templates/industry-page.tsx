@@ -13,6 +13,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { TrackPageView } from "@/components/analytics/track-page-view";
 import type { IndustryPage } from "@/content/industries";
 import { getArticle } from "@/content/resources/registry";
+import { INDUSTRY_IMAGES } from "@/lib/images";
 import { pageMetadata, serviceSchema } from "@/lib/seo";
 import { CALL_CTA_LABEL, CALL_PATH } from "@/lib/site";
 
@@ -39,6 +40,7 @@ export function IndustryPageTemplate({ page }: { page: IndustryPage }) {
         eyebrow={`Websites for ${page.name}`}
         title={page.h1}
         intro={<p>{page.intro}</p>}
+        image={INDUSTRY_IMAGES[page.path]}
       >
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <ButtonLink href={CALL_PATH} size="lg" withArrow>

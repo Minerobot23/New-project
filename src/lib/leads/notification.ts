@@ -117,7 +117,7 @@ export function buildLeadEmail(input: LeadEmailInput): OutgoingEmail {
     ...attributionRows.map((row) => `${row.label}: ${row.value}`),
   ].join("\n");
 
-  const linkStyle = "color:#0e6b5c;text-decoration:underline;";
+  const linkStyle = "color:#1d5bd8;text-decoration:underline;";
   const renderRow = (row: LeadRow, small = false) => `
           <tr>
             <td style="padding:${small ? "8px" : "12px"} 0;border-bottom:1px solid #e4e4de;">
@@ -134,13 +134,13 @@ export function buildLeadEmail(input: LeadEmailInput): OutgoingEmail {
     ? `
             <tr>
               <td style="padding:16px 20px 4px 20px;">
-                <a href="${escapeHtml(toTelHref(input.phone))}" style="display:block;background:#0e6b5c;color:#ffffff;text-decoration:none;text-align:center;font-size:17px;font-weight:600;line-height:24px;padding:14px 16px;border-radius:6px;">Call ${escapeHtml(input.phone)}</a>
+                <a href="${escapeHtml(toTelHref(input.phone))}" style="display:block;background:#1d5bd8;color:#ffffff;text-decoration:none;text-align:center;font-size:17px;font-weight:600;line-height:24px;padding:14px 16px;border-radius:6px;">Call ${escapeHtml(input.phone)}</a>
               </td>
             </tr>`
     : `
             <tr>
               <td style="padding:16px 20px 4px 20px;">
-                <a href="${escapeHtml(mailtoHref(input.replyTo))}" style="display:block;background:#0e6b5c;color:#ffffff;text-decoration:none;text-align:center;font-size:17px;font-weight:600;line-height:24px;padding:14px 16px;border-radius:6px;">Email ${escapeHtml(input.replyTo)}</a>
+                <a href="${escapeHtml(mailtoHref(input.replyTo))}" style="display:block;background:#1d5bd8;color:#ffffff;text-decoration:none;text-align:center;font-size:17px;font-weight:600;line-height:24px;padding:14px 16px;border-radius:6px;">Email ${escapeHtml(input.replyTo)}</a>
               </td>
             </tr>`;
 
@@ -159,7 +159,7 @@ export function buildLeadEmail(input: LeadEmailInput): OutgoingEmail {
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border:1px solid #e4e4de;border-radius:8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
             <tr>
               <td style="padding:20px 20px 4px 20px;">
-                <div style="font-size:12px;font-weight:600;letter-spacing:0.12em;color:#0e6b5c;">${escapeHtml(input.heading)}</div>
+                <div style="font-size:12px;font-weight:600;letter-spacing:0.12em;color:#1d5bd8;">${escapeHtml(input.heading)}</div>
                 <div style="margin-top:6px;font-size:22px;line-height:28px;font-weight:600;color:#0f1a24;">${escapeHtml(input.businessName)}</div>
                 <div style="font-size:15px;line-height:22px;color:#3b4652;">${escapeHtml(input.primaryName)}</div>
               </td>

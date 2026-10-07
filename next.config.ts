@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     // The apex domain is canonical. Vercel's domain settings should also redirect www; this is a safe backstop.
     return [
+      // Old URL from the previous version of the site.
+      { source: "/call", destination: "/request-a-call", permanent: true },
       {
         source: "/:path*",
         has: [{ type: "host", value: "www.fluxlinesolutions.com" }],

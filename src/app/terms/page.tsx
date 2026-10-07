@@ -1,14 +1,14 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalContact, LegalPage } from "@/components/legal/legal-page";
+import { pageMetadata } from "@/lib/seo";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Terms of Use",
-  description: "Terms governing use of the Fluxline LLC website, fluxlinesolutions.com.",
-  alternates: { canonical: "/terms" },
-  openGraph: { url: "/terms" },
-};
+  description:
+    "Terms governing use of the Fluxline Solutions website, fluxlinesolutions.com, operated by Fluxline LLC.",
+  path: "/terms",
+});
 
 export default function TermsPage() {
   return (
@@ -23,7 +23,7 @@ export default function TermsPage() {
       <section>
         <h2>About the website</h2>
         <p>
-          The website describes Fluxline&apos;s services and lets businesses request a call. Its content is general
+          The website describes Fluxline Solutions&apos; services and lets businesses request a call. Its content is general
           information, not professional, legal, or financial advice, and it is not an offer to provide services on
           any particular terms.
         </p>
@@ -32,9 +32,9 @@ export default function TermsPage() {
       <section>
         <h2>Services and results</h2>
         <p>
-          Any services Fluxline provides are governed by a separate written agreement with the client. Outcomes
-          depend on many factors outside our control, and we do not guarantee any specific amount of recovered
-          revenue or other results.
+          Any services Fluxline provides are governed by a separate written agreement with the client. Business outcomes
+          depend on many factors outside our control, and we do not guarantee search rankings, traffic, leads, sales, or
+          other specific results.
         </p>
       </section>
 

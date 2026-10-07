@@ -3,14 +3,16 @@
  * Anything secret (API keys, notification recipients) lives in server-only env vars.
  */
 export const site = {
-  name: "Fluxline",
+  name: "Fluxline Solutions",
+  shortName: "Fluxline",
   legalName: "Fluxline LLC",
   url: "https://fluxlinesolutions.com",
   domain: "fluxlinesolutions.com",
-  tagline: "Revenue Recovery for Home Service Companies",
-  title: "Fluxline | Revenue Recovery for Home Service Companies",
+  tagline: "Web Design for Businesses",
+  title: "Fluxline Solutions | Websites Built to Turn Visitors Into Customers",
   description:
-    "Fluxline helps home-service companies identify and pursue valuable unsold estimates already sitting in their pipeline.",
+    "Fluxline Solutions designs fast, modern, mobile-first websites for businesses that want to look better online and turn more visitors into calls, reservations, appointments, and customers.",
+  serviceArea: "Serving businesses throughout Long Island, Queens, and beyond.",
   contact: {
     name: "Cristhian Garcia",
     title: "Sales",
@@ -22,15 +24,35 @@ export const site = {
    * Example shape: ["Fluxline LLC", "123 Street, Suite 100", "City, ST 00000"]
    */
   mailingAddress: null as readonly string[] | null,
-  legalLastUpdated: "October 6, 2026",
+  legalLastUpdated: "October 7, 2026",
 } as const;
 
+export const CALL_PATH = "/request-a-call";
+export const CALL_CTA_LABEL = "Request a Call";
+export const CHECK_PATH = "/website-check";
+export const CHECK_CTA_LABEL = "Get a Free Website Check";
+
 export const navLinks = [
-  { href: "/#how-it-works", label: "How It Works" },
-  { href: "/#who-we-help", label: "Who We Help" },
-  { href: "/#why-fluxline", label: "Why Fluxline" },
-  { href: "/#faq", label: "FAQ" },
+  { href: "/services", label: "Services" },
+  { href: "/#simulator", label: "See the Difference" },
+  { href: "/work", label: "Work" },
+  { href: "/resources", label: "Resources" },
 ] as const;
 
-export const CALL_PATH = "/call";
-export const CALL_CTA_LABEL = "Request a 15-Minute Call";
+export const industryLinks = [
+  { href: "/websites-for-contractors", label: "Contractors & Remodelers" },
+  { href: "/websites-for-hvac-companies", label: "HVAC Companies" },
+  { href: "/websites-for-plumbers", label: "Plumbers" },
+  { href: "/websites-for-roofers", label: "Roofers" },
+  { href: "/websites-for-restaurants", label: "Restaurants" },
+  { href: "/websites-for-salons", label: "Salons & Wellness" },
+  { href: "/websites-for-auto-repair-shops", label: "Auto Repair Shops" },
+  { href: "/websites-for-local-businesses", label: "Local Businesses" },
+] as const;
+
+export const locationLinks = [
+  { href: "/web-design-long-island", label: "Long Island" },
+  { href: "/web-design-nassau-county", label: "Nassau County" },
+  { href: "/web-design-suffolk-county", label: "Suffolk County" },
+  { href: "/web-design-queens", label: "Queens" },
+] as const;

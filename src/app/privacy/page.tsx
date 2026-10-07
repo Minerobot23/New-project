@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
 import { LegalContact, LegalPage } from "@/components/legal/legal-page";
+import { pageMetadata } from "@/lib/seo";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Privacy Policy",
-  description: "How Fluxline LLC collects, uses, and protects information submitted through fluxlinesolutions.com.",
-  alternates: { canonical: "/privacy" },
-  openGraph: { url: "/privacy" },
-};
+  description:
+    "How Fluxline Solutions collects, uses, and protects information submitted through fluxlinesolutions.com, including lead forms, analytics, and attribution.",
+  path: "/privacy",
+});
 
 export default function PrivacyPage() {
   return (
@@ -24,13 +24,24 @@ export default function PrivacyPage() {
         <h2>Information we collect</h2>
         <ul>
           <li>
-            <strong className="text-ink">Information you submit.</strong> When you request a call, we receive your
-            name, company, business email, phone number, preferred time to call, and any message you choose to include.
+            <strong className="text-ink">Information you submit.</strong> When you request a call or a website check, we
+            receive the details you enter, such as your name, business name, business type, website address, business email,
+            phone number, preferred contact time, and any message you choose to include.
           </li>
           <li>
             <strong className="text-ink">Technical information.</strong> Like most websites, our hosting provider
             automatically processes basic technical data such as IP address, browser type, pages requested, and
             timestamps. This is used to deliver the website, keep it secure, and prevent abuse.
+          </li>
+          <li>
+            <strong className="text-ink">Usage analytics.</strong> We use Vercel Web Analytics, which is cookieless and does not
+            identify individual visitors, to understand which pages and features are used.
+          </li>
+          <li>
+            <strong className="text-ink">How you found us.</strong> When you arrive, your browser stores the campaign tags in the
+            link you clicked (such as utm_source), the referring website, and the page you landed on, for up to 30 days. If you
+            submit a form, this information is sent along with it so we know which channels are useful. It is not shared with
+            advertisers.
           </li>
         </ul>
         <p>This website does not use advertising cookies or tracking pixels.</p>
@@ -39,8 +50,9 @@ export default function PrivacyPage() {
       <section>
         <h2>How we use information</h2>
         <ul>
-          <li>To respond to your request and coordinate a call.</li>
+          <li>To respond to your request, review your website if you asked us to, and coordinate a call.</li>
           <li>To communicate with you about our services when you have contacted us.</li>
+          <li>To understand which pages and marketing channels are useful.</li>
           <li>To protect the website against spam, fraud, and abuse.</li>
           <li>To meet legal obligations.</li>
         </ul>
@@ -50,7 +62,7 @@ export default function PrivacyPage() {
         <h2>How information is shared</h2>
         <p>
           We do not sell personal information. We share it only with service providers that help us operate the
-          website and our business, such as our website hosting provider and our email delivery provider, and only
+          website and our business, such as our website hosting and analytics provider and our email delivery provider, and only
           as needed for them to perform those services for us. We may also disclose information if required by law.
         </p>
       </section>
@@ -58,9 +70,9 @@ export default function PrivacyPage() {
       <section>
         <h2>Client business data</h2>
         <p>
-          If your company becomes a client, any customer or estimate information you share with us is governed by
-          our agreement with you. Our approach is that this information should be used only for the agreed business
-          purpose, accessed only by those who need it, never sold, and not retained longer than necessary.
+          If your company becomes a client, any business information, content, or account access you share with us to build
+          or maintain your website is governed by our agreement with you. It is used only for that purpose, accessed only by
+          those who need it, never sold, and not retained longer than necessary.
         </p>
       </section>
 

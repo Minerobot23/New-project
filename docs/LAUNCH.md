@@ -41,12 +41,23 @@ This runbook covers deploying the website, connecting the domain, and setting up
 | `LEAD_FROM_EMAIL` | Yes | Production, Preview | `Fluxline Website <notifications@fluxlinesolutions.com>` (the domain must be verified in Resend) |
 | `LEAD_NOTIFICATION_EMAIL` | Yes | Production, Preview | `cristhian@fluxlinesolutions.com` (until the mailbox is live, `fluxlinellc@gmail.com` works as an interim recipient) |
 | `LEAD_NOTIFICATION_TIMEZONE` | Optional | All | IANA zone for the "Submitted" time, e.g. `America/New_York`. Defaults to UTC. |
+| `GOOGLE_SITE_VERIFICATION` | Optional | Production | Only if using HTML-tag verification. See `docs/SEARCH-CONSOLE.md`. |
+| `BING_SITE_VERIFICATION` | Optional | Production | Only if using HTML-tag verification. |
 
 All variables are server-only. None use the `NEXT_PUBLIC_` prefix, so they never reach the browser.
 
 In local development with no variables set, the form works and prints the notification to the dev-server console instead of sending it.
 
 ---
+
+## 1b. Lead forms and analytics
+
+- Lead endpoints are `/api/leads/request-call` and `/api/leads/website-check`, and both use the same notification settings above.
+- Subjects are `NEW FLUXLINE WEBSITE LEAD — [Business]` and `NEW FLUXLINE WEBSITE CHECK — [Business]`. Test submissions are prefixed `[TEST]`.
+- Each notification includes a **Source** block: channel, UTM tags, gclid, referrer, and landing page.
+  - Tag outreach links so leads are classified correctly. For cold email: `?utm_source=coldemail&utm_medium=email&utm_campaign=<name>`.
+  - For cold-call follow-ups: `?utm_source=coldcall&utm_medium=call`.
+- **YOU:** Enable **Web Analytics** in Vercel → project → **Analytics** tab. Until it's enabled, `/_vercel/insights/script.js` returns 404 and analytics are not collected.
 
 ## 2. Vercel deployment
 

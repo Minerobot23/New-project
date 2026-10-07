@@ -73,3 +73,99 @@ section[id] {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Simulator: gentle crossfade between Before/After and a rising note for simulated actions. */
+@keyframes sim-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.sim-fade {
+  animation: sim-fade-in 280ms ease-out;
+}
+
+.sim-note {
+  animation: sim-fade-in 200ms ease-out;
+}
+
+.sim-viewport {
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Long-form article typography. Direct children only, so embedded callouts keep their own styles. */
+.prose-article {
+  color: var(--color-ink-soft);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+.prose-article > * + * {
+  margin-top: 1.25rem;
+}
+.prose-article > h2 {
+  margin-top: 3rem;
+  color: var(--color-ink);
+  font-size: 1.625rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+}
+.prose-article > h3 {
+  margin-top: 2rem;
+  color: var(--color-ink);
+  font-size: 1.1875rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.prose-article > ul,
+.prose-article > ol {
+  padding-left: 1.25rem;
+}
+.prose-article > ul {
+  list-style: disc;
+}
+.prose-article > ol {
+  list-style: decimal;
+}
+.prose-article li + li {
+  margin-top: 0.5rem;
+}
+.prose-article li::marker {
+  color: var(--color-accent);
+}
+.prose-article strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+.prose-article a:not(.not-prose a) {
+  color: var(--color-ink);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+  text-underline-offset: 3px;
+}
+.prose-article a:not(.not-prose a):hover {
+  color: var(--color-accent);
+}
+.prose-article table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+.prose-article th,
+.prose-article td {
+  border-bottom: 1px solid var(--color-line);
+  padding: 0.65rem 0.75rem 0.65rem 0;
+  text-align: left;
+  vertical-align: top;
+}
+.prose-article th {
+  color: var(--color-ink);
+  font-weight: 600;
+}

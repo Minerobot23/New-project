@@ -26,11 +26,11 @@ export default function OpengraphImage() {
             <div style={{ width: 8, height: 28, background: "#14937e", borderRadius: 2 }} />
             <div style={{ width: 8, height: 40, background: "#2bb59c", borderRadius: 2 }} />
           </div>
-          Fluxline
+          Fluxline <span style={{ color: "#7d8a96", fontWeight: 400, marginLeft: 10 }}>Solutions</span>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ fontSize: 72, fontWeight: 700, lineHeight: 1.05, letterSpacing: -2 }}>
-            Turn Unsold Estimates Into Revenue.
+            Websites Built to Turn Visitors Into Customers.
           </div>
           <div style={{ marginTop: 28, fontSize: 30, color: "#a9b4be" }}>{site.tagline}</div>
         </div>

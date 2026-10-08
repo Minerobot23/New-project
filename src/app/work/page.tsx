@@ -33,15 +33,15 @@ export default function WorkPage() {
 
       {CASE_STUDIES.length > 0 && (
         <section aria-labelledby="case-studies-title" className="py-16">
-          <Container className="max-w-7xl">
+          <Container className="max-w-[90rem]">
             <h2 id="case-studies-title" className="text-2xl font-semibold tracking-tight text-ink">
               Client projects
             </h2>
             <ul className="mt-8 grid gap-4 md:grid-cols-2">
               {CASE_STUDIES.map((study) => (
                 <li key={study.slug}>
-                  <Link href={`/work/${study.slug}`} className="block rounded-[1.25rem] border border-line bg-surface p-6 hover:border-ink/30">
-                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">{study.industry}</p>
+                  <Link href={`/work/${study.slug}`} className="block border border-line bg-surface p-6 hover:border-ink/30">
+                    <p className="text-sm font-medium text-muted">{study.industry}</p>
                     <p className="mt-2 text-lg font-semibold text-ink">{study.client}</p>
                     <p className="mt-2 text-[15px] leading-relaxed text-ink-soft">{study.summary}</p>
                   </Link>
@@ -53,7 +53,7 @@ export default function WorkPage() {
       )}
 
       <section aria-labelledby="concepts-title" className="py-16 sm:py-20">
-        <Container className="max-w-7xl">
+        <Container className="max-w-[90rem]">
           <h2 id="concepts-title" className="text-2xl font-semibold tracking-tight text-ink">
             Interactive concept projects
           </h2>
@@ -68,7 +68,7 @@ export default function WorkPage() {
       </section>
 
       <section className="border-t border-line bg-surface py-16">
-        <Container className="max-w-7xl">
+        <Container className="max-w-[90rem]">
           <h2 className="text-2xl font-semibold tracking-tight text-ink">What every case study will include</h2>
           <ul className="mt-6 grid gap-3 text-[15px] text-ink-soft sm:grid-cols-2 lg:grid-cols-3">
             {[
@@ -79,7 +79,7 @@ export default function WorkPage() {
               "Measured results, only when they're real and measured",
               "The client's own words, only if they choose to share them",
             ].map((item) => (
-              <li key={item} className="rounded-lg border border-line bg-paper px-4 py-3">
+              <li key={item} className="border border-line bg-paper px-4 py-3">
                 {item}
               </li>
             ))}

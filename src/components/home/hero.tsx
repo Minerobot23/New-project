@@ -1,88 +1,76 @@
 import type { CSSProperties } from "react";
-import { CalendarCheck, MapPin, MessageSquareText, Phone, ShoppingBag, UtensilsCrossed } from "lucide-react";
-import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";
-import { DeviceShowcase } from "@/components/shared/device-showcase";
+import { BeforeAfter } from "@/components/home/before-after";
 import { SHOWCASE } from "@/lib/images";
-import { CALL_CTA_LABEL, CALL_PATH } from "@/lib/site";
+import { CALL_CTA_LABEL, CALL_PATH, site } from "@/lib/site";
 
-const outcomes = [
-  { icon: Phone, label: "Calls" },
-  { icon: MessageSquareText, label: "Quote requests" },
-  { icon: CalendarCheck, label: "Appointments" },
-  { icon: UtensilsCrossed, label: "Reservations" },
-  { icon: ShoppingBag, label: "Orders" },
-  { icon: MapPin, label: "Store visits" },
-];
+const lines = ["Websites built", "to turn visitors", "into customers."];
 
 export function Hero() {
   return (
-    <>
-      {/* Pulled up under the floating header so the dark hero runs to the top of the page. */}
-      <section
-        aria-labelledby="hero-title"
-        className="grain relative -mt-[76px] overflow-hidden bg-night text-white"
-        data-track-location="hero"
-      >
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(55%_65%_at_82%_35%,rgba(47,124,255,0.24),transparent_70%),radial-gradient(35%_45%_at_5%_100%,rgba(47,124,255,0.10),transparent_70%)]"
-        />
-        <Container className="relative grid max-w-7xl gap-14 pb-20 pt-[calc(76px+3.5rem)] sm:pb-24 sm:pt-[calc(76px+4.5rem)] lg:grid-cols-[1fr_1.08fr] lg:items-center lg:gap-12 lg:pb-28 lg:pt-[calc(76px+5rem)]">
-          <div>
-            <p className="rise inline-flex rounded-full px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-white/70 ring-1 ring-white/15">
-              Web design for local businesses
+    <section aria-labelledby="hero-title" data-track-location="hero">
+      <div className="mx-auto max-w-[90rem] px-5 sm:px-8">
+        <div className="flex flex-wrap justify-between gap-x-6 gap-y-1 pt-8 text-sm text-ink-soft sm:pt-10">
+          <p>Web design for local businesses</p>
+          <p>Long Island, Queens, and beyond</p>
+        </div>
+
+        <h1 id="hero-title" className="display mt-8 text-[2.6rem] text-ink sm:mt-12 sm:text-[clamp(3.5rem,7.6vw,7.4rem)]">
+          {lines.map((line, index) => (
+            <span key={line} className="line-mask">
+              <span style={{ "--i": index } as CSSProperties}>
+                {index === lines.length - 1 ? (
+                  <>
+                    into <span className="text-accent">customers.</span>
+                  </>
+                ) : (
+                  `${line} `
+                )}
+              </span>
+            </span>
+          ))}
+        </h1>
+
+        <div className="fade-late mt-10 grid gap-10 border-t border-ink pb-20 pt-8 sm:mt-14 lg:grid-cols-12 lg:gap-8 lg:pb-28">
+          <div className="lg:col-span-4 lg:pr-6">
+            <p className="max-w-[40ch] text-pretty text-lg leading-relaxed text-ink-soft">
+              {site.name} designs fast, modern websites for businesses that want more calls, bookings, reservations, and
+              customers.
             </p>
-            <h1
-              id="hero-title"
-              style={{ "--i": 1 } as CSSProperties}
-              className="rise mt-6 text-balance text-[2.7rem] font-semibold leading-[1.02] tracking-[-0.035em] sm:text-6xl lg:text-[4.25rem]"
-            >
-              Websites built to turn visitors into <span className="text-accent-on-night">customers.</span>
-            </h1>
-            <p
-              style={{ "--i": 2 } as CSSProperties}
-              className="rise mt-6 max-w-[44ch] text-pretty text-lg leading-relaxed text-white/70"
-            >
-              Fast, modern websites for businesses that want more calls, bookings, reservations, and customers.
-            </p>
-            <div style={{ "--i": 3 } as CSSProperties} className="rise mt-9 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
               <ButtonLink href={CALL_PATH} size="lg" withArrow>
                 {CALL_CTA_LABEL}
               </ButtonLink>
-              <ButtonLink href="/#simulator" size="lg" variant="ghost-inverse">
+              <ButtonLink href="/#simulator" size="lg" variant="secondary">
                 See the Difference
               </ButtonLink>
             </div>
+            <p className="mt-10 text-sm leading-relaxed text-muted">
+              Questions first? Email {site.contact.name.split(" ")[0]} at{" "}
+              <a
+                href={`mailto:${site.contact.email}`}
+                className="text-ink underline decoration-line-strong underline-offset-4 hover:decoration-ink"
+              >
+                {site.contact.email}
+              </a>
+              .
+            </p>
           </div>
 
-          <figure style={{ "--i": 3 } as CSSProperties} className="rise relative">
-            <DeviceShowcase
-              desktop={SHOWCASE.restaurant.desktop}
-              mobile={SHOWCASE.home.mobile}
-              alt="Redesigned concept websites: an Italian restaurant homepage on a laptop and an HVAC company homepage on a phone"
-              eager
+          <div className="lg:col-span-8">
+            <BeforeAfter
+              before={SHOWCASE.home.before}
+              after={SHOWCASE.home.desktop}
+              label="North Shore Heating & Cooling homepage"
+              url="northshore-hvac.demo"
             />
-            <figcaption className="mt-5 text-center text-xs text-white/45 lg:text-right">
-              Interactive Concept Demos for fictional businesses.
-            </figcaption>
-          </figure>
-        </Container>
-      </section>
-
-      <section aria-label="What a Fluxline website is built around" className="border-b border-line bg-surface">
-        <Container className="flex max-w-7xl flex-col gap-4 py-6 lg:flex-row lg:items-center lg:gap-10">
-          <p className="shrink-0 text-sm font-medium text-ink">Every page built around the next step:</p>
-          <ul className="flex flex-wrap gap-x-7 gap-y-3">
-            {outcomes.map(({ icon: Icon, label }) => (
-              <li key={label} className="inline-flex items-center gap-2 text-sm text-ink-soft">
-                <Icon aria-hidden="true" strokeWidth={1.5} className="size-4 text-accent" />
-                {label}
-              </li>
-            ))}
-          </ul>
-        </Container>
-      </section>
-    </>
+            <p className="mt-3 text-sm text-muted">
+              Drag to compare. North Shore Heating &amp; Cooling is a fictional HVAC company, one of four Interactive Concept
+              Demos below.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

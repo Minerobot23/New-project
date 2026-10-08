@@ -35,24 +35,24 @@ const expectations = [
 export default function RequestCallPage() {
   return (
     <section aria-labelledby="call-title" className="py-10 sm:py-14 lg:py-16">
-      <Container className="max-w-7xl">
+      <Container className="max-w-[90rem]">
         <Breadcrumbs items={[{ name: "Request a Call", path: "/request-a-call" }]} />
         <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:gap-16">
           <div className="lg:pt-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">Talk to Fluxline</p>
-            <h1 id="call-title" className="mt-3 text-balance text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+            <p className="text-sm font-medium text-accent">Talk to Fluxline</p>
+            <h1 id="call-title" className="mt-3 display text-balance text-[2.5rem] text-ink sm:text-[3.5rem]">
               Request a Call
             </h1>
             <p className="mt-5 max-w-md text-lg leading-relaxed text-ink-soft">
               Tell us a little about your business. We&apos;ll follow up to coordinate a time to talk.
             </p>
-            <div className="relative mt-8 hidden aspect-[16/9] overflow-hidden rounded-[1.25rem] bg-sunken sm:block">
+            <div className="relative mt-8 hidden aspect-[16/9] overflow-hidden bg-sunken sm:block">
               <Image src={PHOTOS.ownerCall.src} alt={PHOTOS.ownerCall.alt} fill sizes="(min-width: 1024px) 40vw, 90vw" placeholder="blur" className="object-cover" />
             </div>
             <ul className="mt-10 hidden space-y-6 sm:block">
               {expectations.map(({ icon: Icon, title, body }) => (
                 <li key={title} className="flex gap-4">
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-md border border-line bg-surface text-accent">
+                  <span className="flex size-9 shrink-0 items-center justify-center border border-line bg-surface text-accent">
                     <Icon aria-hidden="true" className="size-[18px]" />
                   </span>
                   <div>
@@ -69,7 +69,7 @@ export default function RequestCallPage() {
               </a>
             </p>
           </div>
-          <div className="rounded-[1.25rem] border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(15,26,36,0.04),0_12px_32px_-16px_rgba(15,26,36,0.16)] sm:p-8">
+          <div className="border border-ink bg-surface p-5 sm:p-8">
             <RequestCallForm />
           </div>
           <p className="text-sm text-muted lg:hidden">

@@ -1,6 +1,5 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
-import { Container } from "@/components/ui/container";
 import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import type { SiteImage } from "@/lib/images";
 
@@ -17,28 +16,23 @@ type Props = {
 /** Standard inner-page header: breadcrumbs, eyebrow, H1, intro, optional actions and photo. */
 export function PageHeader({ crumbs, eyebrow, title, intro, children, image }: Props) {
   return (
-    <section className="border-b border-line">
-      <Container
-        className={`max-w-7xl py-10 sm:py-14 ${image ? "grid gap-10 lg:grid-cols-[1.25fr_1fr] lg:items-center lg:gap-14" : ""}`}
+    <section className="border-b border-ink">
+      <div
+        className={`mx-auto max-w-[90rem] px-5 pb-12 pt-8 sm:px-8 sm:pb-16 ${image ? "grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-8" : ""}`}
       >
-        <div>
+        <div className={image ? "lg:col-span-7" : ""}>
           <Breadcrumbs items={crumbs} />
-          {eyebrow && (
-            <p className="mt-8 inline-flex rounded-full px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-accent ring-1 ring-accent/20">
-              {eyebrow}
-            </p>
-          )}
+          {eyebrow && <p className="mt-10 text-sm font-medium text-accent">{eyebrow}</p>}
           <h1
-            className={`${eyebrow ? "mt-5" : "mt-8"} max-w-4xl text-balance text-[2.5rem] font-semibold leading-[1.04] tracking-[-0.035em] text-ink sm:text-[3.5rem]`}
+            className={`display ${eyebrow ? "mt-4" : "mt-10"} max-w-[18ch] text-balance text-[2.5rem] text-ink sm:text-[clamp(3rem,5.4vw,5rem)]`}
           >
             {title}
           </h1>
-          {intro && <div className="mt-5 max-w-2xl text-pretty text-lg leading-relaxed text-ink-soft">{intro}</div>}
+          {intro && <div className="mt-6 max-w-[56ch] text-pretty text-lg leading-relaxed text-ink-soft">{intro}</div>}
           {children}
         </div>
         {image && (
-          <div className="bezel">
-          <div className="relative aspect-[16/10] overflow-hidden bg-sunken lg:aspect-[4/4.2]">
+          <div className="relative aspect-[16/10] overflow-hidden bg-sunken lg:col-span-5 lg:aspect-[4/4.4]">
             <Image
               src={image.src}
               alt={image.alt}
@@ -49,9 +43,8 @@ export function PageHeader({ crumbs, eyebrow, title, intro, children, image }: P
               className="object-cover"
             />
           </div>
-          </div>
         )}
-      </Container>
+      </div>
     </section>
   );
 }

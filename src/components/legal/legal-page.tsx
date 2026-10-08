@@ -7,7 +7,7 @@ export function LegalPage({ title, children }: { title: string; children: ReactN
     <article className="py-14 sm:py-20">
       <Container className="max-w-3xl">
         <header className="border-b border-line pb-8">
-          <h1 className="text-4xl font-semibold tracking-tight text-ink">{title}</h1>
+          <h1 className="display text-[2.5rem] text-ink">{title}</h1>
           <p className="mt-3 text-sm text-muted">Last updated: {site.legalLastUpdated}</p>
         </header>
         <div className="legal-prose mt-10 space-y-8 text-[15px] leading-relaxed text-ink-soft [&_a]:font-medium [&_a]:text-ink [&_a]:underline [&_a]:underline-offset-4 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-ink [&_li]:mt-1.5 [&_p]:mt-3 [&_ul]:mt-3 [&_ul]:list-disc [&_ul]:pl-5">

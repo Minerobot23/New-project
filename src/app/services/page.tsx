@@ -78,11 +78,11 @@ export default function ServicesPage() {
       </PageHeader>
 
       <section aria-label="Capabilities" className="py-16 sm:py-20">
-        <Container className="max-w-7xl space-y-6">
+        <Container className="max-w-[90rem] space-y-6">
           {SERVICE_GROUPS.map(({ id, icon: Icon, title, summary, items }) => (
-            <article key={id} id={id} className="grid gap-6 rounded-2xl border border-line bg-surface p-6 sm:p-8 lg:grid-cols-[1fr_1.6fr] lg:gap-12">
+            <article key={id} id={id} className="grid gap-6 border border-line bg-surface p-6 sm:p-8 lg:grid-cols-[1fr_1.6fr] lg:gap-12">
               <div>
-                <span className="flex size-10 items-center justify-center rounded-lg bg-accent-soft text-accent">
+                <span className="flex size-10 items-center justify-center bg-accent-soft text-accent">
                   <Icon aria-hidden="true" className="size-5" />
                 </span>
                 <h2 className="mt-4 text-xl font-semibold tracking-tight text-ink">{title}</h2>
@@ -90,7 +90,7 @@ export default function ServicesPage() {
               </div>
               <ul className="grid gap-3 sm:grid-cols-2">
                 {items.map((item) => (
-                  <li key={item.name} className="rounded-lg border border-line bg-paper p-4">
+                  <li key={item.name} className="border border-line bg-paper p-4">
                     <h3 className="text-[15px] font-semibold text-ink">{item.name}</h3>
                     <p className="mt-1 text-sm leading-relaxed text-ink-soft">{item.body}</p>
                   </li>
@@ -103,7 +103,7 @@ export default function ServicesPage() {
       </section>
 
       <section aria-labelledby="services-process-title" className="border-y border-line bg-surface py-16 sm:py-20">
-        <Container className="max-w-7xl">
+        <Container className="max-w-[90rem]">
           <SectionHeading id="services-process-title" title="How a project works." />
           <div className="mt-10">
             <Process />
@@ -112,7 +112,7 @@ export default function ServicesPage() {
       </section>
 
       <section aria-labelledby="services-industries-title" className="py-16 sm:py-20">
-        <Container className="max-w-7xl">
+        <Container className="max-w-[90rem]">
           <SectionHeading id="services-industries-title" title="Websites shaped around your industry." />
           <div className="mt-10">
             <IndustriesGrid />
@@ -124,7 +124,7 @@ export default function ServicesPage() {
       </section>
 
       <section aria-labelledby="services-faq-title" className="border-t border-line bg-surface py-16 sm:py-20">
-        <Container className="grid max-w-7xl gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
+        <Container className="grid max-w-[90rem] gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
           <SectionHeading id="services-faq-title" title="Questions about scope." />
           <FaqList faqs={faqs} />
         </Container>

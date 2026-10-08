@@ -37,16 +37,16 @@ export function DesktopFrame({ url, children, overlay, scrollKey }: FrameProps) 
   return (
     <div ref={ref} className="w-full">
       <div
-        className="overflow-hidden rounded-[1.25rem] border border-line-strong bg-white shadow-[0_24px_60px_-28px_rgba(15,26,36,0.45)]"
+        className="overflow-hidden border border-ink bg-white"
         style={{ visibility: scale === null ? "hidden" : "visible" }}
       >
-        <div className="flex items-center gap-3 border-b border-line bg-sunken px-3 py-2">
+        <div className="flex items-center gap-3 border-b border-ink bg-paper px-3 py-2">
           <span aria-hidden="true" className="flex gap-1.5">
-            <span className="size-2.5 rounded-full bg-[#ff5f57]" />
-            <span className="size-2.5 rounded-full bg-[#febc2e]" />
-            <span className="size-2.5 rounded-full bg-[#28c840]" />
+            <span className="size-2 border border-ink" />
+            <span className="size-2 border border-ink" />
+            <span className="size-2 border border-ink" />
           </span>
-          <span className="flex min-w-0 flex-1 items-center justify-center gap-1.5 truncate rounded-md bg-white px-3 py-1 text-[11px] text-muted">
+          <span className="flex min-w-0 flex-1 items-center justify-center gap-1.5 truncate font-mono text-[11px] text-muted">
             <Lock aria-hidden="true" className="size-3 shrink-0" />
             {url}
           </span>
@@ -71,7 +71,7 @@ export function PhoneFrame({ url, children, overlay, scrollKey }: FrameProps) {
   return (
     <div ref={ref} className="flex w-full justify-center">
       <div
-        className="rounded-[44px] bg-[#0f1a24] shadow-[0_24px_60px_-24px_rgba(15,26,36,0.55)]"
+        className="rounded-[44px] bg-ink"
         style={{ padding: bezel * (scale ?? 1), visibility: scale === null ? "hidden" : "visible" }}
       >
         <div className="relative overflow-hidden rounded-[32px] bg-white">

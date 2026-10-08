@@ -58,8 +58,8 @@ export default async function ArticlePage({ params }: PageProps<"/resources/[slu
                 { name: article.title, path },
               ]}
             />
-            <p className="mt-8 text-xs font-semibold uppercase tracking-[0.14em] text-accent">{article.category}</p>
-            <h1 className="mt-3 text-balance text-4xl font-semibold leading-[1.1] tracking-tight text-ink sm:text-5xl">{article.title}</h1>
+            <p className="mt-8 text-sm font-medium text-accent">{article.category}</p>
+            <h1 className="mt-3 display text-balance text-[2.5rem] text-ink sm:text-[3.5rem]">{article.title}</h1>
             <p className="mt-5 text-lg leading-relaxed text-ink-soft">{article.description}</p>
             <p className="mt-6 text-sm text-muted">
               By {site.name} · <time dateTime={updated}>{dateFormat.format(new Date(updated))}</time> · {article.readingMinutes} min read
@@ -68,7 +68,7 @@ export default async function ArticlePage({ params }: PageProps<"/resources/[slu
         </header>
         {cover && (
           <Container className="max-w-4xl pt-10 sm:pt-12">
-            <div className="relative aspect-[2/1] overflow-hidden rounded-2xl bg-sunken">
+            <div className="relative aspect-[2/1] overflow-hidden bg-sunken">
               <Image src={cover.src} alt={cover.alt} fill sizes="(min-width: 960px) 896px, 100vw" placeholder="blur" loading="eager" className="object-cover" />
             </div>
           </Container>
@@ -83,7 +83,7 @@ export default async function ArticlePage({ params }: PageProps<"/resources/[slu
       {related.length > 0 && (
         <section aria-labelledby="related-title" className="border-t border-line bg-surface py-14">
           <Container className="max-w-3xl">
-            <h2 id="related-title" className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
+            <h2 id="related-title" className="text-sm font-medium text-muted">
               Keep reading
             </h2>
             <ul className="mt-5 divide-y divide-line border-y border-line">

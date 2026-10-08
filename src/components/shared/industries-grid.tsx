@@ -1,40 +1,38 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import { INDUSTRY_IMAGES } from "@/lib/images";
 import { industryLinks } from "@/lib/site";
 
+/** Typeset index of industries: a ruled two-column list with a small photo per row. */
 export function IndustriesGrid({ exclude }: { exclude?: string }) {
   const links = industryLinks.filter((link) => link.href !== exclude);
   return (
-    <ul className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+    <ul className="grid gap-x-12 border-b border-ink md:grid-cols-2">
       {links.map((link) => {
         const image = INDUSTRY_IMAGES[link.href];
         return (
-          <li key={link.href} className="reveal">
-            <Link
-              href={link.href}
-              className="group relative flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-[1.25rem] bg-night p-4 text-white sm:aspect-[4/4.4] sm:p-5"
-            >
+          <li key={link.href} className="border-t border-ink">
+            <Link href={link.href} className="group flex items-center gap-5 py-4 sm:py-5">
               {image && (
-                <Image
-                  src={image.src}
-                  alt=""
-                  fill
-                  sizes="(min-width: 768px) 25vw, 50vw"
-                  placeholder="blur"
-                  className="object-cover transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.05]"
-                />
-              )}
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-t from-[#0b1420] via-[#0b1420]/55 to-transparent"
-              />
-              <span className="relative flex items-end justify-between gap-2">
-                <span className="text-[15px] font-semibold leading-snug sm:text-base">Websites for {link.label}</span>
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition-transform duration-300 ease-[var(--ease-out-soft)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:bg-white group-hover:text-ink">
-                  <ArrowUpRight aria-hidden="true" strokeWidth={1.75} className="size-4" />
+                <span className="relative h-14 w-20 shrink-0 overflow-hidden bg-sunken sm:h-16 sm:w-24">
+                  <Image
+                    src={image.src}
+                    alt=""
+                    fill
+                    sizes="96px"
+                    placeholder="blur"
+                    className="object-cover grayscale transition-[filter,transform] duration-500 ease-[var(--ease-out-soft)] group-hover:scale-105 group-hover:grayscale-0"
+                  />
                 </span>
+              )}
+              <span className="flex-1">
+                <span className="block text-xs text-muted">Websites for</span>
+                <span className="display-tight mt-0.5 block text-xl text-ink transition-colors group-hover:text-accent sm:text-2xl">
+                  {link.label}
+                </span>
+              </span>
+              <span aria-hidden="true" className="text-xl text-ink transition-transform duration-300 group-hover:translate-x-1 group-hover:text-accent">
+                →
               </span>
             </Link>
           </li>

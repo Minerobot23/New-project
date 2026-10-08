@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type ComponentType } from "react";
-import { Check, Info, Monitor, Smartphone, Sparkles, X, type LucideIcon } from "lucide-react";
+import { Check, Info, Monitor, Smartphone, X, type LucideIcon } from "lucide-react";
 import { Car, Scissors, ThermometerSnowflake, UtensilsCrossed } from "lucide-react";
 import { track } from "@/lib/analytics";
 import { DesktopFrame, PhoneFrame } from "./device-frame";
@@ -108,8 +108,8 @@ export function WebsiteSimulator({ industries = INDUSTRY_ORDER, initialIndustry 
   const overlay = (
     <div aria-live="polite" className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center p-3">
       {note && (
-        <div className="sim-note pointer-events-auto flex max-w-md items-start gap-2.5 rounded-2xl bg-ink/95 px-3.5 py-2.5 text-[13px] leading-snug text-white shadow-lg">
-          <Info aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-[#6ea8ff]" />
+        <div className="sim-note pointer-events-auto flex max-w-md items-start gap-2.5 bg-ink px-3.5 py-2.5 text-[13px] leading-snug text-white">
+          <Info aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-accent-on-night" />
           <span>
             <span className="font-semibold">Concept demo:</span> on a real site, this would {note}.
           </span>
@@ -124,7 +124,7 @@ export function WebsiteSimulator({ industries = INDUSTRY_ORDER, initialIndustry 
   return (
     <div className="w-full">
       {industries.length > 1 && (
-        <div role="group" aria-label="Choose a business type" className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div role="group" aria-label="Choose a business type" className="grid grid-cols-2 gap-px border border-ink bg-ink sm:grid-cols-4">
           {industries.map((id) => {
             const Icon = ICONS[id];
             const selected = id === industry;
@@ -134,11 +134,11 @@ export function WebsiteSimulator({ industries = INDUSTRY_ORDER, initialIndustry 
                 type="button"
                 aria-pressed={selected}
                 onClick={() => chooseIndustry(id)}
-                className={`flex min-h-12 items-center gap-2.5 rounded-2xl border px-4 sm:rounded-full py-2.5 text-left text-sm font-medium transition-colors ${
-                  selected ? "border-ink bg-ink text-white" : "border-line-strong bg-surface text-ink-soft hover:border-ink/40 hover:text-ink"
+                className={`flex min-h-14 items-center gap-2.5 px-4 py-3 text-left text-[15px] font-medium transition-colors ${
+                  selected ? "bg-ink text-white" : "bg-paper text-ink hover:bg-surface hover:text-accent"
                 }`}
               >
-                <Icon aria-hidden="true" className={`size-[18px] shrink-0 ${selected ? "text-[#6ea8ff]" : "text-accent"}`} />
+                <Icon aria-hidden="true" strokeWidth={1.5} className={`size-[18px] shrink-0 ${selected ? "text-accent-on-night" : "text-muted"}`} />
                 {INDUSTRY_DEMOS[id].label}
               </button>
             );
@@ -147,7 +147,7 @@ export function WebsiteSimulator({ industries = INDUSTRY_ORDER, initialIndustry 
       )}
 
       <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div role="group" aria-label="Before or after" className="grid grid-cols-2 rounded-full border border-line-strong bg-sunken p-1 sm:w-80">
+        <div role="group" aria-label="Before or after" className="grid grid-cols-2 border border-ink sm:w-80">
           {(["before", "after"] as const).map((value) => {
             const selected = variant === value;
             return (
@@ -156,15 +156,10 @@ export function WebsiteSimulator({ industries = INDUSTRY_ORDER, initialIndustry 
                 type="button"
                 aria-pressed={selected}
                 onClick={() => chooseVariant(value)}
-                className={`flex h-11 items-center justify-center gap-2 rounded-full text-[15px] font-semibold transition-all duration-300 ease-[var(--ease-out-soft)] active:scale-[0.98] ${
-                  selected
-                    ? value === "after"
-                      ? "bg-accent text-white shadow-sm"
-                      : "bg-surface text-ink shadow-sm"
-                    : "text-muted hover:text-ink"
+                className={`flex h-12 items-center justify-center gap-2 text-[15px] font-semibold transition-colors ${
+                  selected ? (value === "after" ? "bg-accent text-white" : "bg-ink text-white") : "text-ink hover:bg-surface"
                 }`}
               >
-                {value === "after" && <Sparkles aria-hidden="true" className="size-4" />}
                 {value === "before" ? "Before" : "After"}
               </button>
             );
@@ -173,7 +168,7 @@ export function WebsiteSimulator({ industries = INDUSTRY_ORDER, initialIndustry 
 
         <div className="flex items-center justify-between gap-3 sm:justify-end">
           <p className="text-xs text-muted sm:hidden">Preview as</p>
-          <div role="group" aria-label="Preview device" className="flex rounded-full border border-line-strong bg-surface p-1">
+          <div role="group" aria-label="Preview device" className="flex gap-5">
             {(
               [
                 ["desktop", Monitor, "Desktop"],
@@ -185,8 +180,8 @@ export function WebsiteSimulator({ industries = INDUSTRY_ORDER, initialIndustry 
                 type="button"
                 aria-pressed={device === value}
                 onClick={() => chooseDevice(value)}
-                className={`flex h-11 items-center gap-1.5 rounded-full px-3.5 text-sm font-medium transition-colors sm:h-9 ${
-                  device === value ? "bg-sunken text-ink" : "text-muted hover:text-ink"
+                className={`flex h-11 items-center gap-1.5 border-b-2 text-sm font-medium transition-colors sm:h-9 ${
+                  device === value ? "border-ink text-ink" : "border-transparent text-muted hover:text-ink"
                 }`}
               >
                 <Icon aria-hidden="true" className="size-4" />
@@ -200,7 +195,7 @@ export function WebsiteSimulator({ industries = INDUSTRY_ORDER, initialIndustry 
       <div className={`mt-5 grid gap-6 ${device === "desktop" ? "lg:grid-cols-[1fr_300px]" : "md:grid-cols-[1fr_minmax(280px,360px)] md:items-start"}`}>
         <div className="min-w-0">
           <p className="mb-2.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted">
-            <span className="rounded-full border border-line bg-surface px-2 py-0.5 font-semibold uppercase tracking-[0.12em] text-accent">
+            <span className="bg-accent px-1.5 py-0.5 font-medium text-white">
               Interactive Concept Demo
             </span>
             <span>
@@ -214,8 +209,8 @@ export function WebsiteSimulator({ industries = INDUSTRY_ORDER, initialIndustry 
           </div>
         </div>
 
-        <aside aria-live="polite" className="rounded-[1.25rem] border border-line bg-surface p-6">
-          <p className={`text-xs font-semibold uppercase tracking-[0.14em] ${isAfter ? "text-accent" : "text-amber-700"}`}>
+        <aside aria-live="polite" className="border border-ink bg-surface p-6">
+          <p className={`display-tight text-lg ${isAfter ? "text-accent" : "text-ink"}`}>
             {isAfter ? "What changed" : "What's holding it back"}
           </p>
           <ul className="mt-4 space-y-3.5">
@@ -231,7 +226,7 @@ export function WebsiteSimulator({ industries = INDUSTRY_ORDER, initialIndustry 
             ))}
           </ul>
           {!isAfter ? (
-            <button type="button" onClick={() => chooseVariant("after")} className="mt-5 w-full rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-white transition-[background-color,transform] duration-300 active:scale-[0.98] hover:bg-accent-strong">
+            <button type="button" onClick={() => chooseVariant("after")} className="mt-6 flex h-12 w-full items-center justify-center gap-2 bg-accent px-4 text-sm font-semibold text-white transition-colors hover:bg-ink">
               Show the After version
             </button>
           ) : (

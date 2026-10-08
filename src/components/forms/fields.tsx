@@ -6,7 +6,7 @@ import { HONEYPOT_FIELD } from "@/lib/leads/schemas";
 import { site } from "@/lib/site";
 
 export function inputClasses(invalid: boolean, extra = "") {
-  return `mt-1.5 block w-full rounded-md border bg-surface px-3.5 text-[16px] text-ink shadow-[inset_0_1px_1px_rgba(15,26,36,0.03)] transition-colors placeholder:text-muted/70 focus:outline-2 focus:outline-offset-0 sm:text-[15px] ${
+  return `mt-1.5 block w-full  border bg-surface px-3.5 text-[16px] text-ink shadow-[inset_0_1px_1px_rgba(15,26,36,0.03)] transition-colors placeholder:text-muted/70 focus:outline-2 focus:outline-offset-0 sm:text-[15px] ${
     invalid ? "border-danger focus:outline-danger" : "border-line-strong hover:border-ink/30 focus:border-accent focus:outline-accent"
   } ${extra}`;
 }
@@ -150,7 +150,7 @@ export function ChoiceGroup({
           <label key={value} className="relative">
             <input type="radio" name={name} value={value} className="peer sr-only" onChange={onInput} />
             <span
-              className={`flex min-h-11 cursor-pointer items-center justify-center rounded-md border bg-surface px-3 py-2 text-center text-sm font-medium text-ink-soft transition-colors hover:border-ink/30 peer-checked:border-accent peer-checked:bg-accent-soft peer-checked:text-accent-strong peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent ${
+              className={`flex min-h-11 cursor-pointer items-center justify-center border bg-surface px-3 py-2 text-center text-sm font-medium text-ink-soft transition-colors hover:border-ink/30 peer-checked:border-accent peer-checked:bg-accent-soft peer-checked:text-accent-strong peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent ${
                 error ? "border-danger" : "border-line-strong"
               }`}
             >
@@ -176,7 +176,7 @@ export function Honeypot() {
 
 export function FormAlert({ message }: { message: string | null }) {
   return (
-    <div role="alert" className="flex gap-3 rounded-lg border border-danger/30 bg-danger-soft px-4 py-3 text-sm text-danger">
+    <div role="alert" className="flex gap-3 border border-danger/30 bg-danger-soft px-4 py-3 text-sm text-danger">
       <AlertCircle aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
       <p>
         {message ?? (

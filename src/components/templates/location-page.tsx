@@ -76,12 +76,12 @@ export function LocationPageTemplate({ page }: { page: LocationPage }) {
       </section>
 
       <section aria-labelledby="location-industries-title" className="border-y border-line bg-surface py-16 sm:py-20">
-        <Container className="max-w-7xl">
+        <Container className="max-w-[90rem]">
           <SectionHeading id="location-industries-title" title={`Websites for ${page.place} businesses like yours.`} />
           <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {industries.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className="group flex items-center justify-between rounded-[1.25rem] border border-line bg-paper p-5 text-[15px] font-medium text-ink hover:border-ink/30">
+                <Link href={link.href} className="group flex items-center justify-between border border-line bg-paper p-5 text-[15px] font-medium text-ink hover:border-ink/30">
                   Websites for {link.label}
                   <ArrowUpRight aria-hidden="true" className="size-4 text-muted group-hover:text-ink" />
                 </Link>
@@ -92,10 +92,10 @@ export function LocationPageTemplate({ page }: { page: LocationPage }) {
       </section>
 
       <section aria-labelledby="location-faq-title" className="py-16 sm:py-20">
-        <Container className="grid max-w-7xl gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
+        <Container className="grid max-w-[90rem] gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
           <div>
             <SectionHeading id="location-faq-title" title={`Questions from ${page.place} business owners.`} />
-            <p className="mt-8 text-xs font-semibold uppercase tracking-[0.14em] text-muted">Other areas we serve</p>
+            <p className="mt-8 text-sm font-medium text-muted">Other areas we serve</p>
             <ul className="mt-3 space-y-2">
               {otherLocations.map((link) => (
                 <li key={link.href}>

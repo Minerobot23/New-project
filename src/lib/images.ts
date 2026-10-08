@@ -24,12 +24,16 @@ import locQueens from "../../public/images/loc-queens.webp";
 import locSuffolk from "../../public/images/loc-suffolk.webp";
 import ownerCall from "../../public/images/owner-call.webp";
 import ownerPhone from "../../public/images/owner-phone.webp";
+import autoBefore from "../../public/showcase/auto-before.webp";
 import autoDesktop from "../../public/showcase/auto-desktop.webp";
 import autoMobile from "../../public/showcase/auto-mobile.webp";
+import hvacBefore from "../../public/showcase/hvac-before.webp";
 import hvacDesktop from "../../public/showcase/hvac-desktop.webp";
 import hvacMobile from "../../public/showcase/hvac-mobile.webp";
+import restaurantBefore from "../../public/showcase/restaurant-before.webp";
 import restaurantDesktop from "../../public/showcase/restaurant-desktop.webp";
 import restaurantMobile from "../../public/showcase/restaurant-mobile.webp";
+import salonBefore from "../../public/showcase/salon-before.webp";
 import salonDesktop from "../../public/showcase/salon-desktop.webp";
 import salonMobile from "../../public/showcase/salon-mobile.webp";
 import type { IndustryId } from "@/components/simulator/types";
@@ -152,24 +156,34 @@ export const PHOTOS = {
   },
 } satisfies Record<string, SiteImage>;
 
-/** Screenshots of the redesigned ("After") concept demos. */
-export const SHOWCASE: Record<IndustryId, { desktop: StaticImageData; mobile: StaticImageData; name: string }> = {
+/**
+ * Screenshots of the concept demos: the redesigned ("After") desktop and mobile homepages,
+ * plus the original ("Before") desktop homepage captured from the simulator.
+ */
+export const SHOWCASE: Record<
+  IndustryId,
+  { before: StaticImageData; desktop: StaticImageData; mobile: StaticImageData; name: string }
+> = {
   restaurant: {
+    before: restaurantBefore,
     desktop: restaurantDesktop,
     mobile: restaurantMobile,
     name: "Casa Verona",
   },
   home: {
+    before: hvacBefore,
     desktop: hvacDesktop,
     mobile: hvacMobile,
     name: "North Shore Heating & Cooling",
   },
   auto: {
+    before: autoBefore,
     desktop: autoDesktop,
     mobile: autoMobile,
     name: "Ridgeway Auto Care",
   },
   salon: {
+    before: salonBefore,
     desktop: salonDesktop,
     mobile: salonMobile,
     name: "Lumen Hair & Skin Studio",

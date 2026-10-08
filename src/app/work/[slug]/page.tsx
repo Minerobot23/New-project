@@ -56,7 +56,7 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
             <h2 className="text-xl font-semibold text-ink">Results</h2>
             <ul className="mt-3 grid gap-3 sm:grid-cols-2">
               {study.results.map((result) => (
-                <li key={result.label} className="rounded-lg border border-line bg-surface p-4">
+                <li key={result.label} className="border border-line bg-surface p-4">
                   <p className="text-2xl font-semibold text-ink">{result.value}</p>
                   <p className="text-sm">{result.label}</p>
                   {result.note && <p className="mt-1 text-xs text-muted">{result.note}</p>}
@@ -66,7 +66,7 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
           </section>
         )}
         {study.testimonial && (
-          <figure className="rounded-[1.25rem] border border-line bg-surface p-6">
+          <figure className="border border-line bg-surface p-6">
             <blockquote className="text-lg text-ink">&ldquo;{study.testimonial.quote}&rdquo;</blockquote>
             <figcaption className="mt-3 text-sm">
               {study.testimonial.name}

@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { Container } from "@/components/ui/container";
-import { Wordmark } from "@/components/layout/wordmark";
+import { brandFont } from "@/components/brand/fonts";
 import { CALL_CTA_LABEL, CALL_PATH, CHECK_PATH, industryLinks, locationLinks, site } from "@/lib/site";
 
 const companyLinks = [
@@ -15,11 +14,11 @@ const companyLinks = [
 function FooterList({ title, links }: { title: string; links: readonly { href: string; label: string }[] }) {
   return (
     <nav aria-label={title}>
-      <p className="text-sm font-medium text-white">{title}</p>
-      <ul className="mt-4 space-y-2.5 text-sm">
+      <p className="text-sm text-white/45">{title}</p>
+      <ul className="mt-4 space-y-2 text-[15px]">
         {links.map((link) => (
           <li key={link.href}>
-            <Link href={link.href} className="text-slate-400 transition-colors duration-300 hover:text-white">
+            <Link href={link.href} className="text-white/85 transition-colors hover:text-accent-on-night">
               {link.label}
             </Link>
           </li>
@@ -33,24 +32,21 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer data-track-location="footer" className="bg-night text-slate-300">
-      <Container className="grid max-w-7xl gap-10 border-t border-night-line py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1.2fr_1fr]">
-        <div>
-          <Wordmark tone="light" />
-          <p className="mt-4 text-sm font-medium text-white">{site.name}</p>
-          <p className="mt-1 text-sm text-slate-400">{site.tagline}</p>
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-400">{site.serviceArea}</p>
-          <div className="mt-5">
-            <p className="text-sm text-white">{site.contact.name}</p>
-            <a
-              href={`mailto:${site.contact.email}`}
-              className="mt-1 inline-block break-all text-sm text-slate-200 underline decoration-slate-600 underline-offset-4 transition-colors hover:text-white hover:decoration-slate-300"
-            >
-              {site.contact.email}
-            </a>
-          </div>
+    <footer data-track-location="footer" className="overflow-hidden bg-night text-white">
+      <div className="mx-auto grid max-w-[90rem] gap-12 border-t border-white/25 px-5 py-14 sm:grid-cols-2 sm:px-8 lg:grid-cols-12">
+        <div className="lg:col-span-4">
+          <p className="text-[15px] font-medium">{site.name}</p>
+          <p className="mt-1 text-[15px] text-white/55">{site.tagline}</p>
+          <p className="mt-5 max-w-xs text-[15px] leading-relaxed text-white/55">{site.serviceArea}</p>
+          <p className="mt-6 text-[15px]">{site.contact.name}</p>
+          <a
+            href={`mailto:${site.contact.email}`}
+            className="mt-1 inline-block break-all text-[15px] text-white underline decoration-white/35 underline-offset-4 transition-colors hover:decoration-white"
+          >
+            {site.contact.email}
+          </a>
           {site.mailingAddress && (
-            <address className="mt-4 text-sm not-italic leading-relaxed text-slate-400">
+            <address className="mt-5 text-sm not-italic leading-relaxed text-white/55">
               {site.mailingAddress.map((line) => (
                 <span key={line} className="block">
                   {line}
@@ -59,29 +55,40 @@ export function SiteFooter() {
             </address>
           )}
         </div>
-        <FooterList title="Company" links={companyLinks} />
-        <FooterList title="Industries" links={industryLinks} />
-        <FooterList title="Areas We Serve" links={locationLinks} />
-      </Container>
+        <div className="lg:col-span-2">
+          <FooterList title="Company" links={companyLinks} />
+        </div>
+        <div className="lg:col-span-3">
+          <FooterList title="Industries" links={industryLinks} />
+        </div>
+        <div className="lg:col-span-3">
+          <FooterList title="Areas we serve" links={locationLinks} />
+        </div>
+      </div>
 
-      <div className="border-t border-night-line">
-        <Container className="flex max-w-7xl flex-col gap-3 py-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © {year} {site.legalName}. All rights reserved.
-          </p>
-          <ul className="flex gap-5">
-            <li>
-              <Link href="/privacy" className="transition-colors hover:text-slate-200">
-                Privacy
-              </Link>
-            </li>
-            <li>
-              <Link href="/terms" className="transition-colors hover:text-slate-200">
-                Terms
-              </Link>
-            </li>
-          </ul>
-        </Container>
+      {/* The wordmark, set edge to edge. Decorative: the name is already in the footer text. */}
+      <div aria-hidden="true" className="mx-auto max-w-[90rem] px-5 sm:px-8">
+        <p className={`${brandFont.className} select-none text-[18.4vw] font-bold leading-[0.8] tracking-[-0.02em] text-white 2xl:text-[17.4rem]`}>
+          FLUX<span className="text-accent-on-night">LINE</span>
+        </p>
+      </div>
+
+      <div className="mx-auto flex max-w-[90rem] flex-col gap-3 px-5 py-6 text-sm text-white/45 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+        <p>
+          © {year} {site.legalName}. All rights reserved.
+        </p>
+        <ul className="flex gap-6">
+          <li>
+            <Link href="/privacy" className="transition-colors hover:text-white">
+              Privacy
+            </Link>
+          </li>
+          <li>
+            <Link href="/terms" className="transition-colors hover:text-white">
+              Terms
+            </Link>
+          </li>
+        </ul>
       </div>
     </footer>
   );

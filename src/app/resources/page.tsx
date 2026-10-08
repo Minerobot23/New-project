@@ -28,10 +28,10 @@ export default function ResourcesPage() {
         intro={<p>Practical guides for owners deciding what their website needs, what it should cost, and how to get more from it.</p>}
       />
       <div className="py-14 sm:py-16">
-        <Container className="max-w-7xl space-y-14">
+        <Container className="max-w-[90rem] space-y-14">
           {CATEGORIES.map((category) => (
             <section key={category} aria-labelledby={`cat-${category}`}>
-              <h2 id={`cat-${category}`} className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
+              <h2 id={`cat-${category}`} className="text-sm font-medium text-muted">
                 {category}
               </h2>
               <ul className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -41,7 +41,7 @@ export default function ResourcesPage() {
                     <li key={article.slug}>
                       <Link
                         href={`/resources/${article.slug}`}
-                        className="group flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-line bg-surface transition-colors hover:border-ink/30"
+                        className="group flex h-full flex-col overflow-hidden border border-line bg-surface transition-colors hover:border-ink/30"
                       >
                         {cover && (
                           <span className="relative block aspect-[16/9] overflow-hidden bg-sunken">

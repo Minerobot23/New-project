@@ -21,12 +21,12 @@ const areas = [
 export default function WebsiteCheckPage() {
   return (
     <section aria-labelledby="check-title" className="py-10 sm:py-14 lg:py-16">
-      <Container className="max-w-7xl">
+      <Container className="max-w-[90rem]">
         <Breadcrumbs items={[{ name: "Website Check", path: "/website-check" }]} />
         <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
           <div className="lg:pt-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">Free Website Check</p>
-            <h1 id="check-title" className="mt-3 text-balance text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+            <p className="text-sm font-medium text-accent">Free Website Check</p>
+            <h1 id="check-title" className="mt-3 display text-balance text-[2.5rem] text-ink sm:text-[3.5rem]">
               See What Could Be Better.
             </h1>
             <p className="mt-5 max-w-lg text-lg leading-relaxed text-ink-soft">
@@ -36,7 +36,7 @@ export default function WebsiteCheckPage() {
             <ul className="mt-10 grid gap-5 sm:grid-cols-2">
               {areas.map(({ icon: Icon, title, body }) => (
                 <li key={title} className="flex gap-3.5">
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-md border border-line bg-surface text-accent">
+                  <span className="flex size-9 shrink-0 items-center justify-center border border-line bg-surface text-accent">
                     <Icon aria-hidden="true" className="size-[18px]" />
                   </span>
                   <div>
@@ -50,7 +50,7 @@ export default function WebsiteCheckPage() {
               Every check is done by a person, not an automated scanner. There&apos;s no cost and no obligation.
             </p>
           </div>
-          <div className="rounded-[1.25rem] border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(15,26,36,0.04),0_12px_32px_-16px_rgba(15,26,36,0.16)] sm:p-8">
+          <div className="border border-ink bg-surface p-5 sm:p-8">
             <WebsiteCheckForm />
           </div>
         </div>

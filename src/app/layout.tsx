@@ -4,6 +4,7 @@ import { GeistMono } from "geist/font/mono";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteAnalytics } from "@/components/analytics/site-analytics";
+import { displayFont } from "@/components/brand/fonts";
 import { site } from "@/lib/site";
 import "./globals.css";
 
@@ -39,7 +40,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f7f8fa",
+  themeColor: "#f4f4f1",
   width: "device-width",
   initialScale: 1,
 };
@@ -49,12 +50,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}
+      className={`${GeistSans.variable} ${GeistMono.variable} ${displayFont.variable} antialiased`}
     >
       <body className="flex min-h-dvh flex-col font-sans">
         <a
           href="#main"
-          className="sr-only z-[60] rounded-md bg-ink px-4 py-2 text-sm font-medium text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+          className="sr-only z-[60] bg-ink px-4 py-2 text-sm font-medium text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
         >
           Skip to content
         </a>

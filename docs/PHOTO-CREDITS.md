@@ -60,3 +60,41 @@ capture-slot folders so real photography can replace them in place (see `ASSET_C
 
 `/showcase/*-before.webp` are screenshots of Fluxline's own concept demos (the "Before" state of the simulator), not photographs.
 
+
+## Home services and automotive experience placeholders
+
+The Saltbox Home Co. (`/experiences/home`) and Halden Motor Works (`/experiences/automotive`) concepts use photos from
+Unsplash under the [Unsplash License](https://unsplash.com/license), downloaded from the Unsplash image CDN and stored in
+capture-slot folders so real photography can replace them in place (see `ASSET_CAPTURE_GUIDE.md`). Comparison pairs are
+different stand-in photos, and both experiences say so on screen. License plates were blurred before export.
+
+| File | Source |
+| --- | --- |
+| `/experiences/home/arrival/house-dusk.webp` | https://images.unsplash.com/photo-1568605114967-8130f3a36994 |
+| `/experiences/home/roof/mid-project.webp` | https://images.unsplash.com/photo-1635424710928-0544e8512eae |
+| `/experiences/home/roof/crew.webp` | https://images.unsplash.com/photo-1632759145351-1d592919f522 |
+| `/experiences/home/siding/mid-project.webp` | https://images.unsplash.com/photo-1574359411659-15573a27fd0c |
+| `/experiences/home/siding/finished.webp` | https://images.unsplash.com/photo-1576941089067-2de3c901e126 |
+| `/experiences/home/windows/finished.webp` | https://images.unsplash.com/photo-1509644851169-2acc08aa25b5 |
+| `/experiences/home/kitchen/finished.webp` | https://images.unsplash.com/photo-1484154218962-a197022b5858 |
+| `/experiences/home/kitchen/detail.webp` | https://images.unsplash.com/photo-1556911220-bff31c812dba |
+| `/experiences/home/kitchen/mid-project.webp` | https://images.unsplash.com/photo-1589939705384-5185137a7f0f |
+| `/experiences/home/bathroom/finished.webp` | https://images.unsplash.com/photo-1620626011761-996317b8d101 |
+| `/experiences/home/bathroom/shower.webp` | https://images.unsplash.com/photo-1584622650111-993a426fbf0a |
+| `/experiences/home/bathroom/mid-project.webp` | https://images.unsplash.com/photo-1621905251918-48416bd8575a |
+| `/experiences/home/outdoor/night.webp` | https://images.unsplash.com/photo-1416331108676-a22ccb276e35 |
+| `/experiences/home/outdoor/deck.webp` | https://images.unsplash.com/photo-1600573472550-8090b5e0745e |
+| `/experiences/home/gallery/porch.webp` | https://images.unsplash.com/photo-1572120360610-d971b9d7767c |
+| `/experiences/automotive/arrival/garage-door.webp` | https://images.unsplash.com/photo-1626668893632-6f3a4466d22f (plate blurred) |
+| `/experiences/automotive/bay/vehicle.webp` | https://images.unsplash.com/photo-1492144534655-ae79c964c9d7 |
+| `/experiences/automotive/bay/service-bay.webp` | https://images.unsplash.com/photo-1486006920555-c77dcf18193c |
+| `/experiences/automotive/bay/tools.webp` | https://images.unsplash.com/photo-1530046339160-ce3e530c7d2f |
+| `/experiences/automotive/paint/close-up.webp` | https://images.unsplash.com/photo-1614026480209-cd9934144671 |
+| `/experiences/automotive/paint/hand-wash.webp` | https://images.unsplash.com/photo-1607860108855-64acf2078ed9 |
+| `/experiences/automotive/wheels/tires.webp` | https://images.unsplash.com/photo-1578844251758-2f71da64c96f |
+| `/experiences/automotive/brakes/caliper.webp` | https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8 |
+| `/experiences/automotive/interior/cockpit.webp` | https://images.unsplash.com/photo-1449965408869-eaa3f722e40d |
+| `/experiences/automotive/detailing/pressure-wash.webp` | https://images.unsplash.com/photo-1520340356584-f9917d1eea6f (plate blurred) |
+| `/experiences/automotive/maintenance/oil.webp` | https://images.unsplash.com/photo-1487754180451-c456f719a1fc |
+| `/experiences/automotive/maintenance/under-hood.webp` | https://images.unsplash.com/photo-1625047509248-ec889cbff17f |
+| `/experiences/automotive/maintenance/engine.webp` | https://images.unsplash.com/photo-1486262715619-67b85e0b08d3 |

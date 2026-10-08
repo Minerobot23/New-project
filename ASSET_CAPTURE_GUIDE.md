@@ -1,7 +1,9 @@
-# Asset capture guide: restaurant experience
+# Asset capture guide: restaurant, home services, and automotive experiences
 
-This is the shot list for turning the **Maison Arden** concept (`/experiences/restaurant`) into a real restaurant's
-website. Walk in with the camera, shoot every slot below, export to the listed path, and the experience becomes theirs.
+Shot lists for turning the three Fluxline concepts into real businesses' websites: **Maison Arden** (restaurant,
+`/experiences/restaurant`), **Saltbox Home Co.** (home services, `/experiences/home`, see [Home services](#home-services-saltbox-home-co)),
+and **Halden Motor Works** (automotive, `/experiences/automotive`, see [Automotive](#automotive-halden-motor-works)).
+The restaurant comes first. Walk in with the camera, shoot every slot below, export to the listed path, and the experience becomes theirs.
 
 Written for a **Canon EOS Rebel T7** (24 MP APS-C, 6000 × 4000) with the **EF-S 18-55mm f/3.5-5.6 IS II** kit lens.
 Focal lengths below are what you set on the lens ring; multiply by 1.6 for the full-frame look (18 mm ≈ 29 mm).
@@ -11,7 +13,7 @@ Focal lengths below are what you set on the lens ring; multiply by 1.6 for the f
 ## Before the shoot
 
 **Kit:** camera, kit lens, tripod (any stable one; a cheap travel tripod is fine), two charged batteries, a fast SD card,
-a lens cloth, gaffer tape, and a grey card or a sheet of white paper for white balance.
+a lens cloth, gaffer tape, and a gray card or a sheet of white paper for white balance.
 
 **Camera settings for every still (unless the slot says otherwise):**
 
@@ -24,7 +26,7 @@ a lens cloth, gaffer tape, and a grey card or a sheet of white paper for white b
 | Image stabilizer (lens switch) | **OFF** on the tripod, ON handheld | IS on a tripod can blur the frame |
 | Drive | 2-second self-timer on the tripod | Removes the shake from pressing the shutter |
 | Exposure bracketing (AEB) | ±2 stops for any frame with windows or bright lamps | Merge later so windows and the room both read |
-| White balance | Custom from the grey card, under the room's real light | Keeps warm light warm, not orange |
+| White balance | Custom from the gray card, under the room's real light | Keeps warm light warm, not orange |
 | Focus | Single-point AF on the main subject; check at 10× in Live View | The kit lens is sharp at f/8 when focus is right |
 | Grid | Turn on the Live View grid | Keeps verticals straight; crooked walls look cheap at full screen |
 
@@ -83,7 +85,7 @@ concept builds it without a photo; **Optional** means the experience works witho
 | Tripod | Yes |
 | Lighting | Evening look: all guest-facing lamps on, candles lit, blinds as they are during service. Bracket ±2 and merge so windows don't blow out. |
 | Photo / video | Photo. Optional: a 10-second locked-off 1080p clip of the same frame for subtle movement (candle flicker, a server crossing far in the back). |
-| Transitions | End frame of the doorway transition (the doorway opens onto exactly this frame), start point of every "travel" into the bar, menu, table, private dining, and window scenes. Keep the composition centred so the doorway reveal lands well. |
+| Transitions | End frame of the doorway transition (the doorway opens onto exactly this frame), start point of every "travel" into the bar, menu, table, private dining, and window scenes. Keep the composition centered so the doorway reveal lands well. |
 
 ### 2. `exterior/street-facade.webp`: the front of the restaurant
 
@@ -93,14 +95,14 @@ concept builds it without a photo; **Optional** means the experience works witho
 | Purpose | Scene 01: the street. The visitor sees the building and the door before entering. |
 | Orientation | Landscape 3:2, plus a portrait version (see slot 12) |
 | Resolution | Full resolution; export 3840 |
-| Camera position | Across the street or 6 to 10 m back on the pavement, centred on the front door. Lens at eye height, perfectly level so the facade isn't leaning. The door should sit near the middle of the frame with some street on both sides. |
+| Camera position | Across the street or 6 to 10 m back on the sidewalk, centered on the front door. Lens at eye height, perfectly level so the facade isn't leaning. The door should sit near the middle of the frame with some street on both sides. |
 | Focal length | 24 to 35 mm |
 | Tripod | Yes |
 | Lighting | Blue hour (15 to 30 minutes after sunset) with the interior lights on, so the windows and door glow. Bracket ±2. |
 | Photo / video | Photo |
 | Transitions | The walk to the door. After export, measure the doorway rectangle in the photo (left, top, width, height as fractions) and pass it to `EntranceSequence` as `exterior.door`; the camera will push into that exact door. |
 
-### 3. `entrance/doorway.webp`: the open door from the pavement
+### 3. `entrance/doorway.webp`: the open door from the sidewalk
 
 | | |
 | --- | --- |
@@ -108,7 +110,7 @@ concept builds it without a photo; **Optional** means the experience works witho
 | Purpose | A closer frame of the open front door, looking into the room, used as the middle beat of the approach. |
 | Orientation | Portrait 2:3 (turn the camera) |
 | Resolution | Full; export 2560 |
-| Camera position | 2 to 3 m from the door, centred on the doorway, the room visible through it. Chest height. |
+| Camera position | 2 to 3 m from the door, centered on the doorway, the room visible through it. Chest height. |
 | Focal length | 24 mm |
 | Tripod | Yes |
 | Lighting | Same evening light as the facade; door open. |
@@ -235,7 +237,7 @@ concept builds it without a photo; **Optional** means the experience works witho
 | Purpose | The menu experience: each course change wipes the next photograph up over the last. |
 | Orientation | Portrait 4:5 works best (the photo fills the right half on desktop and the top on phones); landscape also works. |
 | Resolution | Export 2560 long edge |
-| Camera position | Consistent for all five: same table, same height (~45° above), same distance, so the wipe reads as one sequence. Hero dish centred. |
+| Camera position | Consistent for all five: same table, same height (~45° above), same distance, so the wipe reads as one sequence. Hero dish centered. |
 | Focal length | 45 to 55 mm |
 | Tripod | Yes: lock it off and swap the plates, so the set reads as one sequence |
 | Lighting | Identical across all five (same window, same card, same time). |
@@ -269,7 +271,7 @@ concept builds it without a photo; **Optional** means the experience works witho
 | Purpose | Phones crop landscape photos to a narrow slice. The engine already lets visitors drag to look around, but a dedicated portrait frame composes better for key scenes. |
 | Orientation | Portrait 2:3 (camera turned) |
 | Resolution | Export 2560 tall |
-| Camera position | Same spot and height as the landscape version, turned to portrait, the key subject (bar, door) centred. |
+| Camera position | Same spot and height as the landscape version, turned to portrait, the key subject (bar, door) centered. |
 | Focal length | 18 mm |
 | Tripod | Yes |
 | Lighting | Same session as the landscape version |
@@ -303,3 +305,305 @@ concept builds it without a photo; **Optional** means the experience works witho
 
 Back home: merge brackets, straighten verticals, match white balance across the set, export to the paths above, update
 `assets.ts`, and check every scene on a phone.
+
+---
+
+## Home services: Saltbox Home Co.
+
+The house is the interface. Visitors see the client's own house at dusk, the lights come on, and every part of the
+house they can change (roof, siding, windows, kitchen, bathroom, outdoor) is a hotspot. Each area opens on a
+"mid-project / finished" comparison when the client has both photos, or a finished photo when they don't.
+
+Files live in `public/experiences/home/`. After exporting, update `src/experiences/home/assets.ts` (and the hotspot
+coordinates in `content.ts` if the house photo changes framing). Every slot below is currently a **Placeholder**: licensed
+stock from Unsplash, listed in `docs/PHOTO-CREDITS.md`.
+
+**The honesty rule for comparisons:** only pair two photos of the **same job**, taken from the **same spot**. Never put a
+different house in the "before" frame. If a client has no matching pair, the area shows its finished photo alone.
+
+**How to get matching pairs:** on the first day of a job, put a strip of gaffer tape on the ground where the tripod's
+legs stand and note the focal length and height. Come back on the last day and shoot from the tape. Same time of day
+if possible.
+
+### H1. `arrival/house-dusk.webp`: the house at dusk
+
+| | |
+| --- | --- |
+| Purpose | The home screen. The lights-on intro plays over it and the six hotspots sit on the roof, a side wall, the windows, and the yard. |
+| Used in | House scene, the homepage chooser panel, the /experiences card |
+| Orientation | Landscape 3:2 |
+| Resolution | Full 6000 × 4000; export 3840 long edge |
+| Camera position | Across the street or at the end of the driveway, whole house in frame with sky above the roof and lawn in front. Lens at eye height, level (verticals straight). Slightly off-center (about 15°) so a side wall shows: that's where the siding hotspot sits. |
+| Focal length | 18–24 mm |
+| Tripod | Yes (long exposures) |
+| Lighting | Blue hour, 15–25 minutes after sunset, every interior and porch light on. Bracket ±2. Shoot a second frame with lights off from the same spot: the intro can cross-fade between them. |
+| Photo / video | Photo (two: lights off and lights on). Optional 10 s locked-off clip as the lights come on. |
+| Transitions | Start point for every "travel" into an area; the zoom origin is the hotspot position, so keep the roof, a side wall, and a window clearly readable. |
+
+### H2. `roof/mid-project.webp` and `roof/crew.webp`: the roof during work
+
+| | |
+| --- | --- |
+| Purpose | Left side of the roof comparison (mid-project) and the "on the job" gallery photo (crew). |
+| Orientation | Landscape 3:2 |
+| Resolution | Export 2400 long edge |
+| Camera position | Mid-project: from the ground, same tape mark as the finished roof photo (H3), whole roof plane in frame. Crew: from a ladder or the roof edge (with the crew's permission and a harness), workers at a third of the frame. |
+| Focal length | 24–35 mm for mid-project; 18 mm for crew |
+| Tripod | Mid-project yes (it has to match H3); crew handheld, 1/500 s |
+| Lighting | Overcast daylight is best (no hard shadows across shingles). |
+| Photo / video | Photo. Optional 5 s clip of the crew working for the gallery. |
+| Transitions | The comparison slider wipes between this and the finished roof. |
+
+### H3. `roof/finished.webp`: the finished roof
+
+| | |
+| --- | --- |
+| Purpose | Right side of the roof comparison; the area's hero when there is no pair. Currently the concept uses the dusk house (H1) cropped to the roof. |
+| Orientation | Landscape 3:2 |
+| Resolution | Export 2400 long edge |
+| Camera position | From the tape mark used for H2, same height and focal length. |
+| Focal length | Match H2 |
+| Tripod | Yes |
+| Lighting | Same time of day as H2 if possible; low sun from the side shows shingle texture. |
+| Photo / video | Photo |
+| Transitions | Comparison wipe from H2. |
+
+### H4. `siding/mid-project.webp` and `siding/finished.webp`: a wall during and after
+
+| | |
+| --- | --- |
+| Purpose | The siding comparison. |
+| Orientation | Landscape 3:2 |
+| Resolution | Export 2400 long edge |
+| Camera position | Square-on to one wall, 4–6 m back, a window or corner in frame for scale. Same tape mark for both. |
+| Focal length | 24–35 mm (less distortion than 18 mm) |
+| Tripod | Yes |
+| Lighting | Raking light (sun at 30–45° to the wall) shows lap lines and texture. Avoid noon. |
+| Photo / video | Photo |
+| Transitions | Comparison wipe. |
+
+### H5. `windows/finished.webp`: new windows
+
+| | |
+| --- | --- |
+| Purpose | The windows area hero. |
+| Orientation | Landscape 3:2 |
+| Resolution | Export 2400 long edge |
+| Camera position | Outside, slightly to one side (about 30°) so the frame depth and trim show. Or inside looking out, if the client's selling point is the view. |
+| Focal length | 35–55 mm |
+| Tripod | Yes |
+| Lighting | Dusk with interior lights on reads as "home"; daylight shows the trim color truthfully. Shoot both. |
+| Photo / video | Photo |
+| Transitions | Travel from the windows hotspot on H1. |
+
+### H6. `kitchen/finished.webp`, `kitchen/detail.webp`, `kitchen/mid-project.webp`
+
+| | |
+| --- | --- |
+| Purpose | Kitchen comparison (mid-project / finished) and a close detail for the gallery (hardware, counter edge, backsplash). |
+| Orientation | Landscape 3:2 for finished and mid-project; detail can be portrait 2:3 |
+| Resolution | Export 2400 long edge |
+| Camera position | Finished and mid-project: from the kitchen doorway, chest height (1.3 m), level, island or counter run leading into the frame. Same tape mark. Detail: 30–50 cm from the subject. |
+| Focal length | 18 mm for the room; 55 mm for the detail |
+| Tripod | Yes |
+| Lighting | All under-cabinet and pendant lights on, daylight from windows; bracket ±2. Remove clutter from counters (ask first). |
+| Photo / video | Photo. Optional 6 s slow push-in clip on the finished kitchen. |
+| Transitions | Travel from the kitchen hotspot (a ground-floor window on H1), then the comparison wipe. |
+
+### H7. `bathroom/finished.webp`, `bathroom/shower.webp`, `bathroom/mid-project.webp`
+
+| | |
+| --- | --- |
+| Purpose | Bathroom comparison and a shower or tile detail for the gallery. |
+| Orientation | Landscape 3:2; shower detail can be portrait |
+| Resolution | Export 2400 long edge |
+| Camera position | From the doorway or a corner, as low as chest height allows, vanity and shower in frame. Same tape mark for the pair. Turn off the camera's flash; avoid catching yourself in the mirror (shoot at an angle to it). |
+| Focal length | 18 mm |
+| Tripod | Yes |
+| Lighting | All lights on, bracket ±2; match white balance to the vanity lights. |
+| Photo / video | Photo |
+| Transitions | Travel from the bathroom hotspot (an upstairs window on H1), then the comparison wipe. |
+
+### H8. `outdoor/night.webp` and `outdoor/deck.webp`
+
+| | |
+| --- | --- |
+| Purpose | Outdoor living hero (night, lights on) and a daytime deck or patio photo for the gallery. |
+| Orientation | Landscape 3:2 |
+| Resolution | Export 2400 long edge |
+| Camera position | From the yard looking back at the deck and house, chest height, furniture arranged. |
+| Focal length | 18–24 mm |
+| Tripod | Yes for night |
+| Lighting | Night: string lights, fire feature, interior lights on, at blue hour. Day: soft late-afternoon light. |
+| Photo / video | Photo. Optional clip of a fire feature or string lights. |
+| Transitions | Travel from the yard hotspot on H1. |
+
+### H9. `gallery/porch.webp`: a finished porch or entry
+
+| | |
+| --- | --- |
+| Purpose | Extra gallery photo shown under siding and windows. |
+| Orientation | Landscape 3:2 or portrait 2:3 |
+| Resolution | Export 2400 long edge |
+| Camera position | From the walkway, front door centered, steps leading in. |
+| Focal length | 24–35 mm |
+| Tripod | Optional |
+| Lighting | Porch lights on at dusk, or open shade by day. |
+| Photo / video | Photo |
+| Transitions | None (gallery). |
+
+### Home: on-site order
+
+1. **Afternoon, finished job:** siding (H4), windows (H5), porch (H9), deck (H8 day).
+2. **Inside:** kitchen (H6), bathroom (H7).
+3. **Blue hour:** house lights off then on (H1), outdoor at night (H8).
+4. **On other days, at active jobs:** every "mid-project" and crew frame (H2, H4, H6, H7), from tape marks you will
+   return to.
+
+---
+
+## Automotive: Halden Motor Works
+
+The garage door lifts, the visitor pulls into the bay, and the car itself is the menu: hotspots on the paint, wheels,
+brakes, interior, and engine bay. Each service opens on a close photograph (zoomed into the hero for brakes) or a
+comparison for paint and detailing.
+
+Files live in `public/experiences/automotive/`. After exporting, update `src/experiences/automotive/assets.ts` (focus
+points) and the hotspot coordinates in `content.ts`. Every slot is currently a **Placeholder** (Unsplash, see
+`docs/PHOTO-CREDITS.md`).
+
+**Always:** get the vehicle owner's permission, and blur or remove license plates before export (the concept's
+placeholders have their plates blurred). Comparisons follow the same rule as home services: same car, same spot.
+
+### A1. `arrival/garage-door.webp`: the car at the open door
+
+| | |
+| --- | --- |
+| Purpose | The opening frame revealed as the door lifts; the homepage chooser panel and the /experiences card. |
+| Orientation | Landscape 3:2 (keep the car in the middle third so the phone crop holds it) |
+| Resolution | Full 6000 × 4000; export 3840 long edge |
+| Camera position | Inside the shop looking out, or outside looking in, with an open bay door framing the car. Low: lens at bumper height (50–60 cm). Rear three-quarter view so the tail lights show. |
+| Focal length | 18–24 mm |
+| Tripod | Yes |
+| Lighting | Dusk outside, shop lights on inside; tail lights on (ignition on, engine off). Bracket ±2. |
+| Photo / video | Photo. Optional: a locked-off clip of the real door rising, which can replace the drawn shutter. |
+| Transitions | Revealed by the shutter; "Pull in" travels from here into the bay (A2). |
+
+### A2. `bay/vehicle.webp`: the car in the bay
+
+| | |
+| --- | --- |
+| Purpose | The interface. Six hotspots sit on real parts of the car: hood (maintenance), windshield (interior), body panel (paint), front bumper (detailing), front wheel (brakes), tire (wheels). |
+| Orientation | Landscape 3:2 or 16:9 |
+| Resolution | Full 6000 × 4000; export 3840 long edge |
+| Camera position | Front three-quarter view, 3–4 m away, lens at headlight height (70 cm), the whole car plus some floor and the bay around it. On phones the frame is cropped to the right two thirds (focus point 0.7, 0.55), so put the front wheel there. |
+| Focal length | 24–35 mm (wide angles distort the nose) |
+| Tripod | Yes |
+| Lighting | Shop lights on, one soft light (or a white sheet bouncing a work light) along the body so reflections show the paint. Clean floor. |
+| Photo / video | Photo. Optional 360° turntable set (24 frames) for a future drag-to-rotate version. |
+| Transitions | Every service travels in from its hotspot; the zoom origin is the hotspot, so wheels and the windshield must be clearly visible. |
+
+### A3. `bay/service-bay.webp` and `bay/tools.webp`
+
+| | |
+| --- | --- |
+| Purpose | Backdrop for the schedule screen (service bay) and gallery texture (tools). |
+| Orientation | Landscape 3:2 |
+| Resolution | Export 2400 long edge |
+| Camera position | Service bay: from the back of the shop, a lift and a car in frame. Tools: square-on to the tool wall or a drawer, 1–2 m. |
+| Focal length | 18 mm (bay); 35–55 mm (tools) |
+| Tripod | Yes |
+| Lighting | As the shop is during the day. |
+| Photo / video | Photo |
+| Transitions | Fade into the schedule screen. |
+
+### A4. `paint/hand-wash.webp` and `paint/close-up.webp`: paint correction
+
+| | |
+| --- | --- |
+| Purpose | The paint comparison ("In the bay" / "Corrected") and the finished close-up, also used as "Finished" for detailing. |
+| Orientation | Landscape 3:2 |
+| Resolution | Export 2400 long edge |
+| Camera position | One body panel (hood or door) at a low angle so reflections run across it, 1–1.5 m away. Same tape mark before and after correction; same panel. |
+| Focal length | 35–55 mm |
+| Tripod | Yes |
+| Lighting | A single hard light reflected in the panel shows swirls before and clarity after. Same light position for both. |
+| Photo / video | Photo. Optional clip of the polisher working. |
+| Transitions | Comparison wipe. |
+
+### A5. `detailing/pressure-wash.webp`: foam and rinse
+
+| | |
+| --- | --- |
+| Purpose | Left side of the detailing comparison. |
+| Orientation | Landscape 3:2 |
+| Resolution | Export 2400 long edge |
+| Camera position | Side-on to the car during the foam stage, 2–3 m away, detailer in frame. Blur the plate. |
+| Focal length | 24–35 mm |
+| Tripod | Optional; 1/500 s to freeze spray |
+| Lighting | Backlight (sun or a light behind the spray) makes the water glow. |
+| Photo / video | Photo, plus a 6 s slow-motion clip (the T7 records 1080p at 30 fps; slow it in editing). |
+| Transitions | Comparison wipe to the finished close-up. |
+
+### A6. `wheels/tires.webp`: wheels and tires
+
+| | |
+| --- | --- |
+| Purpose | Wheels service hero. |
+| Orientation | Landscape 3:2 |
+| Resolution | Export 2400 long edge |
+| Camera position | Tire rack or a mounted wheel at hub height, filling two thirds of the frame. |
+| Focal length | 35–55 mm |
+| Tripod | Optional |
+| Lighting | Side light to show tread depth. |
+| Photo / video | Photo |
+| Transitions | Travel from the tire hotspot. |
+
+### A7. `brakes/caliper.webp`: the brake caliper
+
+| | |
+| --- | --- |
+| Purpose | Brakes hero, shown zoomed 1.7× into the focus point (0.74, 0.6), so it needs full resolution. |
+| Orientation | Landscape 3:2 |
+| Resolution | Full 6000 × 4000; export 3840 long edge |
+| Camera position | Wheel turned to full lock, lens 40–60 cm from the caliper through the spokes, at hub height. |
+| Focal length | 55 mm |
+| Tripod | Yes (f/8 for depth) |
+| Lighting | A small LED or flashlight raking across the caliper. |
+| Photo / video | Photo |
+| Transitions | Travel from the brake hotspot, then the slow zoom. |
+
+### A8. `interior/cockpit.webp`: the interior
+
+| | |
+| --- | --- |
+| Purpose | Interior service hero. |
+| Orientation | Landscape 3:2 |
+| Resolution | Export 2400 long edge |
+| Camera position | From the back seat between the front seats, or from the passenger seat toward the wheel, dashboard lit. |
+| Focal length | 18 mm |
+| Tripod | Small tabletop tripod or bean bag |
+| Lighting | Dusk outside, dashboard on; bracket so windows don't blow out. |
+| Photo / video | Photo |
+| Transitions | Travel from the windshield hotspot. |
+
+### A9. `maintenance/oil.webp`, `maintenance/under-hood.webp`, `maintenance/engine.webp`
+
+| | |
+| --- | --- |
+| Purpose | Maintenance hero (oil) and gallery (technician under the hood, engine detail). |
+| Orientation | Landscape 3:2 |
+| Resolution | Export 2400 long edge |
+| Camera position | Oil: 50 cm from the fill cap, pour in frame. Under the hood: from the fender, technician's hands and tools in frame. Engine: square-on to the belt side. |
+| Focal length | 35–55 mm |
+| Tripod | Optional (1/250 s handheld for the pour) |
+| Lighting | Work light; clean the engine bay first. |
+| Photo / video | Photo. Optional 4 s clip of the pour. |
+| Transitions | Travel from the hood hotspot. |
+
+### Automotive: on-site order
+
+1. **Morning, shop quiet:** bay vehicle (A2), service bay and tools (A3), tires (A6), caliper (A7), engine (A9).
+2. **During work:** foam and rinse (A5), paint before correction (A4), under the hood and the pour (A9).
+3. **After correction:** paint corrected from the same tape mark (A4).
+4. **Dusk:** car at the open door (A1), interior (A8).

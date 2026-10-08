@@ -4,13 +4,13 @@ import { ClosingCta } from "@/components/shared/closing-cta";
 import { TrackPageView } from "@/components/analytics/track-page-view";
 import { pageMetadata } from "@/lib/seo";
 import mainRoom from "../../../public/experiences/restaurant/interior/main-room.webp";
-import house from "../../../public/images/industry-roofers.webp";
-import wheel from "../../../public/demo/auto-brakes.webp";
+import house from "../../../public/experiences/home/arrival/house-dusk.webp";
+import garage from "../../../public/experiences/automotive/arrival/garage-door.webp";
 
 export const metadata = pageMetadata({
   title: "Experiences",
   description:
-    "Immersive website experiences by Fluxline Solutions: walk into Maison Arden, an interactive restaurant concept, and see the home services and automotive experiences in production.",
+    "Immersive website experiences by Fluxline Solutions: walk into Maison Arden, a restaurant; light up Saltbox Home Co., a home remodeler; and pull into Halden Motor Works, an auto shop. All three are interactive concepts.",
   path: "/experiences",
 });
 
@@ -39,26 +39,26 @@ const ENTRIES: Entry[] = [
     action: "Enter the experience",
   },
   {
-    name: "Home Services",
-    kind: "Home",
-    line: "The house is the interface: choose the roof, siding, windows, kitchen, or bath, compare before and after, and request an estimate.",
+    name: "Saltbox Home Co.",
+    kind: "Home Services",
+    line: "The lights come on in a house at dusk. Choose the roof, siding, windows, kitchen, bath, or backyard, compare mid-project and finished, pick materials, and request an estimate.",
     image: house,
-    alt: "A roofer stripping old shingles from a house roof",
-    focus: "70% 40%",
-    status: "Experience in production",
-    href: "/websites-for-hvac-companies#demo",
-    action: "See the current concept",
+    alt: "A two-story house at dusk with its windows lit",
+    focus: "50% 45%",
+    status: "Fluxline Interactive Concept",
+    href: "/experiences/home",
+    action: "Enter the experience",
   },
   {
-    name: "Automotive",
+    name: "Halden Motor Works",
     kind: "Automotive",
-    line: "A cinematic service bay where the vehicle leads: paint, wheels, interior, brakes, and detailing, with service booked from the car itself.",
-    image: wheel,
-    alt: "A technician's gloved hands on a car wheel in a service bay",
-    focus: "70% 50%",
-    status: "Experience in production",
-    href: "/websites-for-auto-repair-shops#demo",
-    action: "See the current concept",
+    line: "The garage door lifts and the car pulls into the bay. Paint, wheels, brakes, interior, detailing, and maintenance start from the car itself, and drop-off is booked from there.",
+    image: garage,
+    alt: "A car under red tail light in front of an open garage door",
+    focus: "55% 55%",
+    status: "Fluxline Interactive Concept",
+    href: "/experiences/automotive",
+    action: "Enter the experience",
   },
 ];
 
@@ -73,15 +73,18 @@ export default function ExperiencesPage() {
             Projects open as places, not portfolio cards.
           </h1>
           <p className="mt-8 max-w-[52ch] text-lg leading-relaxed text-bone/70">
-            Concepts are labeled as concepts: fictional businesses built to show what we make. Client experiences will appear
-            here as they launch, with each client&apos;s permission.
+            Concepts are labeled as concepts: fictional businesses built to show what we make. Client experiences will appear here
+            as they launch, with each client&apos;s permission.
           </p>
         </header>
 
         <ul>
           {ENTRIES.map((entry, index) => (
             <li key={entry.name} className="border-t border-bone/15">
-              <Link href={entry.href} className="group relative flex min-h-[78svh] flex-col overflow-hidden outline-none focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-bone">
+              <Link
+                href={entry.href}
+                className="group relative flex min-h-[78svh] flex-col overflow-hidden outline-none focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-bone"
+              >
                 <Image
                   src={entry.image}
                   alt={entry.alt}
@@ -98,7 +101,9 @@ export default function ExperiencesPage() {
                     <p className="label text-bone/70">
                       {entry.kind} · {entry.status}
                     </p>
-                    <h2 className="display mt-4 text-[2.4rem] uppercase leading-none sm:text-[clamp(3rem,6vw,5.6rem)]">{entry.name}</h2>
+                    <h2 className="display mt-4 text-[2.4rem] uppercase leading-none sm:text-[clamp(3rem,6vw,5.6rem)]">
+                      {entry.name}
+                    </h2>
                   </div>
                   <div className="lg:col-span-4 lg:col-start-9">
                     <p className="font-serif text-xl italic leading-snug text-bone/85 sm:text-2xl">{entry.line}</p>

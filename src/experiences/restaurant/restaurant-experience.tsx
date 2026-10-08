@@ -15,7 +15,7 @@ import {
 } from "@/experience";
 import { CRITICAL_IMAGES, DEFERRED_IMAGES } from "./assets";
 import { RESTAURANT } from "./content";
-import { VIA_HOME_KEY } from "./keys";
+import { VIA_HOME_KEY } from "../keys";
 import { RestaurantContext, SCENE_LABELS, type SceneId } from "./context";
 import { Arrival } from "./scenes/arrival";
 import { Interior } from "./scenes/interior";
@@ -26,7 +26,6 @@ import { Dish } from "./scenes/dish";
 import { PrivateDining } from "./scenes/private-dining";
 import { Visit } from "./scenes/visit";
 import { Gallery } from "./scenes/gallery";
-
 
 const subscribeNoop = () => () => {};
 // Read once per page load and cached, so clearing the flag below doesn't bring the loader back.

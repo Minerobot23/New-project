@@ -397,3 +397,13 @@ section[id] {
     animation-delay: calc(var(--i, 0) * 110ms + 120ms);
   }
 }
+
+/* Condensed display type, for industrial clients (Archivo at its narrowest width). */
+.condensed {
+  font-family: var(--font-display);
+  font-stretch: 62%;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.005em;
+  line-height: 0.88;
+}

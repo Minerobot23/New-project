@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
 import { useRef } from "react";
 import { prefersReducedMotion } from "@/experience";
-import { VIA_HOME_KEY } from "@/experiences/restaurant/keys";
+import { VIA_HOME_KEY } from "@/experiences/keys";
 import mainRoom from "../../../public/experiences/restaurant/interior/main-room.webp";
-import house from "../../../public/images/industry-roofers.webp";
-import wheel from "../../../public/demo/auto-brakes.webp";
+import house from "../../../public/experiences/home/arrival/house-dusk.webp";
+import garage from "../../../public/experiences/automotive/arrival/garage-door.webp";
 
 type Environment = {
   id: string;
@@ -38,18 +38,18 @@ const ENVIRONMENTS: Environment[] = [
     name: "Home",
     line: "The house becomes the interface.",
     image: house,
-    alt: "A roofer stripping old shingles from a house roof",
-    focus: "70% 40%",
-    concept: { href: "/websites-for-hvac-companies#demo", label: "Experience in production" },
+    alt: "A two-story house at dusk with its windows lit",
+    focus: "50% 45%",
+    experience: "/experiences/home",
   },
   {
     id: "automotive",
     name: "Automotive",
     line: "The vehicle is the website.",
-    image: wheel,
-    alt: "A technician's gloved hands on a car wheel in a service bay",
-    focus: "70% 50%",
-    concept: { href: "/websites-for-auto-repair-shops#demo", label: "Experience in production" },
+    image: garage,
+    alt: "A car under red tail light in front of an open garage door",
+    focus: "55% 55%",
+    experience: "/experiences/automotive",
   },
 ];
 

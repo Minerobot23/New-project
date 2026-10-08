@@ -1,8 +1,10 @@
-# Next: Home Services and Automotive experiences
+# Home Services and Automotive experiences
 
-The restaurant experience (`/experiences/restaurant`, Maison Arden) set the bar. Home Services and Automotive must
-reach the same level. They are currently the old simulator demos on `/websites-for-hvac-companies#demo` and
-`/websites-for-auto-repair-shops#demo`.
+**Status: built.** Home Services is live as Saltbox Home Co. at `/experiences/home`; Automotive as Halden Motor Works
+at `/experiences/automotive`. Both run on the same engine as the restaurant (`src/experience`), share the shell in
+`src/experiences/use-experience-shell.ts`, use licensed stand-in photos (see `docs/PHOTO-CREDITS.md`), and have shot
+lists in `ASSET_CAPTURE_GUIDE.md`. The old simulator demos on `/websites-for-hvac-companies#demo` and
+`/websites-for-auto-repair-shops#demo` remain on those pages. The plan they were built from follows.
 
 ## Ground rules (same as the restaurant)
 

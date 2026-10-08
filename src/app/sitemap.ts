@@ -4,7 +4,12 @@ import { CASE_STUDIES } from "@/content/work";
 import { industryLinks, locationLinks, site } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const entry = (path: string, priority: number, changeFrequency: "weekly" | "monthly" | "yearly" = "monthly", lastModified?: string) => ({
+  const entry = (
+    path: string,
+    priority: number,
+    changeFrequency: "weekly" | "monthly" | "yearly" = "monthly",
+    lastModified?: string,
+  ) => ({
     url: `${site.url}${path}`,
     priority,
     changeFrequency,
@@ -18,6 +23,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     entry("/website-check", 0.9),
     entry("/experiences", 0.8),
     entry("/experiences/restaurant", 0.7),
+    entry("/experiences/home", 0.7),
+    entry("/experiences/automotive", 0.7),
     ...CASE_STUDIES.map((study) => entry(`/work/${study.slug}`, 0.6)),
     ...industryLinks.map((link) => entry(link.href, 0.8)),
     ...locationLinks.map((link) => entry(link.href, 0.7)),

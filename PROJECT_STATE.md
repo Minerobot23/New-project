@@ -140,3 +140,20 @@ Screenshots: `docs/screenshots/before/` (live site) and `docs/screenshots/after/
 
 Owner review of the home and automotive films on the preview, then publish. A licensed car model
 or real footage would be the next step up in quality; see `media/README.md`.
+
+## Review round, 2026-10-08 (all three concepts)
+
+Owner feedback applied to every concept, films left untouched at the owner's request:
+
+- Hotspot labels flip to whichever side has room (`src/experience/hotspot.tsx`); restaurant
+  hotspots moved inside the area that survives a 4:3 crop. Audit of every hotspot in all three
+  concepts at 1024x768, 1280x720, 1366x768, 1440x900, 1536x864, 1920x1080, 2560x1080, 768x1024 and
+  390x844: no clipped label; on landscape screens every hotspot is on screen. On portrait screens
+  some hotspots start off screen by design (the scene is dragged sideways; the bar lists them all).
+- Photographs are graded toward each concept's film with a CSS filter (`globals.css`,
+  `.experience--*`). This aligns brightness, contrast and colour; photographs still look like
+  photographs and the films like 3D.
+- Small labels inside the concepts are 13px (were 11px) with stronger contrast.
+- Confirmation labels say "preview" first: "Reservation preview", "Enquiry preview", "Estimate
+  request preview", "Booking preview".
+- Published to fluxlinesolutions.com with all three films.

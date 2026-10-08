@@ -65,7 +65,7 @@ export function HomeExperience() {
 
   return (
     <HomeContext.Provider value={api}>
-      <div className="fixed inset-0 h-[100svh] overflow-hidden bg-[#060b17] text-bone">
+      <div className="experience experience--home fixed inset-0 h-[100svh] overflow-hidden bg-[#060b17] text-bone">
         <SceneStack director={director} label={label} render={render} className="bg-[#060b17]!" />
 
         <ExperienceNavigation
@@ -74,11 +74,11 @@ export function HomeExperience() {
               <span className="block font-display text-lg font-light uppercase leading-none tracking-[0.04em]">
                 {COMPANY.name}
               </span>
-              <span className="label mt-1 block text-[10px] text-bone/55">{COMPANY.kicker}</span>
+              <span className="label mt-1 block text-bone/75">{COMPANY.kicker}</span>
             </button>
           }
           credit={
-            <p className="label text-bone/60">
+            <p className="label text-bone/85">
               Fluxline interactive concept ·{" "}
               <Link href="/request-a-call?from=home" className="border-b border-bone/50 text-bone hover:border-bone">
                 Want this for your business?

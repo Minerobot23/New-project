@@ -54,7 +54,7 @@ export function Estimate() {
         <div className="max-w-xl px-5 pb-28 pt-36 text-bone sm:px-8 md:pt-40">
           {sent ? (
             <div aria-live="polite">
-              <p className="label text-[#f2b45c]">Request received</p>
+              <p className="label text-[#f2b45c]">Estimate request preview</p>
               <p
                 data-scene-focus
                 tabIndex={-1}

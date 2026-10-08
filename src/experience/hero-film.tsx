@@ -113,7 +113,7 @@ export function HeroFilm({ sources, poster, focus = { x: 0.5, y: 0.5 }, label, s
         <img
           src={poster.landscape}
           alt=""
-          className="absolute inset-0 size-full object-cover"
+          className="film-frame absolute inset-0 size-full object-cover"
           style={{ objectPosition: position }}
           fetchPriority="high"
         />

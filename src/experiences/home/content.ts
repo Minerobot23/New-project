@@ -125,7 +125,7 @@ export const AREAS: Area[] = [
     id: "outdoor",
     title: "Outdoor",
     line: "Decks, patios, and light, so the summer evenings happen outside.",
-    at: { x: 0.385, y: 0.86 },
+    at: { x: 0.385, y: 0.84 },
     align: "left",
     finished: ASSETS.outdoorNight,
     gallery: [ASSETS.outdoorDeck, ASSETS.outdoorNight],

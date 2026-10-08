@@ -64,18 +64,18 @@ export function AutoExperience() {
 
   return (
     <AutoContext.Provider value={api}>
-      <div className="fixed inset-0 h-[100svh] overflow-hidden bg-[#040507] text-bone">
+      <div className="experience experience--automotive fixed inset-0 h-[100svh] overflow-hidden bg-[#040507] text-bone">
         <SceneStack director={director} label={label} render={render} className="bg-[#040507]!" />
 
         <ExperienceNavigation
           brand={
             <button type="button" onClick={toBay} className="text-left">
               <span className="condensed block text-xl leading-none">{SHOP.name}</span>
-              <span className="label mt-1 block text-[10px] text-bone/55">{SHOP.kicker}</span>
+              <span className="label mt-1 block text-bone/75">{SHOP.kicker}</span>
             </button>
           }
           credit={
-            <p className="label text-bone/60">
+            <p className="label text-bone/85">
               Fluxline interactive concept ·{" "}
               <Link href="/request-a-call?from=automotive" className="border-b border-bone/50 text-bone hover:border-bone">
                 Want this for your business?

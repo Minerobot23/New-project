@@ -93,7 +93,7 @@ export function Schedule() {
         <div className="max-w-xl px-5 pb-28 pt-36 text-bone sm:px-8 md:pt-40">
           {booked ? (
             <div aria-live="polite">
-              <p className="label text-[#ff4b3a]">Drop-off requested</p>
+              <p className="label text-[#ff4b3a]">Booking preview</p>
               <p data-scene-focus tabIndex={-1} className="condensed mt-4 text-[3.2rem] outline-none sm:text-[4.5rem]">
                 {booked}.
               </p>

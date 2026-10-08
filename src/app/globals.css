@@ -406,3 +406,22 @@ section[id] {
   letter-spacing: -0.005em;
   line-height: 0.88;
 }
+
+/* Inside the interactive concepts: small labels a step larger and less widely spaced, so they
+   stay legible over photographs. */
+.experience .label {
+  font-size: 0.8125rem;
+  letter-spacing: 0.18em;
+}
+
+/* Photographs graded toward each concept's film, so stills and film read as one place.
+   Film frames (class film-frame) are left as rendered. */
+.experience--restaurant img:not(.film-frame) {
+  filter: brightness(0.8) contrast(1.1) saturate(0.78) sepia(0.3);
+}
+.experience--home img:not(.film-frame) {
+  filter: brightness(0.84) contrast(1.06) saturate(0.82);
+}
+.experience--automotive img:not(.film-frame) {
+  filter: brightness(0.88) contrast(1.12) saturate(0.85);
+}

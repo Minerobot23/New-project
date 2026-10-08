@@ -18,6 +18,7 @@ export function Interior() {
     <>
       <CoverStage
         image={ASSETS.arrivalEnd}
+        imageClassName="film-frame"
         parallax
         pan
         grade={
@@ -29,7 +30,7 @@ export function Interior() {
       >
         <Hotspot at={{ x: 0.2, y: 0.51 }} label="Menu" hint="Tonight's menu" onSelect={(o) => go("menu", o)} index={0} />
         <Hotspot
-          at={{ x: 0.826, y: 0.4 }}
+          at={{ x: 0.826, y: 0.43 }}
           label="Gallery"
           hint="The room by night"
           onSelect={(o) => go("gallery", o)}
@@ -38,7 +39,7 @@ export function Interior() {
         />
         <Hotspot at={{ x: 0.4, y: 0.37 }} label="The bar" hint="Cocktails and wine" onSelect={(o) => go("bar", o)} index={2} />
         <Hotspot
-          at={{ x: 0.94, y: 0.28 }}
+          at={{ x: 0.735, y: 0.345 }}
           label="Find us"
           hint="Hours and directions"
           onSelect={(o) => go("visit", o)}
@@ -46,7 +47,7 @@ export function Interior() {
           index={3}
         />
         <Hotspot
-          at={{ x: 0.06, y: 0.4 }}
+          at={{ x: 0.17, y: 0.215 }}
           label="Private dining"
           hint="Through here: the Salon"
           onSelect={(o) => go("private", o)}
@@ -61,11 +62,10 @@ export function Interior() {
           index={5}
         />
         <Hotspot
-          at={{ x: 0.92, y: 0.76 }}
+          at={{ x: 0.57, y: 0.525 }}
           label="Tonight's plate"
           hint="From the kitchen"
           onSelect={(o) => go("dish", o)}
-          align="left"
           index={6}
         />
       </CoverStage>

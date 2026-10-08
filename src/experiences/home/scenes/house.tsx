@@ -17,6 +17,7 @@ export function House() {
     <>
       <CoverStage
         image={ASSETS.house}
+        imageClassName="film-frame"
         parallax
         pan
         grade={

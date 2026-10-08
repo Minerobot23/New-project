@@ -49,7 +49,7 @@ export function ExperienceNavigation({ brand, credit, exitHref, exitLabel = "Exi
           {exitHref && (
             <Link
               href={exitHref}
-              className="label flex h-11 items-center border-b border-transparent text-bone/80 hover:border-bone hover:text-bone"
+              className="label flex h-11 items-center border-b border-transparent text-bone/95 hover:border-bone hover:text-bone"
             >
               {exitLabel}
             </Link>
@@ -72,7 +72,7 @@ export function ExperienceNavigation({ brand, credit, exitHref, exitLabel = "Exi
                   className={`label relative py-2 transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:bg-bone after:transition-transform after:duration-500 ${
                     item.active
                       ? "text-bone after:scale-x-100"
-                      : "text-bone/65 after:scale-x-0 hover:text-bone hover:after:scale-x-100"
+                      : "text-bone/90 after:scale-x-0 hover:text-bone hover:after:scale-x-100"
                   }`}
                 >
                   {item.label}

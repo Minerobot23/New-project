@@ -125,7 +125,7 @@ export function RestaurantExperience() {
 
   return (
     <RestaurantContext.Provider value={api}>
-      <div className="fixed inset-0 h-[100svh] overflow-hidden bg-stage text-bone">
+      <div className="experience experience--restaurant fixed inset-0 h-[100svh] overflow-hidden bg-stage text-bone">
         <SceneStack director={director} label={label} render={render} />
 
         <ExperienceNavigation
@@ -139,7 +139,7 @@ export function RestaurantExperience() {
             </button>
           }
           credit={
-            <p className="label text-bone/60">
+            <p className="label text-bone/85">
               Fluxline interactive concept ·{" "}
               <Link href="/request-a-call?from=restaurant" className="border-b border-bone/50 text-bone hover:border-bone">
                 Want this for your business?

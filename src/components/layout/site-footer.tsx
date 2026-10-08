@@ -3,10 +3,9 @@ import { brandFont } from "@/components/brand/fonts";
 import { CALL_CTA_LABEL, CALL_PATH, CHECK_PATH, industryLinks, locationLinks, site } from "@/lib/site";
 
 const companyLinks = [
+  { href: "/experiences", label: "Experiences" },
   { href: "/services", label: "Services" },
-  { href: "/work", label: "Work" },
   { href: "/resources", label: "Resources" },
-  { href: "/#simulator", label: "See the Difference" },
   { href: CHECK_PATH, label: "Website Check" },
   { href: CALL_PATH, label: CALL_CTA_LABEL },
 ];

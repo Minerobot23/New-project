@@ -43,3 +43,20 @@ Photos are stored as optimized WebP in `public/demo/` (concept demo businesses) 
 | `/images/article-noleads.webp` | https://unsplash.com/photos/person-using-macbook-pro-on-table-DBZIU619Wj8 |
 | `/images/article-social.webp` | https://unsplash.com/photos/young-woman-looking-at-her-smartphone-on-a-couch-2EYipG0onnE |
 | `/images/article-timeline.webp` | https://unsplash.com/photos/woman-in-red-and-black-jacket-using-macbook-ivF9IZSDML0 |
+
+## Restaurant experience placeholders
+
+The Maison Arden concept (`/experiences/restaurant`) currently uses copies of the licensed photos above, stored in
+capture-slot folders so real photography can replace them in place (see `ASSET_CAPTURE_GUIDE.md`).
+
+| File | Copy of | Source |
+| --- | --- | --- |
+| `/experiences/restaurant/interior/main-room.webp` | `/demo/verona-room.webp` | https://unsplash.com/photos/empty-restaurant-interior-with-checkered-tablecloths-and-framed-artwork-3ICm8lZyeZE |
+| `/experiences/restaurant/private-dining/sala.webp` | `/images/article-restaurant.webp` | https://unsplash.com/photos/a-dining-room-with-tables-and-chairs-and-a-fireplace-Le7UM046mTI |
+| `/experiences/restaurant/food/table-service.webp` | `/images/industry-restaurants.webp` | https://unsplash.com/photos/dish-on-white-ceramic-plate-N_Y88TWmGwA |
+| `/experiences/restaurant/food/pasta-overhead.webp` | `/demo/verona-hero.webp` | https://unsplash.com/photos/seafood-pasta-dish-with-wine-on-wooden-table-uVjqFohje3I |
+| `/experiences/restaurant/food/pasta-detail.webp` | `/demo/verona-pasta.webp` | https://unsplash.com/photos/pasta-dish-on-white-plate-ddZYOtZUnBk |
+| `/experiences/restaurant/bar/wine-glass.webp` | `/demo/verona-wine.webp` | https://unsplash.com/photos/clear-wine-glass-with-red-wine-8em0b1ziHd0 |
+
+`/showcase/*-before.webp` are screenshots of Fluxline's own concept demos (the "Before" state of the simulator), not photographs.
+

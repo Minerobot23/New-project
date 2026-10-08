@@ -1,4 +1,4 @@
-import { Archivo, Montserrat } from "next/font/google";
+import { Archivo, Cormorant_Garamond, Montserrat } from "next/font/google";
 
 /** Wordmark typeface: wide, geometric, matching the Fluxline Solutions logo. */
 export const brandFont = Montserrat({
@@ -16,4 +16,18 @@ export const displayFont = Archivo({
   display: "swap",
   axes: ["wdth"],
   variable: "--font-archivo",
+});
+
+/**
+ * Serif for client experiences in hospitality. Each client experience gets its own type;
+ * Fluxline's own brand stays in Archivo + Geist.
+ */
+export const serifFont = Cormorant_Garamond({
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-cormorant",
+  // Only experience routes use it; don't preload it on every page.
+  preload: false,
 });

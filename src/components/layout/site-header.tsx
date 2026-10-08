@@ -16,12 +16,15 @@ export function SiteHeader() {
   const industriesRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
-  // Close menus on navigation (adjusting state during render, per React's guidance, instead of in an effect).
+  const [dark, setDark] = useState(false);
+
+  // Close menus and reset the tone on navigation (adjusting state during render, per React's guidance, instead of in an effect).
   const [lastPathname, setLastPathname] = useState(pathname);
   if (lastPathname !== pathname) {
     setLastPathname(pathname);
     setOpen(false);
     setIndustriesOpen(false);
+    setDark(false);
   }
 
   // Escape closes whichever menu is open; clicking outside closes the industries menu.
@@ -46,24 +49,50 @@ export function SiteHeader() {
     };
   }, [open, industriesOpen]);
 
+  // Over cinematic sections (marked data-tone="dark") the header turns to the stage colour so it reads as part of the scene.
+  useEffect(() => {
+    const sections = document.querySelectorAll("[data-tone=dark]");
+    if (sections.length === 0) return;
+    const visible = new Set<Element>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => (entry.isIntersecting ? visible.add(entry.target) : visible.delete(entry.target)));
+        setDark(visible.size > 0);
+      },
+      // A thin band just under the 64px header.
+      { rootMargin: "-64px 0px -86% 0px" },
+    );
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, [pathname]);
+
   const onCallPage = pathname === CALL_PATH;
   const isActive = (href: string) => !href.includes("#") && (pathname === href || pathname.startsWith(`${href}/`));
   /* Active page gets an underline in the accent; hover draws the same line in ink. */
   const linkClass =
     "relative py-2 text-sm font-medium transition-colors duration-200 after:absolute after:inset-x-0 after:-bottom-px after:h-[2px] after:origin-left after:scale-x-0 after:transition-transform after:duration-300 after:ease-[var(--ease-out-soft)] hover:after:scale-x-100";
   const linkTone = (href: string) =>
-    isActive(href) ? "text-ink after:scale-x-100 after:bg-accent" : "text-ink-soft hover:text-ink after:bg-ink";
+    dark
+      ? isActive(href)
+        ? "text-bone after:scale-x-100 after:bg-bone"
+        : "text-bone/65 hover:text-bone after:bg-bone"
+      : isActive(href)
+        ? "text-ink after:scale-x-100 after:bg-accent"
+        : "text-ink-soft hover:text-ink after:bg-ink";
 
   return (
-    <header data-track-location="header" className="sticky top-0 z-50 border-b border-ink bg-paper">
+    <header
+      data-track-location="header"
+      className={`sticky top-0 z-50 border-b transition-colors duration-500 ${dark ? "border-bone/15 bg-stage text-bone" : "border-ink bg-paper"}`}
+    >
       <div className="mx-auto flex h-16 max-w-[90rem] items-center justify-between gap-6 px-5 sm:px-8">
-        <Wordmark />
+        <Wordmark tone={dark ? "light" : "dark"} />
 
         <nav aria-label="Primary" className="hidden lg:block">
           <ul className="flex items-center gap-7">
             <li>
-              <Link href="/services" aria-current={isActive("/services") ? "page" : undefined} className={`${linkClass} ${linkTone("/services")}`}>
-                Services
+              <Link href="/experiences" aria-current={isActive("/experiences") ? "page" : undefined} className={`${linkClass} ${linkTone("/experiences")}`}>
+                Experiences
               </Link>
             </li>
             <li>
@@ -73,7 +102,9 @@ export function SiteHeader() {
                   aria-expanded={industriesOpen}
                   aria-controls="industries-menu"
                   onClick={() => setIndustriesOpen((value) => !value)}
-                  className={`flex items-center gap-1 ${linkClass} ${industriesOpen ? "text-ink" : "text-ink-soft hover:text-ink"} after:bg-ink`}
+                  className={`flex items-center gap-1 ${linkClass} ${
+                    dark ? "text-bone/65 hover:text-bone after:bg-bone" : industriesOpen ? "text-ink after:bg-ink" : "text-ink-soft hover:text-ink after:bg-ink"
+                  }`}
                 >
                   Industries
                   <ChevronDown aria-hidden="true" strokeWidth={1.75} className={`size-4 transition-transform duration-300 ease-[var(--ease-out-soft)] ${industriesOpen ? "rotate-180" : ""}`} />
@@ -96,7 +127,7 @@ export function SiteHeader() {
               </div>
             </li>
             {navLinks
-              .filter((link) => link.href !== "/services")
+              .filter((link) => link.href !== "/experiences")
               .map((link) => (
                 <li key={link.href}>
                   <Link
@@ -117,7 +148,9 @@ export function SiteHeader() {
           </Link>
           {!onCallPage && (
             <div className="hidden sm:block">
-              <ButtonLink href={CALL_PATH}>{CALL_CTA_LABEL}</ButtonLink>
+              <ButtonLink href={CALL_PATH} variant={dark ? "ghost-inverse" : "secondary"}>
+                {CALL_CTA_LABEL}
+              </ButtonLink>
             </div>
           )}
           <button
@@ -127,7 +160,7 @@ export function SiteHeader() {
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Close menu" : "Open menu"}
-            className="relative -mr-2 inline-flex size-12 items-center justify-center text-ink lg:hidden"
+            className={`relative -mr-2 inline-flex size-12 items-center justify-center lg:hidden ${dark ? "text-bone" : "text-ink"}`}
           >
             {/* Two lines that morph into an X. */}
             <span

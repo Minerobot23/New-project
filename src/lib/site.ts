@@ -8,7 +8,7 @@ export const site = {
   legalName: "Fluxline LLC",
   url: "https://fluxlinesolutions.com",
   domain: "fluxlinesolutions.com",
-  tagline: "Web Design for Businesses",
+  tagline: "Immersive websites for real-world businesses",
   title: "Fluxline Solutions | Websites Built to Turn Visitors Into Customers",
   description:
     "Fluxline Solutions designs fast, modern, mobile-first websites for businesses that want to look better online and turn more visitors into calls, reservations, appointments, and customers.",
@@ -33,9 +33,8 @@ export const CHECK_PATH = "/website-check";
 export const CHECK_CTA_LABEL = "Get a Free Website Check";
 
 export const navLinks = [
+  { href: "/experiences", label: "Experiences" },
   { href: "/services", label: "Services" },
-  { href: "/#simulator", label: "See the Difference" },
-  { href: "/work", label: "Work" },
   { href: "/resources", label: "Resources" },
 ] as const;
 

@@ -4,7 +4,8 @@ import { GeistMono } from "geist/font/mono";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteAnalytics } from "@/components/analytics/site-analytics";
-import { displayFont } from "@/components/brand/fonts";
+import { HideOnImmersive } from "@/components/layout/chrome-gate";
+import { displayFont, serifFont } from "@/components/brand/fonts";
 import { site } from "@/lib/site";
 import "./globals.css";
 
@@ -50,7 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${GeistSans.variable} ${GeistMono.variable} ${displayFont.variable} antialiased`}
+      className={`${GeistSans.variable} ${GeistMono.variable} ${displayFont.variable} ${serifFont.variable} antialiased`}
     >
       <body className="flex min-h-dvh flex-col font-sans">
         <a
@@ -59,11 +60,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Skip to content
         </a>
-        <SiteHeader />
+        <HideOnImmersive>
+          <SiteHeader />
+        </HideOnImmersive>
         <main id="main" className="flex-1">
           {children}
         </main>
-        <SiteFooter />
+        <HideOnImmersive>
+          <SiteFooter />
+        </HideOnImmersive>
         <SiteAnalytics />
       </body>
     </html>

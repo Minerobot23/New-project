@@ -34,10 +34,10 @@ const CTA_VARIANTS = {
   },
   simulator: {
     icon: MonitorSmartphone,
-    title: "See the difference for yourself",
-    body: "Our interactive concept demo shows the same business before and after a redesign, on desktop and mobile.",
-    href: "/#simulator",
-    label: "Try the Website Simulator",
+    title: "See what an immersive website feels like",
+    body: "Walk into Maison Arden, an interactive restaurant concept: the entrance, the dining room, the menu, and private dining.",
+    href: "/experiences/restaurant",
+    label: "Enter the experience",
   },
 } as const;
 

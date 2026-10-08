@@ -10,6 +10,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // AVIF first (smaller for photography-heavy scenes), WebP as the fallback.
+  images: { formats: ["image/avif", "image/webp"] },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
@@ -18,6 +20,8 @@ const nextConfig: NextConfig = {
     return [
       // Old URL from the previous version of the site.
       { source: "/call", destination: "/request-a-call", permanent: true },
+      // The portfolio became /experiences when projects started opening as experiences.
+      { source: "/work", destination: "/experiences", permanent: true },
       {
         source: "/:path*",
         has: [{ type: "host", value: "www.fluxlinesolutions.com" }],

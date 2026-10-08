@@ -1,42 +1,35 @@
-import type { ReactNode } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { Hero } from "@/components/home/hero";
-import { Problems } from "@/components/home/problems";
-import { PhoneFirst } from "@/components/home/phone-first";
-import { ConceptCards } from "@/components/shared/concept-cards";
-import { SimulatorSection } from "@/components/simulator/simulator-section";
-import { IndustriesGrid } from "@/components/shared/industries-grid";
-import { Process } from "@/components/shared/process";
-import { CheckPromo } from "@/components/shared/check-promo";
+import { FluxlineIntro } from "@/components/home/fluxline-intro";
+import { EnvironmentChooser } from "@/components/home/environments";
+import { ProcessStory } from "@/components/home/process-story";
 import { ClosingCta } from "@/components/shared/closing-cta";
 import { FaqList, type Faq } from "@/components/ui/faq-list";
 import { JsonLd } from "@/components/seo/json-ld";
-import { SERVICE_GROUPS } from "@/content/services";
 import { organizationSchema, websiteSchema } from "@/lib/seo";
-import { site } from "@/lib/site";
+import { industryLinks, locationLinks } from "@/lib/site";
 
-export const metadata = { alternates: { canonical: "/" } };
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
-const principles = [
-  {
-    title: "Designed around the next step",
-    body: "Every page answers one question: what should a ready customer do now? Call, book, reserve, order, or request a quote.",
-  },
-  {
-    title: "Mobile-first, not mobile-adjusted",
-    body: "We design for the phone first, because that's where many of your customers will meet your business.",
-  },
-  {
-    title: "Fast and technically sound",
-    body: "Modern hosting, optimized images, clean code, and search-friendly structure from day one.",
-  },
-  {
-    title: "Honest about what a website can do",
-    body: "A better website can make it easier for customers to choose you. We don't promise rankings or guaranteed results.",
-  },
+/** What Fluxline brings together, told as one sentence rather than six cards. */
+const DISCIPLINES = [
+  { word: "Strategy", line: "What the business needs the website to do, and for whom." },
+  { word: "Design", line: "A visual world that belongs to this business and no other." },
+  { word: "Photography", line: "Shot on location, planned scene by scene." },
+  { word: "Development", line: "Fast, responsive, and built to be found." },
+  { word: "Interaction", line: "Rooms to walk into, details to discover, choices to make." },
+  { word: "Conversion", line: "The call, the table, the quote: built into the experience." },
 ];
 
 const faqs: Faq[] = [
+  {
+    q: "Do you take the photographs?",
+    a: "Yes. An immersive site is built on photography planned for it: we visit, walk the space the way a customer does, and shoot the exterior, the rooms, the details, and the moments that sell the business. Every frame is planned around a scene in the experience.",
+  },
+  {
+    q: "Will it work on phones?",
+    a: "It is designed for the phone first. Scenes are composed for portrait screens, controls sit within thumb reach, and calls, bookings, and quote requests are always one tap away. Visitors who prefer less motion get a calmer version automatically.",
+  },
   {
     q: "How much does a website cost?",
     a: "It depends on the number of pages, the features you need (like booking, ordering, or quote forms), and how much content needs to be written. After a short call we give you a clear scope and price before any work begins.",
@@ -63,159 +56,113 @@ const faqs: Faq[] = [
   },
 ];
 
-/** Shared section wrapper: a full-width ink rule and the wide page grid. */
-function Section({ id, labelledBy, className = "", children }: { id?: string; labelledBy: string; className?: string; children: ReactNode }) {
-  return (
-    <section id={id} aria-labelledby={labelledBy} className={`border-t border-ink ${className}`}>
-      <div className="mx-auto max-w-[90rem] px-5 py-20 sm:px-8 sm:py-28">{children}</div>
-    </section>
-  );
-}
-
-function MoreLink({ href, children }: { href: string; children: ReactNode }) {
-  return (
-    <Link href={href} className="group inline-flex items-center gap-2 border-b border-ink pb-0.5 text-sm font-medium text-ink hover:border-accent hover:text-accent">
-      {children}
-      <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
-        →
-      </span>
-    </Link>
-  );
-}
-
 export default function HomePage() {
   return (
     <>
       <JsonLd data={[organizationSchema(), websiteSchema()]} />
-      <Hero />
-      <SimulatorSection />
-      <Problems />
-      <PhoneFirst />
+      <FluxlineIntro />
+      {/* Without JavaScript the opening can't play; go straight to the page. */}
+      <noscript>
+        <style>{"[data-intro]{display:none!important}html{overflow:auto!important}"}</style>
+      </noscript>
 
-      <Section labelledBy="build-title">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-          <h2 id="build-title" className="display-tight max-w-[20ch] text-balance text-[2.25rem] sm:text-[3.25rem]">
-            Everything a business website needs to do its job.
+      <EnvironmentChooser />
+
+      <section id="after" aria-labelledby="after-title" className="scroll-mt-16">
+        <div className="mx-auto max-w-[90rem] px-5 pb-20 pt-24 sm:px-8 sm:pb-28 sm:pt-36">
+          <h2 id="after-title" className="display max-w-[13ch] text-[2.75rem] uppercase sm:text-[clamp(3.5rem,7.4vw,7.2rem)]">
+            You just experienced what we build.
           </h2>
-          <MoreLink href="/services">All services</MoreLink>
-        </div>
-        <p className="mt-6 max-w-[56ch] text-lg leading-relaxed text-ink-soft">
-          Design, development, and the technical work around it, scoped to what your business actually needs.
-        </p>
-
-        {/* Service index: each row is a link; hovering fills it with ink. */}
-        <ul className="mt-14 border-b border-ink">
-          {SERVICE_GROUPS.map(({ id, title, summary, items }, index) => (
-            <li key={id} className="border-t border-ink">
-              <Link
-                href={`/services#${id}`}
-                className="group -mx-5 grid gap-3 px-5 py-7 transition-colors duration-300 hover:bg-ink hover:text-white sm:-mx-8 sm:px-8 lg:grid-cols-12 lg:items-baseline lg:gap-8"
-              >
-                <span className="text-sm text-muted transition-colors group-hover:text-white/50 lg:col-span-1">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <h3 className="display-tight text-2xl sm:text-3xl lg:col-span-5">{title}</h3>
-                <div className="lg:col-span-5">
-                  <p className="max-w-[52ch] text-[15px] leading-relaxed text-ink-soft transition-colors group-hover:text-white/80">{summary}</p>
-                  <p className="mt-2 text-sm text-muted transition-colors group-hover:text-white/55">
-                    {items.map((item) => item.name).join(", ")}
-                  </p>
-                </div>
-                <span aria-hidden="true" className="hidden text-right text-2xl transition-transform duration-300 group-hover:translate-x-1 lg:col-span-1 lg:block">
-                  →
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </Section>
-
-      <Section labelledBy="concepts-title" className="bg-surface">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-          <h2 id="concepts-title" className="display-tight max-w-[18ch] text-balance text-[2.25rem] sm:text-[3.25rem]">
-            Four businesses, four different websites.
-          </h2>
-          <MoreLink href="/work">All work</MoreLink>
-        </div>
-        <p className="mt-6 max-w-[60ch] text-lg leading-relaxed text-ink-soft">
-          Interactive Concept Demos for fictional businesses, each designed around how its customers actually decide. Open one to
-          compare the Before and After on desktop and mobile.
-        </p>
-        <div className="mt-14">
-          <ConceptCards />
-        </div>
-      </Section>
-
-      <Section labelledBy="industries-title">
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-8">
-          <div className="lg:col-span-4">
-            <h2 id="industries-title" className="display-tight text-balance text-[2.25rem] sm:text-[2.75rem] lg:text-[2.4rem]">
-              Built for the businesses customers search for every day.
-            </h2>
-            <p className="mt-6 max-w-[44ch] text-lg leading-relaxed text-ink-soft">
-              Contractors, restaurants, salons, auto shops, and other local businesses each win customers differently. Their
-              websites should too.
+          <div className="mt-14 grid gap-10 border-t border-ink pt-8 lg:grid-cols-12">
+            <p className="font-serif text-[1.9rem] italic leading-[1.15] text-ink sm:text-[2.6rem] lg:col-span-7">
+              Most websites tell customers about a business. We want them to experience it.
+            </p>
+            <p className="max-w-[46ch] text-lg leading-relaxed text-ink-soft lg:col-span-4 lg:col-start-9">
+              A restaurant is the room, the light, the plate, and the person who greets you. A contractor is the work you can
+              stand in. We build websites that carry that across, then make the next step obvious.
             </p>
           </div>
-          <div className="lg:col-span-8">
-            <IndustriesGrid />
+        </div>
+
+        <div className="mx-auto max-w-[90rem] px-5 pb-24 sm:px-8 sm:pb-32">
+          <p className="label text-muted">Fluxline combines</p>
+          <ul className="mt-6 border-b border-ink">
+            {DISCIPLINES.map(({ word, line }) => (
+              <li key={word} className="read-in grid items-baseline gap-2 border-t border-ink py-5 sm:py-6 md:grid-cols-12 md:gap-8">
+                <span className="display text-[2.4rem] uppercase sm:text-[clamp(3rem,6.4vw,6.2rem)] md:col-span-8">{word}</span>
+                <span className="max-w-[34ch] text-[15px] leading-relaxed text-ink-soft md:col-span-4">{line}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-8 max-w-[30ch] font-serif text-2xl italic text-ink sm:text-3xl">
+            to turn real-world businesses into digital experiences.
+          </p>
+        </div>
+      </section>
+
+      <ProcessStory />
+
+      <section aria-labelledby="where-title" className="border-b border-ink">
+        <div className="mx-auto grid max-w-[90rem] gap-12 px-5 py-24 sm:px-8 sm:py-32 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-4">
+            <h2 id="where-title" className="display-tight text-[2.25rem] sm:text-[2.75rem]">
+              Built for places people walk into.
+            </h2>
+            <p className="mt-5 max-w-[40ch] text-lg leading-relaxed text-ink-soft">
+              Restaurants, contractors, salons, auto shops, and the local businesses customers choose with their eyes first.
+              Serving Long Island, Queens, and beyond.
+            </p>
           </div>
-        </div>
-      </Section>
-
-      <Section labelledBy="process-title" className="bg-surface">
-        <h2 id="process-title" className="display-tight max-w-[20ch] text-balance text-[2.25rem] sm:text-[3.25rem]">
-          A clear process, from first call to launch.
-        </h2>
-        <p className="mt-6 max-w-[56ch] text-lg leading-relaxed text-ink-soft">
-          You always know what&apos;s happening, what it costs, and what comes next.
-        </p>
-        <div className="mt-14">
-          <Process />
-        </div>
-      </Section>
-
-      <Section labelledBy="principles-title">
-        <h2 id="principles-title" className="display-tight max-w-[20ch] text-balance text-[2.25rem] sm:text-[3.25rem]">
-          How we think about business websites.
-        </h2>
-        <dl className="mt-14 grid gap-x-12 md:grid-cols-2">
-          {principles.map(({ title, body }) => (
-            <div key={title} className="border-t border-ink py-8">
-              <dt className="display-tight text-2xl text-ink">{title}</dt>
-              <dd className="mt-3 max-w-[50ch] text-[15px] leading-relaxed text-ink-soft">{body}</dd>
+          <nav aria-label="Industries and areas" className="grid gap-10 sm:grid-cols-2 lg:col-span-7 lg:col-start-6">
+            <div>
+              <p className="label text-muted">Industries</p>
+              <ul className="mt-4 border-t border-ink">
+                {industryLinks.map((link) => (
+                  <li key={link.href} className="border-b border-line-strong">
+                    <Link href={link.href} className="group flex items-center justify-between py-3 text-lg text-ink hover:text-accent">
+                      {link.label}
+                      <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
+                        →
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-          ))}
-        </dl>
-        <div className="mt-12">
-          <CheckPromo />
+            <div>
+              <p className="label text-muted">Areas</p>
+              <ul className="mt-4 border-t border-ink">
+                {locationLinks.map((link) => (
+                  <li key={link.href} className="border-b border-line-strong">
+                    <Link href={link.href} className="group flex items-center justify-between py-3 text-lg text-ink hover:text-accent">
+                      Web design, {link.label}
+                      <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
+                        →
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </nav>
         </div>
-      </Section>
+      </section>
 
-      <Section id="faq" labelledBy="faq-title" className="bg-surface">
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-8">
-          <div className="lg:col-span-4">
-            <h2 id="faq-title" className="display-tight text-[2.25rem] sm:text-[3.25rem]">
-              Common questions.
-            </h2>
-            <p className="mt-6 max-w-[34ch] text-[15px] leading-relaxed text-ink-soft">
-              Something not covered here? Email{" "}
-              <a
-                href={`mailto:${site.contact.email}`}
-                className="text-ink underline decoration-line-strong underline-offset-4 hover:decoration-ink"
-              >
-                {site.contact.email}
-              </a>
-              .
-            </p>
-          </div>
-          <div className="lg:col-span-8">
+      <section id="faq" aria-labelledby="faq-title">
+        <div className="mx-auto grid max-w-[90rem] gap-12 px-5 py-24 sm:px-8 sm:py-32 lg:grid-cols-12 lg:gap-8">
+          <h2 id="faq-title" className="display-tight text-[2.25rem] sm:text-[2.75rem] lg:col-span-4">
+            Questions owners ask.
+          </h2>
+          <div className="lg:col-span-7 lg:col-start-6">
             <FaqList faqs={faqs} />
           </div>
         </div>
-      </Section>
+      </section>
 
-      <ClosingCta />
+      <ClosingCta
+        title="Your business is an experience. Let's build the website."
+        body="Tell us about the place: what customers see when they walk in, and what you want them to do next. We'll tell you what we'd capture and how we'd build it."
+      />
     </>
   );
 }

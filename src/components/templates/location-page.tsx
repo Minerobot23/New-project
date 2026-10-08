@@ -43,8 +43,8 @@ export function LocationPageTemplate({ page }: { page: LocationPage }) {
           <ButtonLink href={CALL_PATH} size="lg" withArrow>
             {CALL_CTA_LABEL}
           </ButtonLink>
-          <ButtonLink href="/#simulator" size="lg" variant="secondary">
-            Try the Website Simulator
+          <ButtonLink href="/experiences" size="lg" variant="secondary">
+            See the experiences
           </ButtonLink>
         </div>
       </PageHeader>

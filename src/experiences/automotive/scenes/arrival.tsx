@@ -1,57 +1,42 @@
 "use client";
 
-import { useState } from "react";
-import { ContextCTA, CoverStage, ShutterReveal, originOf } from "@/experience";
-import { ASSETS } from "../assets";
+import { HeroFilm } from "@/experience";
+import { ARRIVAL_FILM } from "../assets";
 import { SHOP } from "../content";
 import { useAuto } from "../context";
 
 /**
- * The garage door lifts on a car under red light; then the visitor pulls into the bay.
- * The name and "Pull in" sit in front of the door and work from the first frame: pressing it
- * while the door is still moving simply skips the rest of the lift.
+ * The arrival film, from the driver's seat: the roller door lifts as the shop lights come on and
+ * the car rolls into the bay. It plays once by itself; "Pull in" skips straight to the bay, and
+ * the navigation works the whole time.
  */
 export function Arrival() {
-  const { go, ready } = useAuto();
-  const [skip, setSkip] = useState(false);
+  const { go } = useAuto();
 
   return (
-    <div className="absolute inset-0">
-      <ShutterReveal delay={0.5} start={ready} skip={skip}>
-        <CoverStage
-          image={ASSETS.garageDoor}
-          drift
-          preload
-          grade={
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 bg-[linear-gradient(to_top,rgba(5,6,8,0.85)_0%,transparent_45%),linear-gradient(to_bottom,rgba(5,6,8,0.6)_0%,transparent_30%)]"
-            />
-          }
-        />
-      </ShutterReveal>
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#050608]/90 to-transparent px-5 pb-[10vh] pt-24 text-bone sm:px-8 md:pb-[14vh]">
-        <p className="label text-[#ff4b3a]">{SHOP.kicker}</p>
-        <h1
-          data-scene-focus
-          tabIndex={-1}
-          className="condensed mt-3 text-[4.2rem] outline-none sm:text-[clamp(5rem,10vw,9.5rem)]"
+    <HeroFilm
+      {...ARRIVAL_FILM}
+      label="Driving up to a workshop at night as its roller door lifts, then into the lit service bay"
+      skipLabel="Pull in"
+      onFinished={() => go("bay")}
+    >
+      {({ progress }) => (
+        <div
+          className={`pointer-events-none absolute inset-x-0 top-0 bg-gradient-to-b from-[#050608]/80 to-transparent px-5 pb-24 pt-24 text-bone transition-opacity duration-1000 sm:px-8 sm:pt-28 ${
+            progress > 0.6 ? "opacity-0" : "opacity-100"
+          }`}
         >
-          {SHOP.name}
-        </h1>
-        <div className="mt-8 flex flex-wrap items-center gap-6">
-          <ContextCTA
-            onClick={(event) => {
-              setSkip(true);
-              go("bay", originOf(event.currentTarget));
-            }}
-            className="min-w-40"
+          <p className="label text-[#ff4b3a]">{SHOP.kicker}</p>
+          <h1
+            data-scene-focus
+            tabIndex={-1}
+            className="condensed mt-3 text-[4.2rem] outline-none sm:text-[clamp(5rem,10vw,9.5rem)]"
           >
-            Pull in
-          </ContextCTA>
-          <p className="text-sm text-bone/65">{SHOP.hours}</p>
+            {SHOP.name}
+          </h1>
+          <p className="mt-3 text-sm text-bone/65">{SHOP.hours}</p>
         </div>
-      </div>
-    </div>
+      )}
+    </HeroFilm>
   );
 }

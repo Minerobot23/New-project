@@ -12,6 +12,8 @@ type Props = {
   focus?: { x: number; y: number };
   /** Accessible description of what the film shows. */
   label: string;
+  /** Text on the control that leaves the film early. */
+  skipLabel?: string;
   /**
    * Called once: the film ended, was skipped, could not play, or motion is reduced.
    * `held` is true only when the landscape cut played to its last frame, which is the frame the
@@ -34,7 +36,7 @@ const START_LIMIT_MS = 9000;
  * refused playback falls back to the poster, reduced motion skips it, and a timer moves on if it
  * never starts. Everything here is driven by media events and timers, not animation frames.
  */
-export function HeroFilm({ sources, poster, focus = { x: 0.5, y: 0.5 }, label, onFinished, children }: Props) {
+export function HeroFilm({ sources, poster, focus = { x: 0.5, y: 0.5 }, label, skipLabel = "Skip intro", onFinished, children }: Props) {
   const video = useRef<HTMLVideoElement>(null);
   const finished = useRef(false);
   const onFinishedRef = useRef(onFinished);
@@ -156,7 +158,7 @@ export function HeroFilm({ sources, poster, focus = { x: 0.5, y: 0.5 }, label, o
           onClick={() => finish()}
           className="label inline-flex min-h-11 items-center gap-3 bg-bone px-5 text-stage hover:bg-white"
         >
-          Skip intro <span aria-hidden="true">→</span>
+          {skipLabel} <span aria-hidden="true">→</span>
         </button>
       </div>
     </div>

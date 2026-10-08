@@ -19,7 +19,7 @@ arrival animations with real films at the level of the Inti reference.
 - [x] Call-request form reduced to three required fields; delivery states honest
 - [x] Clear route from each demo into the real inquiry flow
 - [x] Lint, type check and production build pass
-- [ ] Three finished films, mobile exports and posters — **one of three: Maison Arden, as a CG example below the benchmark**
+- [x] Three films with mobile exports and posters — **all CG (Blender), below the photographic benchmark; accepted by the owner as the approach**
 - [x] Shared film component (`src/experience/hero-film.tsx`), used by the restaurant concept
 
 ## Decisions
@@ -37,6 +37,12 @@ arrival animations with real films at the level of the Inti reference.
 - 2026-10-08: At the owner's request the Maison Arden Blender film was rendered in full and
   integrated as a working example, knowing it is CG and below the benchmark. The dining-room scene
   now uses the film's last frame as its backdrop (hotspots repositioned) so the handover is a cut.
+- 2026-10-08: The owner approved the restaurant film and asked for the same for the other two.
+  Both were built from free CC0 assets; nothing was purchased. The automotive film has no car in
+  it (no licensed model) and fades to the existing bay photograph.
+- 2026-10-08: Published to fluxlinesolutions.com on the owner's instruction, by direct Vercel
+  production deploy. The repository has no `main`; the branch is pushed as
+  `upgrade/films-and-access`.
 - 2026-10-08: No pricing, reviews, client counts or guarantees were added or changed.
 
 ## The automotive lock-up: diagnosis
@@ -121,8 +127,8 @@ Screenshots: `docs/screenshots/before/` (live site) and `docs/screenshots/after/
 
 ## Remaining issues
 
-- Saltbox Home Co. and Halden Motor Works have no film; they keep the original intros, now
-  non-blocking. The home demo still opens on the dark dusk photograph the brief wants replaced.
+- All three films are CG and read as 3D, not as photographed places.
+- The Halden film has no car and ends in a fade to a photograph of a different-looking bay.
 - The Maison Arden film is CG and reads as 3D, not as a photographed place. The gallery and
   find-us scenes still show the stock photograph of a different room.
 - On phones the dining-room backdrop is the landscape frame cropped, so the handover from the
@@ -132,5 +138,5 @@ Screenshots: `docs/screenshots/before/` (live site) and `docs/screenshots/after/
 
 ## Next action
 
-Decide how the home and automotive films will be produced (generative service with a budget,
-licensed 3D models, or real footage); see `media/README.md`.
+Owner review of the home and automotive films on the preview, then publish. A licensed car model
+or real footage would be the next step up in quality; see `media/README.md`.

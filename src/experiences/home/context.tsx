@@ -4,9 +4,10 @@ import { createContext, useContext } from "react";
 import type { FocalPoint } from "@/experience";
 import type { AreaId } from "./content";
 
-export type SceneId = "house" | AreaId | "estimate";
+export type SceneId = "arrival" | "house" | AreaId | "estimate";
 
 export const SCENE_LABELS: Record<SceneId, string> = {
+  arrival: "Saltbox Home Co.: arriving at the house",
   house: "The house: choose what to transform",
   roof: "Roof",
   siding: "Siding",

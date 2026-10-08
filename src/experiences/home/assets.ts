@@ -1,5 +1,5 @@
 import type { ExperienceImage } from "@/experience";
-import houseDusk from "../../../public/experiences/home/arrival/house-dusk.webp";
+import houseDusk from "../../../public/experiences/home/film/arrival-end.webp";
 import roofMid from "../../../public/experiences/home/roof/mid-project.webp";
 import roofCrew from "../../../public/experiences/home/roof/crew.webp";
 import sidingMid from "../../../public/experiences/home/siding/mid-project.webp";
@@ -24,7 +24,7 @@ export const ASSETS = {
   house: {
     slot: "arrival/house-dusk",
     src: houseDusk,
-    alt: "A two-story timber house at dusk, its windows lit warm against a blue sky",
+    alt: "A two-storey house at dusk with every window lit, a front porch, a garage wing, and a lit path across the lawn (a 3D render, the last frame of the arrival film)",
     focus: { x: 0.5, y: 0.5 },
   },
   roofMid: {
@@ -117,3 +117,15 @@ export const DEFERRED_IMAGES = [
   { src: outdoorNight },
   { src: windowsFinished },
 ];
+
+/** The arrival film. See media/README.md. */
+export const ARRIVAL_FILM = {
+  sources: {
+    landscape: "/experiences/home/film/arrival-desktop.mp4",
+    portrait: "/experiences/home/film/arrival-mobile.mp4",
+  },
+  poster: {
+    landscape: "/experiences/home/film/arrival-desktop-poster.jpg",
+    portrait: "/experiences/home/film/arrival-mobile-poster.jpg",
+  },
+};

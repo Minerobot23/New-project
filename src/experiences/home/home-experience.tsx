@@ -18,6 +18,7 @@ import { AREAS, COMPANY, type AreaId } from "./content";
 import { HomeContext, SCENE_LABELS, type SceneId } from "./context";
 import { House } from "./scenes/house";
 import { Area } from "./scenes/area";
+import { Arrival } from "./scenes/arrival";
 import { Estimate } from "./scenes/estimate";
 
 const label = (id: SceneId) => SCENE_LABELS[id];
@@ -25,7 +26,7 @@ const isArea = (id: SceneId): id is AreaId => AREAS.some((area) => area.id === i
 
 /** Saltbox Home Co.: a Fluxline Interactive Concept. The house is the interface. */
 export function HomeExperience() {
-  const director = useSceneDirector<SceneId>("house");
+  const director = useSceneDirector<SceneId>("arrival");
   const scene = director.current.id;
   const shell = useExperienceShell("home", CRITICAL_IMAGES, DEFERRED_IMAGES, { inside: true });
   const [selections, setSelections] = useState<Partial<Record<AreaId, string>>>({});
@@ -49,11 +50,15 @@ export function HomeExperience() {
     [directorGo, directorBack, note, selections, visited, setChromeHidden],
   );
 
-  const render = useCallback((id: SceneId) => {
-    if (id === "house") return <House />;
-    if (id === "estimate") return <Estimate />;
-    return <Area id={id} />;
-  }, []);
+  const render = useCallback(
+    (id: SceneId) => {
+      if (id === "arrival") return <Arrival onEntered={(held) => directorGo("house", { kind: held ? "cut" : "fade" })} />;
+      if (id === "house") return <House />;
+      if (id === "estimate") return <Estimate />;
+      return <Area id={id} />;
+    },
+    [directorGo],
+  );
 
   const jump = (id: SceneId) => () => api.go(id);
   const call = () => note(`On a real site this calls ${COMPANY.name}: ${COMPANY.phoneDisplay}.`);

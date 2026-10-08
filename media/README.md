@@ -1,9 +1,8 @@
 # Film production
 
-Working files for the arrival films in the three interactive concepts. **One film exists: the
-Maison Arden arrival, rendered in Blender and playing in the restaurant concept as a working
-example.** It is computer-generated and below the photographic benchmark described here. The home
-services and automotive films are not started.
+Working files for the arrival films in the three interactive concepts. **All three films exist,
+rendered in Blender from free (CC0) assets and playing in their concepts.** They are
+computer-generated and below the photographic benchmark described here.
 
 ## The Maison Arden film
 
@@ -24,7 +23,20 @@ blender -b media/restaurant-film/maison-arden-mobile.blend --python media/render
 ffmpeg -framerate 24 -i media/restaurant-film/renders/final/frame_%04d.png -c:v libx264 -preset slow -crf 23 -pix_fmt yuv420p -movflags +faststart -an public/experiences/restaurant/film/arrival-desktop.mp4
 ```
 
-The player is `src/experience/hero-film.tsx` (shared; any concept can use it).
+The player is `src/experience/hero-film.tsx` (shared; all three concepts use it).
+
+## The other two films
+
+Same layout under `public/experiences/home/film/` and `public/experiences/automotive/film/`
+(12 s each, 288 frames). Scenes: `home-film/build_scene.py` and `auto-film/build_scene.py`, both
+built on the shared helpers in `filmkit.py`. Build and render exactly as above, with
+`saltbox-<variant>.blend` and `halden-<variant>.blend`. `probe_models.py` prints model sizes.
+
+- **Saltbox Home Co.**: up the street at dusk while the house lights come on; the last frame is
+  the house scene's backdrop, so the film hands over with a cut.
+- **Halden Motor Works**: from the driver's seat, the roller door lifts and the car rolls into an
+  empty bay. There is no car in the film (no usable licensed car model), so it fades to the
+  concept's existing photograph of a car on the bay.
 
 ## What is here
 
@@ -71,8 +83,8 @@ inference from the footage; the tool used is not known.
 | Film | Status | Why |
 | :- | :- | :- |
 | Maison Arden (restaurant) | Rendered and integrated as an example | The Blender scene gives a real continuous move from street to dining room in one physically consistent building. It reads as clean 3D, not as a photographed place. Below the benchmark. |
-| Saltbox Home Co. (home services) | Not started | No licensed house model exists in the CC0 library used here. Modelling a house from primitives would give the crude result the brief rules out. |
-| Halden Motor Works (automotive) | Not started | No usable licensed car model is available (the library's only vehicle is a car under a tarp). A believable car is the centre of this film. |
+| Saltbox Home Co. (home services) | Rendered and integrated | The house is modelled in the script (siding, roof, porch, lit rooms) and dressed with CC0 trees, plants and lamps. Reads as clean 3D. Below the benchmark. |
+| Halden Motor Works (automotive) | Rendered and integrated | Shop front, roller door, lift and bay are modelled in the script and dressed with CC0 tools and shelving. No hero car: the only vehicle is the library's car under a cover, parked to one side. Below the benchmark. |
 
 ## What would close the gap
 

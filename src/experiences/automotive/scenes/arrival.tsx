@@ -6,27 +6,31 @@ import { ASSETS } from "../assets";
 import { SHOP } from "../content";
 import { useAuto } from "../context";
 
-/** The garage door lifts on a car under red light; then the visitor pulls into the bay. */
+/**
+ * The garage door lifts on a car under red light; then the visitor pulls into the bay.
+ * The name and "Pull in" sit in front of the door and work from the first frame: pressing it
+ * while the door is still moving simply skips the rest of the lift.
+ */
 export function Arrival() {
   const { go, ready } = useAuto();
-  const [open, setOpen] = useState(false);
+  const [skip, setSkip] = useState(false);
 
   return (
-    <ShutterReveal onOpen={() => setOpen(true)} delay={0.5} start={ready}>
-      <CoverStage
-        image={ASSETS.garageDoor}
-        drift
-        preload
-        grade={
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-[linear-gradient(to_top,rgba(5,6,8,0.85)_0%,transparent_45%),linear-gradient(to_bottom,rgba(5,6,8,0.6)_0%,transparent_30%)]"
-          />
-        }
-      />
-      <div
-        className={`absolute inset-x-0 bottom-0 px-5 pb-[8vh] text-bone transition-opacity duration-1000 sm:px-8 ${open ? "opacity-100" : "opacity-0"}`}
-      >
+    <div className="absolute inset-0">
+      <ShutterReveal delay={0.5} start={ready} skip={skip}>
+        <CoverStage
+          image={ASSETS.garageDoor}
+          drift
+          preload
+          grade={
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 bg-[linear-gradient(to_top,rgba(5,6,8,0.85)_0%,transparent_45%),linear-gradient(to_bottom,rgba(5,6,8,0.6)_0%,transparent_30%)]"
+            />
+          }
+        />
+      </ShutterReveal>
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#050608]/90 to-transparent px-5 pb-[10vh] pt-24 text-bone sm:px-8 md:pb-[14vh]">
         <p className="label text-[#ff4b3a]">{SHOP.kicker}</p>
         <h1
           data-scene-focus
@@ -36,12 +40,18 @@ export function Arrival() {
           {SHOP.name}
         </h1>
         <div className="mt-8 flex flex-wrap items-center gap-6">
-          <ContextCTA onClick={(event) => go("bay", originOf(event.currentTarget))} disabled={!open} className="min-w-40">
+          <ContextCTA
+            onClick={(event) => {
+              setSkip(true);
+              go("bay", originOf(event.currentTarget));
+            }}
+            className="min-w-40"
+          >
             Pull in
           </ContextCTA>
           <p className="text-sm text-bone/65">{SHOP.hours}</p>
         </div>
       </div>
-    </ShutterReveal>
+    </div>
   );
 }

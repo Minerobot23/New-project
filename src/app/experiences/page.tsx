@@ -70,7 +70,7 @@ export default function ExperiencesPage() {
         <header className="mx-auto max-w-[90rem] px-5 pb-12 pt-14 sm:px-8 sm:pt-20">
           <p className="label text-bone/55">Experiences</p>
           <h1 className="display mt-6 max-w-[15ch] text-[2.6rem] uppercase sm:text-[clamp(3.25rem,6.6vw,6.4rem)]">
-            Projects open as places, not portfolio cards.
+            Explore what your website could feel like.
           </h1>
           <p className="mt-8 max-w-[52ch] text-lg leading-relaxed text-bone/70">
             Concepts are labeled as concepts: fictional businesses built to show what we make. Client experiences will appear here

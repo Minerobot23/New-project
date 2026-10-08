@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import {
   ConceptNote,
@@ -71,8 +72,16 @@ export function HomeExperience() {
               <span className="label mt-1 block text-[10px] text-bone/55">{COMPANY.kicker}</span>
             </button>
           }
-          credit={<p className="label text-bone/50">Fluxline Interactive Concept</p>}
-          exitHref="/#after"
+          credit={
+            <p className="label text-bone/60">
+              Fluxline interactive concept ·{" "}
+              <Link href="/request-a-call?from=home" className="border-b border-bone/50 text-bone hover:border-bone">
+                Want this for your business?
+              </Link>
+            </p>
+          }
+          exitHref="/#demos"
+          exitLabel="All demos"
           items={[
             ...AREAS.map((area) => ({ id: area.id, label: area.title, onSelect: jump(area.id), active: scene === area.id })),
             { id: "call", label: "Call", onSelect: call },
@@ -100,6 +109,11 @@ export function HomeExperience() {
               onSelect: jump(area.id),
             })),
             { id: "call", label: `Call ${COMPANY.phoneDisplay}`, onSelect: call },
+            {
+              id: "fluxline",
+              label: "Want this for your business?",
+              onSelect: () => window.location.assign("/request-a-call?from=home"),
+            },
           ]}
           sticky={scene !== "estimate" ? { id: "estimate", label: "Estimate", onSelect: jump("estimate") } : undefined}
         />

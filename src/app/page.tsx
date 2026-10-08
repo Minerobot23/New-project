@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FluxlineIntro } from "@/components/home/fluxline-intro";
 import { EnvironmentChooser } from "@/components/home/environments";
 import { ProcessStory } from "@/components/home/process-story";
 import { ClosingCta } from "@/components/shared/closing-cta";
@@ -11,14 +10,12 @@ import { industryLinks, locationLinks } from "@/lib/site";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
-/** What Fluxline brings together, told as one sentence rather than six cards. */
+/** What a Fluxline project includes. */
 const DISCIPLINES = [
-  { word: "Strategy", line: "What the business needs the website to do, and for whom." },
-  { word: "Design", line: "A visual world that belongs to this business and no other." },
-  { word: "Photography", line: "Shot on location, planned scene by scene." },
-  { word: "Development", line: "Fast, responsive, and built to be found." },
-  { word: "Interaction", line: "Rooms to walk into, details to discover, choices to make." },
-  { word: "Conversion", line: "The call, the table, the quote: built into the experience." },
+  { word: "Plan", line: "What the business needs the website to do, and for whom." },
+  { word: "Capture", line: "Photography and film of the place, planned scene by scene." },
+  { word: "Build", line: "Fast, responsive, and designed for the phone first." },
+  { word: "Launch", line: "Calls, bookings, and quote requests built in, with tracking so you can see what works." },
 ];
 
 const faqs: Faq[] = [
@@ -60,22 +57,16 @@ export default function HomePage() {
   return (
     <>
       <JsonLd data={[organizationSchema(), websiteSchema()]} />
-      <FluxlineIntro />
-      {/* Without JavaScript the opening can't play; go straight to the page. */}
-      <noscript>
-        <style>{"[data-intro]{display:none!important}html{overflow:auto!important}"}</style>
-      </noscript>
-
       <EnvironmentChooser />
 
       <section id="after" aria-labelledby="after-title" className="scroll-mt-16">
         <div className="mx-auto max-w-[90rem] px-5 pb-20 pt-24 sm:px-8 sm:pb-28 sm:pt-36">
           <h2 id="after-title" className="display max-w-[13ch] text-[2.75rem] uppercase sm:text-[clamp(3.5rem,7.4vw,7.2rem)]">
-            You just experienced what we build.
+            A website that shows the place, then gets the call.
           </h2>
           <div className="mt-14 grid gap-10 border-t border-ink pt-8 lg:grid-cols-12">
             <p className="font-serif text-[1.9rem] italic leading-[1.15] text-ink sm:text-[2.6rem] lg:col-span-7">
-              Most websites tell customers about a business. We want them to experience it.
+              Most websites tell customers about a business. We help them picture being there.
             </p>
             <p className="max-w-[46ch] text-lg leading-relaxed text-ink-soft lg:col-span-4 lg:col-start-9">
               A restaurant is the room, the light, the plate, and the person who greets you. A contractor is the work you can
@@ -85,7 +76,7 @@ export default function HomePage() {
         </div>
 
         <div className="mx-auto max-w-[90rem] px-5 pb-24 sm:px-8 sm:pb-32">
-          <p className="label text-muted">Fluxline combines</p>
+          <p className="label text-muted">What a project includes</p>
           <ul className="mt-6 border-b border-ink">
             {DISCIPLINES.map(({ word, line }) => (
               <li key={word} className="read-in grid items-baseline gap-2 border-t border-ink py-5 sm:py-6 md:grid-cols-12 md:gap-8">
@@ -94,9 +85,6 @@ export default function HomePage() {
               </li>
             ))}
           </ul>
-          <p className="mt-8 max-w-[30ch] font-serif text-2xl italic text-ink sm:text-3xl">
-            to turn real-world businesses into digital experiences.
-          </p>
         </div>
       </section>
 

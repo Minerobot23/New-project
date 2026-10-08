@@ -42,3 +42,10 @@ next-env.d.ts
 
 # allow the documented template
 !.env.example
+
+# Film production: downloads, frame sequences, and backups are reproducible (see media/README.md)
+media/assets/
+media/**/renders/
+*.blend1
+.playwright-mcp/
+media/**/*.blend

@@ -15,10 +15,22 @@ export function runSceneTransition(
   options: { reduced: boolean; lowPower: boolean },
 ): Promise<void> {
   return new Promise((resolve) => {
+    let settled = false;
+    let timeline: gsap.core.Timeline | undefined;
+    // Animations need animation frames. A background tab, a throttled device, or an embedded
+    // browser may never deliver them; navigation must not wait on that. Longest move is 2.1s.
+    const guard = window.setTimeout(() => finish(), TRANSITION_LIMIT_MS);
     const finish = () => {
-      gsap.set(incoming, {
-        clearProps: "transform,opacity,filter,transformOrigin",
-      });
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(guard);
+      timeline?.kill();
+      // Set the end state directly rather than through the animation engine, so it holds even
+      // when no animation frame is ever delivered.
+      for (const property of ["transform", "opacity", "filter", "transform-origin"]) {
+        incoming.style.removeProperty(property);
+      }
+      if (outgoing) outgoing.style.opacity = "0";
       resolve();
     };
 
@@ -29,7 +41,7 @@ export function runSceneTransition(
 
     // Reduced motion: every move becomes a short crossfade.
     if (options.reduced) {
-      gsap
+      timeline = gsap
         .timeline({ onComplete: finish })
         .fromTo(incoming, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "none" })
         .to(outgoing, { opacity: 0, duration: 0.25, ease: "none" }, 0);
@@ -39,6 +51,7 @@ export function runSceneTransition(
     // Blur on full-screen layers is expensive on phones; there the move relies on scale and fade alone.
     const blur = (px: number) => (options.lowPower ? "blur(0px)" : `blur(${px}px)`);
     const tl = gsap.timeline({ onComplete: finish });
+    timeline = tl;
 
     if (transition.kind === "travel") {
       const origin = toOrigin(transition.origin);
@@ -108,6 +121,9 @@ export function runSceneTransition(
     );
   });
 }
+
+/** Upper bound on any scene change, animated or not. */
+const TRANSITION_LIMIT_MS = 2600;
 
 const toOrigin = (point: FocalPoint) => `${(point.x * 100).toFixed(2)}% ${(point.y * 100).toFixed(2)}%`;
 

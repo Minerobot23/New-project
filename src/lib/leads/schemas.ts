@@ -4,6 +4,7 @@ import {
   businessEmail,
   businessName,
   choice,
+  emailOptional,
   message,
   optionalChoice,
   personName,
@@ -47,15 +48,18 @@ export const PREFERRED_TIME_LABELS: Record<(typeof PREFERRED_TIMES)[number], str
   evening: "Evening",
 };
 
+/**
+ * A call request needs three things: who to ask for, the business, and a number to call.
+ * Everything else helps us prepare but is optional.
+ */
 export const requestCallSchema = z.object({
-  firstName: personName("First name"),
-  lastName: personName("Last name"),
+  name: personName("Name"),
   businessName,
-  website: websiteOptional,
-  email: businessEmail,
   phone: phoneRequired,
-  businessType: choice(BUSINESS_TYPES, "Please choose your type of business."),
-  projectType: choice(PROJECT_TYPES, "Please choose what you're looking for."),
+  email: emailOptional,
+  website: websiteOptional,
+  businessType: optionalChoice(BUSINESS_TYPES, "Please choose a type of business from the list."),
+  projectType: optionalChoice(PROJECT_TYPES, "Please choose one of the options."),
   preferredTime: optionalChoice(PREFERRED_TIMES, "Please choose morning, afternoon, or evening."),
   message,
   attribution: attributionSchema,
@@ -73,6 +77,13 @@ export const websiteCheckSchema = z.object({
 
 export type RequestCall = z.output<typeof requestCallSchema>;
 export type WebsiteCheck = z.output<typeof websiteCheckSchema>;
+
+/** Which demo a visitor came from, mapped to the business type we pre-select (they can change it). */
+export const DEMO_BUSINESS_TYPE: Record<string, (typeof BUSINESS_TYPES)[number]> = {
+  restaurant: "restaurant",
+  home: "home-services",
+  automotive: "automotive",
+};
 
 export const HONEYPOT_FIELD = "company_url";
 export const STARTED_AT_FIELD = "startedAt";

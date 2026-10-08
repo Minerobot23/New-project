@@ -8,9 +8,10 @@ export type PreloadImage = { src: StaticImageData; sizes?: string };
 /**
  * Warms the browser cache with the exact responsive candidates next/image will request
  * (same srcset and sizes), and reports real progress. Resolves anyway after `timeout`
- * so a slow connection never traps the visitor behind the loader.
+ * so a slow or failed image never traps the visitor behind the loader. Every wait here is a
+ * plain timer, never an animation callback, so it also resolves in a tab that is not painting.
  */
-export function useAssetPreload(images: PreloadImage[], { minDuration = 1400, timeout = 6000 } = {}) {
+export function useAssetPreload(images: PreloadImage[], { minDuration = 300, timeout = 2500 } = {}) {
   const [progress, setProgress] = useState(0);
   const [done, setDone] = useState(false);
   const started = useRef(false);

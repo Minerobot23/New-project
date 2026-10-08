@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import {
   ConceptNote,
@@ -58,7 +59,8 @@ export function AutoExperience() {
   const toBay = () => scene !== "bay" && api.go("bay");
   const call = () => note(`On a real site this calls ${SHOP.name}: ${SHOP.phoneDisplay}.`);
   const directions = () => note("On a real site this opens directions to the shop in Maps.");
-  const chromeHidden = shell.showLoader || shell.chromeHidden || scene === "arrival";
+  // Services, booking, and the way out are available from the first frame, including during the door intro.
+  const chromeHidden = shell.showLoader || shell.chromeHidden;
 
   return (
     <AutoContext.Provider value={api}>
@@ -72,8 +74,16 @@ export function AutoExperience() {
               <span className="label mt-1 block text-[10px] text-bone/55">{SHOP.kicker}</span>
             </button>
           }
-          credit={<p className="label text-bone/50">Fluxline Interactive Concept</p>}
-          exitHref="/#after"
+          credit={
+            <p className="label text-bone/60">
+              Fluxline interactive concept ·{" "}
+              <Link href="/request-a-call?from=automotive" className="border-b border-bone/50 text-bone hover:border-bone">
+                Want this for your business?
+              </Link>
+            </p>
+          }
+          exitHref="/#demos"
+          exitLabel="All demos"
           items={[
             ...SERVICES.map((service) => ({
               id: service.id,
@@ -108,6 +118,11 @@ export function AutoExperience() {
             })),
             { id: "call", label: `Call ${SHOP.phoneDisplay}`, onSelect: call },
             { id: "directions", label: "Directions", onSelect: directions },
+            {
+              id: "fluxline",
+              label: "Want this for your business?",
+              onSelect: () => window.location.assign("/request-a-call?from=automotive"),
+            },
           ]}
           sticky={scene !== "schedule" ? { id: "schedule", label: "Schedule", onSelect: jump("schedule") } : undefined}
         />

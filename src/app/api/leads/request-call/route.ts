@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     schema: requestCallSchema,
     isSpam: (lead) => tooManyLinks(lead.message),
     buildEmail: (lead, recipients) => {
-      const name = `${lead.firstName} ${lead.lastName}`;
+      const name = lead.name;
       return buildLeadEmail({
         heading: "NEW FLUXLINE WEBSITE LEAD",
         subject: `NEW FLUXLINE WEBSITE LEAD — ${lead.businessName}`,
@@ -24,14 +24,16 @@ export async function POST(request: NextRequest) {
         replyTo: lead.email,
         recipients,
         attribution: lead.attribution,
-        isTest: looksLikeTest(lead.firstName, lead.lastName, lead.businessName),
+        isTest: looksLikeTest(lead.name, lead.businessName),
         rows: [
           { label: "Name", value: name },
           { label: "Business", value: lead.businessName },
-          { label: "Business Type", value: BUSINESS_TYPE_LABELS[lead.businessType] },
-          { label: "Looking For", value: PROJECT_TYPE_LABELS[lead.projectType] },
+          { label: "Business Type", value: lead.businessType ? BUSINESS_TYPE_LABELS[lead.businessType] : "Not specified" },
+          { label: "Looking For", value: lead.projectType ? PROJECT_TYPE_LABELS[lead.projectType] : "Not specified" },
           { label: "Website", value: lead.website ?? "None provided", href: lead.website },
-          { label: "Email", value: lead.email, href: mailtoHref(lead.email) },
+          lead.email
+            ? { label: "Email", value: lead.email, href: mailtoHref(lead.email) }
+            : { label: "Email", value: "None provided" },
           { label: "Phone", value: lead.phone, href: telHref(lead.phone) },
           {
             label: "Preferred Time",

@@ -96,8 +96,7 @@ section[id] {
 }
 /* On dark, cinematic surfaces the ring is bone, not blue. */
 .bg-stage :focus-visible,
-[data-tone="dark"] :focus-visible,
-[data-intro] :focus-visible {
+[data-tone="dark"] :focus-visible {
   outline-color: var(--color-bone);
 }
 

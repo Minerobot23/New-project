@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import {
   ConceptNote,
@@ -51,7 +52,7 @@ export function RestaurantExperience() {
   const viaHome = useSyncExternalStore(subscribeNoop, readViaHome, () => false);
   const director = useSceneDirector<SceneId>("arrival");
   const { progress, done } = useAssetPreload(CRITICAL_IMAGES, {
-    minDuration: 1600,
+    minDuration: 300,
   });
   const [loaderGone, setLoaderGone] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -67,7 +68,7 @@ export function RestaurantExperience() {
 
   useEffect(() => {
     if (!done) return;
-    const timer = window.setTimeout(() => setLoaderGone(true), 700);
+    const timer = window.setTimeout(() => setLoaderGone(true), 450);
     return () => window.clearTimeout(timer);
   }, [done]);
 
@@ -129,24 +130,26 @@ export function RestaurantExperience() {
 
         <ExperienceNavigation
           brand={
-            inside ? (
-              <button
-                type="button"
-                onClick={() => scene !== "interior" && api.back()}
-                className="font-serif text-2xl leading-none"
-              >
-                {RESTAURANT.name}
-              </button>
-            ) : (
-              <p className="label pt-1 text-bone/60">Fluxline Interactive Concept</p>
-            )
+            <button
+              type="button"
+              onClick={() => (inside ? scene !== "interior" && api.back() : api.go("interior"))}
+              className="font-serif text-2xl leading-none"
+            >
+              {RESTAURANT.name}
+            </button>
           }
-          credit={inside ? <p className="label text-bone/50">Fluxline Interactive Concept</p> : undefined}
-          exitHref="/#after"
-          exitLabel="Exit"
+          credit={
+            <p className="label text-bone/60">
+              Fluxline interactive concept ·{" "}
+              <Link href="/request-a-call?from=restaurant" className="border-b border-bone/50 text-bone hover:border-bone">
+                Want this for your business?
+              </Link>
+            </p>
+          }
+          exitHref="/#demos"
+          exitLabel="All demos"
           items={
-            inside
-              ? [
+            [
                   {
                     id: "menu",
                     label: "Menu",
@@ -189,10 +192,9 @@ export function RestaurantExperience() {
                     onSelect: () => api.note(`On a real site this calls the restaurant: ${RESTAURANT.phoneDisplay}.`),
                   },
                 ]
-              : []
           }
           action={
-            inside && scene !== "reserve" ? (
+            scene !== "reserve" ? (
               <ContextCTA onClick={jump("reserve")} className="min-h-11">
                 Reserve
               </ContextCTA>
@@ -202,7 +204,7 @@ export function RestaurantExperience() {
         />
 
         <MobileExperienceControls
-          hidden={!inside || showLoader || chromeHidden}
+          hidden={showLoader || chromeHidden}
           primary={[
             { id: "menu", label: "Menu", onSelect: jump("menu") },
             { id: "bar", label: "Bar", onSelect: jump("bar") },
@@ -211,7 +213,7 @@ export function RestaurantExperience() {
             {
               id: "interior",
               label: "The dining room",
-              onSelect: () => scene !== "interior" && api.back(),
+              onSelect: () => (inside ? scene !== "interior" && api.back() : api.go("interior")),
             },
             {
               id: "private",
@@ -229,6 +231,11 @@ export function RestaurantExperience() {
               id: "call",
               label: `Call ${RESTAURANT.phoneDisplay}`,
               onSelect: () => api.note(`On a real site this calls the restaurant: ${RESTAURANT.phoneDisplay}.`),
+            },
+            {
+              id: "fluxline",
+              label: "Want this for your business?",
+              onSelect: () => window.location.assign("/request-a-call?from=restaurant"),
             },
           ]}
           sticky={scene !== "reserve" ? { id: "reserve", label: "Reserve", onSelect: jump("reserve") } : undefined}

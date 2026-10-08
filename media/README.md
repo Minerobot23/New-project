@@ -1,8 +1,30 @@
 # Film production
 
-Working files for the arrival films in the three interactive concepts. **No film is finished or
-integrated yet.** This folder holds the reference analysis, one motion preview, and the scripts that
-made it, so the decision about how to produce the films can be made with evidence.
+Working files for the arrival films in the three interactive concepts. **One film exists: the
+Maison Arden arrival, rendered in Blender and playing in the restaurant concept as a working
+example.** It is computer-generated and below the photographic benchmark described here. The home
+services and automotive films are not started.
+
+## The Maison Arden film
+
+| File (under `public/experiences/restaurant/film/`) | What it is |
+| :- | :- |
+| `arrival-desktop.mp4` | 1600x900, 24 fps, 14 s, H.264, no audio, plays once |
+| `arrival-mobile.mp4` | 720x1280 portrait cut with its own camera path, same length |
+| `arrival-desktop-poster.jpg`, `arrival-mobile-poster.jpg` | First frame of each cut, shown while the film loads |
+| `arrival-end.webp` | Last desktop frame; the dining-room scene uses it as its backdrop so the film hands over without a jump |
+
+Final render and encode, from the repository root (the two renders take about 17 and 11 minutes
+on an RTX 4080 SUPER; frames are resumable):
+
+```
+blender -b --factory-startup --python media/restaurant-film/build_scene.py -- --variant mobile
+blender -b media/restaurant-film/maison-arden-desktop.blend --python media/render.py -- --mode final --out media/restaurant-film/renders
+blender -b media/restaurant-film/maison-arden-mobile.blend --python media/render.py -- --mode final --out media/restaurant-film/renders-mobile
+ffmpeg -framerate 24 -i media/restaurant-film/renders/final/frame_%04d.png -c:v libx264 -preset slow -crf 23 -pix_fmt yuv420p -movflags +faststart -an public/experiences/restaurant/film/arrival-desktop.mp4
+```
+
+The player is `src/experience/hero-film.tsx` (shared; any concept can use it).
 
 ## What is here
 
@@ -27,8 +49,6 @@ blender -b media/restaurant-film/maison-arden-desktop.blend --python media/rende
 blender -b media/restaurant-film/maison-arden-desktop.blend --python media/render.py -- --mode preview --step 6 --scale 50 --samples 48 --out media/restaurant-film/renders
 ```
 
-A `mobile` variant (720x1280, its own camera path) is defined in the script but has not been rendered.
-
 ## Reference: what the benchmark film does
 
 The reference site's hero is one continuous 19.2 s take at 1920x1080 and 24 fps (H.264, about
@@ -50,7 +70,7 @@ inference from the footage; the tool used is not known.
 
 | Film | Status | Why |
 | :- | :- | :- |
-| Maison Arden (restaurant) | Preview only | The Blender scene gives a real continuous move from street to dining room in one physically consistent building. It reads as clean 3D previsualization, not as a photographed place. Below the benchmark. |
+| Maison Arden (restaurant) | Rendered and integrated as an example | The Blender scene gives a real continuous move from street to dining room in one physically consistent building. It reads as clean 3D, not as a photographed place. Below the benchmark. |
 | Saltbox Home Co. (home services) | Not started | No licensed house model exists in the CC0 library used here. Modelling a house from primitives would give the crude result the brief rules out. |
 | Halden Motor Works (automotive) | Not started | No usable licensed car model is available (the library's only vehicle is a car under a tarp). A believable car is the centre of this film. |
 

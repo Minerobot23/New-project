@@ -49,3 +49,4 @@ media/**/renders/
 *.blend1
 .playwright-mcp/
 media/**/*.blend
+media/**/renders-mobile/

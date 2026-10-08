@@ -98,7 +98,7 @@ export function RestaurantExperience() {
     (id: SceneId) => {
       switch (id) {
         case "arrival":
-          return <Arrival onEntered={() => directorGo("interior", { kind: "cut" })} />;
+          return <Arrival onEntered={(held) => directorGo("interior", { kind: held ? "cut" : "fade" })} />;
         case "interior":
           return <Interior />;
         case "bar":

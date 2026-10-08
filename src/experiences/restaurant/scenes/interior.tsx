@@ -1,22 +1,23 @@
 "use client";
 
-import { CoverStage, Hotspot } from "@/experience";
+import { CoverStage, Hotspot, useReducedMotion } from "@/experience";
 import { ASSETS } from "../assets";
 import { RESTAURANT } from "../content";
 import { useRestaurant } from "../context";
 
 /**
  * Scene 04: inside. The room is the interface; each hotspot sits on the real object it leads to.
- * Positions are fractions of the photograph, so they follow the crop on any screen.
+ * The backdrop is the last frame of the arrival film, so the film hands over without a jump.
+ * Positions are fractions of that frame, so they follow the crop on any screen.
  */
 export function Interior() {
   const { go } = useRestaurant();
+  const reduced = useReducedMotion();
 
   return (
     <>
       <CoverStage
-        image={ASSETS.mainRoom}
-        drift
+        image={ASSETS.arrivalEnd}
         parallax
         pan
         grade={
@@ -26,24 +27,18 @@ export function Interior() {
           />
         }
       >
-        <Hotspot at={{ x: 0.13, y: 0.27 }} label="Menu" hint="Tonight's menu" onSelect={(o) => go("menu", o)} index={0} />
+        <Hotspot at={{ x: 0.2, y: 0.51 }} label="Menu" hint="Tonight's menu" onSelect={(o) => go("menu", o)} index={0} />
         <Hotspot
-          at={{ x: 0.42, y: 0.17 }}
+          at={{ x: 0.826, y: 0.4 }}
           label="Gallery"
           hint="The room by night"
           onSelect={(o) => go("gallery", o)}
+          align="left"
           index={1}
         />
+        <Hotspot at={{ x: 0.4, y: 0.37 }} label="The bar" hint="Cocktails and wine" onSelect={(o) => go("bar", o)} index={2} />
         <Hotspot
-          at={{ x: 0.81, y: 0.44 }}
-          label="The bar"
-          hint="Cocktails and wine"
-          onSelect={(o) => go("bar", o)}
-          align="left"
-          index={2}
-        />
-        <Hotspot
-          at={{ x: 0.93, y: 0.33 }}
+          at={{ x: 0.94, y: 0.28 }}
           label="Find us"
           hint="Hours and directions"
           onSelect={(o) => go("visit", o)}
@@ -51,15 +46,22 @@ export function Interior() {
           index={3}
         />
         <Hotspot
-          at={{ x: 0.06, y: 0.53 }}
+          at={{ x: 0.06, y: 0.4 }}
           label="Private dining"
           hint="Through here: the Salon"
           onSelect={(o) => go("private", o)}
           index={4}
         />
-        <Hotspot at={{ x: 0.55, y: 0.74 }} label="Reserve" hint="Book this table" onSelect={(o) => go("reserve", o)} index={5} />
         <Hotspot
-          at={{ x: 0.9, y: 0.71 }}
+          at={{ x: 0.695, y: 0.61 }}
+          label="Reserve"
+          hint="Book this table"
+          onSelect={(o) => go("reserve", o)}
+          align="left"
+          index={5}
+        />
+        <Hotspot
+          at={{ x: 0.92, y: 0.76 }}
           label="Tonight's plate"
           hint="From the kitchen"
           onSelect={(o) => go("dish", o)}
@@ -80,6 +82,15 @@ export function Interior() {
           Select a light in the room, or use the menu below.
         </p>
         <p className="arrive-in mt-3 text-sm text-bone/70 [animation-delay:300ms] md:hidden">Drag to look around. Tap a light.</p>
+        {!reduced && (
+          <button
+            type="button"
+            onClick={() => go("arrival")}
+            className="label pointer-events-auto mt-4 inline-flex min-h-11 items-center text-bone/80 underline decoration-bone/40 underline-offset-4 hover:text-bone hover:decoration-bone"
+          >
+            Replay the arrival film
+          </button>
+        )}
       </div>
     </>
   );

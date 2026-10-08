@@ -1,6 +1,6 @@
 # PROJECT_STATE
 
-Last updated: 2026-10-08 · Branch: `upgrade/films-and-access` (not pushed, not deployed)
+Last updated: 2026-10-08 · Branch: `upgrade/films-and-access` (not pushed; deployed to Vercel previews only, production untouched)
 
 ## Objective
 
@@ -19,8 +19,8 @@ arrival animations with real films at the level of the Inti reference.
 - [x] Call-request form reduced to three required fields; delivery states honest
 - [x] Clear route from each demo into the real inquiry flow
 - [x] Lint, type check and production build pass
-- [ ] Three finished films, mobile exports and posters — **not delivered, see below**
-- [ ] Shared film component — **not built; nothing to play yet**
+- [ ] Three finished films, mobile exports and posters — **one of three: Maison Arden, as a CG example below the benchmark**
+- [x] Shared film component (`src/experience/hero-film.tsx`), used by the restaurant concept
 
 ## Decisions
 
@@ -34,6 +34,9 @@ arrival animations with real films at the level of the Inti reference.
   plain timer behind it and writes its end state directly to the element.
 - 2026-10-08: Film production stopped at a preview. The brief says to report rather than ship a
   substantially weaker substitute, and the preview is below the benchmark. See `media/README.md`.
+- 2026-10-08: At the owner's request the Maison Arden Blender film was rendered in full and
+  integrated as a working example, knowing it is CG and below the benchmark. The dining-room scene
+  now uses the film's last frame as its backdrop (hotspots repositioned) so the handover is a cut.
 - 2026-10-08: No pricing, reviews, client counts or guarantees were added or changed.
 
 ## The automotive lock-up: diagnosis
@@ -89,6 +92,22 @@ arrival animations with real films at the level of the Inti reference.
 | Keyboard, homepage | skip link, header, then both hero actions, all with a focus ring |
 | Console | only the Vercel analytics script, which is not served locally |
 
+Film checks (same build, restaurant concept):
+
+| Check | Result |
+| :- | :- |
+| ffprobe, desktop | H.264 yuv420p, 1600x900, 24 fps, 336 frames, 14.0 s, 3.4 MB, no audio |
+| ffprobe, mobile | H.264 yuv420p, 720x1280, 336 frames, 14.0 s, 2.4 MB, no audio |
+| Source chosen | 390 and 768 wide load only the mobile cut; 1440 loads only the desktop cut |
+| Autoplay, pause, resume | plays muted; Pause holds the time; Play resumes |
+| Plays to the end | dining room appears with all seven hotspots; no video element left |
+| Skip, replay | Skip reaches the dining room; "Replay the arrival film" restarts it |
+| Menu opened mid-film | menu opens and is still open after the film's length has passed |
+| Reduced motion | no film; dining room at once; replay link hidden |
+| Film file blocked | falls through to the dining room |
+| No animation frames | film plays and hands over (media events and timers only) |
+| Overflow at 390, 768, 1440 | none |
+
 Screenshots: `docs/screenshots/before/` (live site) and `docs/screenshots/after/` (local build).
 
 ## Not verified
@@ -102,17 +121,16 @@ Screenshots: `docs/screenshots/before/` (live site) and `docs/screenshots/after/
 
 ## Remaining issues
 
-- The three films, their mobile exports and posters are not produced. See `media/README.md` for
-  the preview, the asset audit and the options that need a decision.
-- The restaurant and automotive demos still use the original CSS and GSAP intros, now
+- Saltbox Home Co. and Halden Motor Works have no film; they keep the original intros, now
   non-blocking. The home demo still opens on the dark dusk photograph the brief wants replaced.
-- The shared film component (poster, pause, skip, replay, fallbacks, per-demo loading) is not
-  built, because there is no film to drive it.
+- The Maison Arden film is CG and reads as 3D, not as a photographed place. The gallery and
+  find-us scenes still show the stock photograph of a different room.
+- On phones the dining-room backdrop is the landscape frame cropped, so the handover from the
+  portrait film is a short fade, not a cut.
 - On phones the demo panels start at the bottom edge of the first screen rather than inside it.
 - The page title still reads "Websites Built to Turn Visitors Into Customers"; left unchanged.
 
 ## Next action
 
-Decide how the films will be produced (generative service with a budget, licensed 3D models, or
-real footage). Review `media/restaurant-film/preview-motion.mp4` first. Then review this branch
-locally with `npm run build && npx next start -p 3210` before any deployment.
+Decide how the home and automotive films will be produced (generative service with a budget,
+licensed 3D models, or real footage); see `media/README.md`.

@@ -41,7 +41,7 @@ export default function ResourcesPage() {
                     <li key={article.slug}>
                       <Link
                         href={`/resources/${article.slug}`}
-                        className="group flex h-full flex-col overflow-hidden rounded-xl border border-line bg-surface transition-colors hover:border-ink/30"
+                        className="group flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-line bg-surface transition-colors hover:border-ink/30"
                       >
                         {cover && (
                           <span className="relative block aspect-[16/9] overflow-hidden bg-sunken">

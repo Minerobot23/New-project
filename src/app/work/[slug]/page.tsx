@@ -66,7 +66,7 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
           </section>
         )}
         {study.testimonial && (
-          <figure className="rounded-xl border border-line bg-surface p-6">
+          <figure className="rounded-[1.25rem] border border-line bg-surface p-6">
             <blockquote className="text-lg text-ink">&ldquo;{study.testimonial.quote}&rdquo;</blockquote>
             <figcaption className="mt-3 text-sm">
               {study.testimonial.name}

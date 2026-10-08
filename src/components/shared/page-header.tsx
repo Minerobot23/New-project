@@ -23,9 +23,13 @@ export function PageHeader({ crumbs, eyebrow, title, intro, children, image }: P
       >
         <div>
           <Breadcrumbs items={crumbs} />
-          {eyebrow && <p className="mt-8 text-xs font-semibold uppercase tracking-[0.14em] text-accent">{eyebrow}</p>}
+          {eyebrow && (
+            <p className="mt-8 inline-flex rounded-full px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-accent ring-1 ring-accent/20">
+              {eyebrow}
+            </p>
+          )}
           <h1
-            className={`${eyebrow ? "mt-3" : "mt-8"} max-w-4xl text-balance text-4xl font-semibold leading-[1.06] tracking-tight text-ink sm:text-5xl`}
+            className={`${eyebrow ? "mt-5" : "mt-8"} max-w-4xl text-balance text-[2.5rem] font-semibold leading-[1.04] tracking-[-0.035em] text-ink sm:text-[3.5rem]`}
           >
             {title}
           </h1>
@@ -33,7 +37,8 @@ export function PageHeader({ crumbs, eyebrow, title, intro, children, image }: P
           {children}
         </div>
         {image && (
-          <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-sunken lg:aspect-[4/4.2]">
+          <div className="bezel">
+          <div className="relative aspect-[16/10] overflow-hidden bg-sunken lg:aspect-[4/4.2]">
             <Image
               src={image.src}
               alt={image.alt}
@@ -43,6 +48,7 @@ export function PageHeader({ crumbs, eyebrow, title, intro, children, image }: P
               loading="eager"
               className="object-cover"
             />
+          </div>
           </div>
         )}
       </Container>

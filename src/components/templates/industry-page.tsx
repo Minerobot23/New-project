@@ -56,8 +56,12 @@ export function IndustryPageTemplate({ page }: { page: IndustryPage }) {
 
       <section aria-labelledby="journey-title" className="py-16 sm:py-20">
         <Container className="max-w-7xl">
-          <SectionHeading id="journey-title" eyebrow="The customer journey" title={page.journey.title} intro={<p>{page.journey.intro}</p>} />
-          <ol className="mt-10 grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-5">
+          <SectionHeading id="journey-title" title={page.journey.title} intro={<p>{page.journey.intro}</p>} />
+          <ol
+            className={`mt-10 grid gap-px overflow-hidden rounded-[1.25rem] border border-line bg-line sm:grid-cols-2 ${
+              page.journey.steps.length === 4 ? "lg:grid-cols-4" : page.journey.steps.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-5"
+            }`}
+          >
             {page.journey.steps.map((step, index) => (
               <li key={step.label} className="bg-surface p-5">
                 <span className="font-mono text-xs font-medium text-accent">{String(index + 1).padStart(2, "0")}</span>
@@ -71,10 +75,10 @@ export function IndustryPageTemplate({ page }: { page: IndustryPage }) {
 
       <section aria-labelledby="problems-title" className="border-y border-line bg-surface py-16 sm:py-20">
         <Container className="max-w-7xl">
-          <SectionHeading id="problems-title" eyebrow="Common website problems" title="What usually gets in the way." />
+          <SectionHeading id="problems-title" title="What usually gets in the way." />
           <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {page.problems.map((problem) => (
-              <li key={problem.title} className="rounded-xl border border-line bg-paper p-5">
+              <li key={problem.title} className="rounded-[1.25rem] border border-line bg-paper p-5">
                 <h3 className="text-[15px] font-semibold text-ink">{problem.title}</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">{problem.body}</p>
               </li>
@@ -96,8 +100,8 @@ export function IndustryPageTemplate({ page }: { page: IndustryPage }) {
       <section aria-labelledby="build-title" className="py-16 sm:py-20">
         <Container className="grid max-w-7xl gap-12 lg:grid-cols-[1fr_2fr] lg:gap-16">
           <div>
-            <SectionHeading id="build-title" eyebrow="What to build" title="Recommended website features." />
-            <div className="mt-8 rounded-xl border border-line bg-surface p-5">
+            <SectionHeading id="build-title" title="Recommended website features." />
+            <div className="mt-8 rounded-[1.25rem] border border-line bg-surface p-5">
               <p className="flex items-center gap-2 text-sm font-semibold text-ink">
                 <Target aria-hidden="true" className="size-4 text-accent" /> {page.conversions.title}
               </p>
@@ -113,7 +117,7 @@ export function IndustryPageTemplate({ page }: { page: IndustryPage }) {
           </div>
           <ul className="grid gap-4 sm:grid-cols-2">
             {page.features.map((feature) => (
-              <li key={feature.title} className="rounded-xl border border-line bg-surface p-5">
+              <li key={feature.title} className="rounded-[1.25rem] border border-line bg-surface p-5">
                 <h3 className="text-[15px] font-semibold text-ink">{feature.title}</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">{feature.body}</p>
               </li>
@@ -128,7 +132,7 @@ export function IndustryPageTemplate({ page }: { page: IndustryPage }) {
             { icon: Smartphone, block: page.mobile },
             { icon: Search, block: page.seo },
           ].map(({ icon: Icon, block }) => (
-            <div key={block.title} className="rounded-xl border border-line bg-paper p-6 sm:p-7">
+            <div key={block.title} className="rounded-[1.25rem] border border-line bg-paper p-6 sm:p-7">
               <Icon aria-hidden="true" className="size-5 text-accent" />
               <h2 className="mt-3 text-xl font-semibold tracking-tight text-ink">{block.title}</h2>
               <ul className="mt-4 space-y-2.5">
@@ -146,13 +150,13 @@ export function IndustryPageTemplate({ page }: { page: IndustryPage }) {
 
       <section aria-labelledby="approach-title" className="py-16 sm:py-20">
         <Container className="grid max-w-7xl gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
-          <SectionHeading id="approach-title" eyebrow="Our approach" title="How Fluxline approaches it." />
+          <SectionHeading id="approach-title" title="How Fluxline approaches it." />
           <div className="space-y-4 text-[17px] leading-relaxed text-ink-soft">
             {page.approach.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
             ))}
             {page.extra && (
-              <div className="mt-8 rounded-xl border border-line bg-surface p-6">
+              <div className="mt-8 rounded-[1.25rem] border border-line bg-surface p-6">
                 <h3 className="text-base font-semibold text-ink">{page.extra.title}</h3>
                 {page.extra.body.map((paragraph) => (
                   <p key={paragraph} className="mt-2 text-[15px]">
@@ -171,7 +175,7 @@ export function IndustryPageTemplate({ page }: { page: IndustryPage }) {
       <section aria-labelledby="industry-faq-title" className="border-t border-line bg-surface py-16 sm:py-20">
         <Container className="grid max-w-7xl gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
           <div>
-            <SectionHeading id="industry-faq-title" eyebrow="FAQ" title="Questions we hear often." />
+            <SectionHeading id="industry-faq-title" title="Questions we hear often." />
             {articles.length > 0 && (
               <div className="mt-8">
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Related reading</p>

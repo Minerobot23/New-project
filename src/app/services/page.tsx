@@ -104,7 +104,7 @@ export default function ServicesPage() {
 
       <section aria-labelledby="services-process-title" className="border-y border-line bg-surface py-16 sm:py-20">
         <Container className="max-w-7xl">
-          <SectionHeading id="services-process-title" eyebrow="Process" title="How a project works." />
+          <SectionHeading id="services-process-title" title="How a project works." />
           <div className="mt-10">
             <Process />
           </div>
@@ -113,7 +113,7 @@ export default function ServicesPage() {
 
       <section aria-labelledby="services-industries-title" className="py-16 sm:py-20">
         <Container className="max-w-7xl">
-          <SectionHeading id="services-industries-title" eyebrow="Industries" title="Websites shaped around your industry." />
+          <SectionHeading id="services-industries-title" title="Websites shaped around your industry." />
           <div className="mt-10">
             <IndustriesGrid />
           </div>
@@ -125,7 +125,7 @@ export default function ServicesPage() {
 
       <section aria-labelledby="services-faq-title" className="border-t border-line bg-surface py-16 sm:py-20">
         <Container className="grid max-w-7xl gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
-          <SectionHeading id="services-faq-title" eyebrow="FAQ" title="Questions about scope." />
+          <SectionHeading id="services-faq-title" title="Questions about scope." />
           <FaqList faqs={faqs} />
         </Container>
       </section>

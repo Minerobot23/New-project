@@ -7,7 +7,7 @@ import { CALL_PATH, CHECK_PATH } from "@/lib/site";
 
 export function Callout({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <aside className="not-prose my-8 rounded-xl border border-line bg-surface p-5">
+    <aside className="not-prose my-8 rounded-[1.25rem] border border-line bg-surface p-5">
       <p className="flex items-center gap-2 text-sm font-semibold text-ink">
         <Lightbulb aria-hidden="true" className="size-4 text-accent" />
         {title ?? "Worth knowing"}
@@ -45,7 +45,7 @@ export function ArticleCta({ kind, href }: { kind: keyof typeof CTA_VARIANTS; hr
   const cta = CTA_VARIANTS[kind];
   const Icon = cta.icon;
   return (
-    <aside className="not-prose my-10 flex flex-col gap-4 rounded-xl border border-accent/25 bg-accent-soft/60 p-5 sm:flex-row sm:items-center sm:justify-between" data-track-location="article-cta">
+    <aside className="not-prose my-10 flex flex-col gap-4 rounded-[1.25rem] border border-accent/25 bg-accent-soft/60 p-5 sm:flex-row sm:items-center sm:justify-between" data-track-location="article-cta">
       <div className="flex gap-3.5">
         <Icon aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-accent" />
         <div>

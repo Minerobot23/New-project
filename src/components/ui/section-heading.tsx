@@ -22,20 +22,22 @@ export function SectionHeading({
     <div className={`max-w-2xl ${align === "center" ? "mx-auto text-center" : ""}`}>
       {eyebrow && (
         <p
-          className={`text-xs font-semibold uppercase tracking-[0.14em] ${dark ? "text-[#6ea8ff]" : "text-accent"}`}
+          className={`inline-flex rounded-full px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] ring-1 ${
+            dark ? "text-accent-on-night ring-white/15" : "text-accent ring-accent/20"
+          }`}
         >
           {eyebrow}
         </p>
       )}
       <h2
         id={id}
-        className={`mt-3 text-balance text-3xl font-semibold tracking-tight sm:text-4xl ${dark ? "text-white" : "text-ink"}`}
+        className={`${eyebrow ? "mt-5" : ""} text-balance text-[2rem] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[2.75rem] ${dark ? "text-white" : "text-ink"}`}
       >
         {title}
       </h2>
       {intro && (
         <div
-          className={`mt-4 text-pretty text-base leading-relaxed sm:text-lg ${dark ? "text-slate-300" : "text-ink-soft"}`}
+          className={`mt-5 max-w-[60ch] text-pretty text-base leading-relaxed sm:text-lg ${dark ? "text-slate-300" : "text-ink-soft"}`}
         >
           {intro}
         </div>

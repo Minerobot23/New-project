@@ -13,7 +13,7 @@ type Props = {
 /** A laptop with an overlapping phone, both showing real screenshots. */
 export function DeviceShowcase({ desktop, mobile, alt, eager = false, className = "" }: Props) {
   return (
-    <figure className={`relative pb-[6%] pr-[9%] ${className}`}>
+    <div className={`relative pb-[6%] pr-[9%] ${className}`}>
       <div className="relative">
         <div className="rounded-t-[14px] border border-white/10 bg-[#0a0f16] p-[1.6%] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)]">
           <div className="relative aspect-[1400/888] overflow-hidden rounded-[4px] bg-[#111]">
@@ -48,6 +48,6 @@ export function DeviceShowcase({ desktop, mobile, alt, eager = false, className 
           />
         </div>
       </div>
-    </figure>
+    </div>
   );
 }

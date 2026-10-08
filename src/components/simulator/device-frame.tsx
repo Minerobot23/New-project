@@ -37,7 +37,7 @@ export function DesktopFrame({ url, children, overlay, scrollKey }: FrameProps) 
   return (
     <div ref={ref} className="w-full">
       <div
-        className="overflow-hidden rounded-xl border border-line-strong bg-white shadow-[0_24px_60px_-28px_rgba(15,26,36,0.45)]"
+        className="overflow-hidden rounded-[1.25rem] border border-line-strong bg-white shadow-[0_24px_60px_-28px_rgba(15,26,36,0.45)]"
         style={{ visibility: scale === null ? "hidden" : "visible" }}
       >
         <div className="flex items-center gap-3 border-b border-line bg-sunken px-3 py-2">

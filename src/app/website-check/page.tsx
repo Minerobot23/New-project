@@ -50,7 +50,7 @@ export default function WebsiteCheckPage() {
               Every check is done by a person, not an automated scanner. There&apos;s no cost and no obligation.
             </p>
           </div>
-          <div className="rounded-xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(15,26,36,0.04),0_12px_32px_-16px_rgba(15,26,36,0.16)] sm:p-8">
+          <div className="rounded-[1.25rem] border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(15,26,36,0.04),0_12px_32px_-16px_rgba(15,26,36,0.16)] sm:p-8">
             <WebsiteCheckForm />
           </div>
         </div>

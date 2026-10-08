@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Wordmark } from "@/components/layout/wordmark";
@@ -12,17 +12,9 @@ import { CALL_CTA_LABEL, CALL_PATH, CHECK_PATH, industryLinks, navLinks } from "
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [industriesOpen, setIndustriesOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const industriesRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 4);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   // Close menus on navigation (adjusting state during render, per React's guidance, instead of in an effect).
   const [lastPathname, setLastPathname] = useState(pathname);
@@ -55,22 +47,21 @@ export function SiteHeader() {
   }, [open, industriesOpen]);
 
   const onCallPage = pathname === CALL_PATH;
-  const linkClass = "text-sm font-medium text-ink-soft transition-colors hover:text-ink";
+  const isActive = (href: string) => !href.includes("#") && (pathname === href || pathname.startsWith(`${href}/`));
+  const linkClass = "rounded-full px-3 py-1.5 text-sm font-medium transition-colors duration-300 ease-[var(--ease-out-soft)]";
+  const linkTone = (href: string) => (isActive(href) ? "bg-ink/[0.06] text-ink" : "text-ink-soft hover:text-ink");
 
   return (
-    <header
-      data-track-location="header"
-      className={`sticky top-0 z-50 border-b bg-paper/90 backdrop-blur-md transition-colors duration-200 supports-[backdrop-filter]:bg-paper/80 ${
-        scrolled || open ? "border-line" : "border-transparent"
-      }`}
-    >
-      <Container className="flex h-16 max-w-7xl items-center justify-between gap-6">
+    <header data-track-location="header" className="sticky top-0 z-50 px-3 pt-3 sm:px-5">
+      <div
+        className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 rounded-full bg-surface/90 pl-5 pr-2 shadow-[var(--shadow-soft)] ring-1 ring-ink/[0.07] backdrop-blur-xl supports-[backdrop-filter]:bg-surface/80 sm:pl-6"
+      >
         <Wordmark />
 
         <nav aria-label="Primary" className="hidden lg:block">
-          <ul className="flex items-center gap-7">
+          <ul className="flex items-center gap-1">
             <li>
-              <Link href="/services" className={linkClass}>
+              <Link href="/services" aria-current={isActive("/services") ? "page" : undefined} className={`${linkClass} ${linkTone("/services")}`}>
                 Services
               </Link>
             </li>
@@ -81,20 +72,20 @@ export function SiteHeader() {
                   aria-expanded={industriesOpen}
                   aria-controls="industries-menu"
                   onClick={() => setIndustriesOpen((value) => !value)}
-                  className={`flex items-center gap-1 ${linkClass}`}
+                  className={`flex items-center gap-1 ${linkClass} ${industriesOpen ? "text-ink" : "text-ink-soft hover:text-ink"}`}
                 >
                   Industries
-                  <ChevronDown aria-hidden="true" className={`size-4 transition-transform ${industriesOpen ? "rotate-180" : ""}`} />
+                  <ChevronDown aria-hidden="true" strokeWidth={1.75} className={`size-4 transition-transform duration-300 ease-[var(--ease-out-soft)] ${industriesOpen ? "rotate-180" : ""}`} />
                 </button>
                 <div
                   id="industries-menu"
                   hidden={!industriesOpen}
-                  className="absolute left-1/2 top-full mt-3 w-72 -translate-x-1/2 rounded-xl border border-line bg-surface p-2 shadow-[0_16px_40px_-16px_rgba(15,26,36,0.25)]"
+                  className="absolute left-1/2 top-full mt-4 w-72 -translate-x-1/2 rounded-[1.25rem] bg-surface p-2 shadow-[var(--shadow-lift)] ring-1 ring-ink/[0.07]"
                 >
                   <ul>
                     {industryLinks.map((link) => (
                       <li key={link.href}>
-                        <Link href={link.href} className="block rounded-md px-3 py-2 text-sm text-ink-soft hover:bg-sunken hover:text-ink">
+                        <Link href={link.href} className="block rounded-[1.25rem] px-3 py-2 text-sm text-ink-soft transition-colors hover:bg-sunken hover:text-ink">
                           {link.label}
                         </Link>
                       </li>
@@ -107,7 +98,11 @@ export function SiteHeader() {
               .filter((link) => link.href !== "/services")
               .map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className={linkClass}>
+                  <Link
+                    href={link.href}
+                    aria-current={isActive(link.href) ? "page" : undefined}
+                    className={`${linkClass} ${linkTone(link.href)}`}
+                  >
                     {link.label}
                   </Link>
                 </li>
@@ -116,7 +111,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Link href={CHECK_PATH} className={`hidden px-2 xl:block ${linkClass}`}>
+          <Link href={CHECK_PATH} className={`hidden xl:block ${linkClass} ${linkTone(CHECK_PATH)}`}>
             Website Check
           </Link>
           {!onCallPage && (
@@ -131,26 +126,42 @@ export function SiteHeader() {
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Close menu" : "Open menu"}
-            className="-mr-2 inline-flex size-11 items-center justify-center rounded-md text-ink hover:bg-sunken lg:hidden"
+            className="relative inline-flex size-12 items-center justify-center rounded-full text-ink transition-colors hover:bg-sunken lg:hidden"
           >
-            {open ? <X className="size-5" aria-hidden="true" /> : <Menu className="size-5" aria-hidden="true" />}
+            {/* Two lines that morph into an X. */}
+            <span
+              aria-hidden="true"
+              className={`absolute h-[1.5px] w-5 rounded-full bg-current transition-transform duration-500 ease-[var(--ease-out-soft)] ${
+                open ? "rotate-45" : "-translate-y-[4px]"
+              }`}
+            />
+            <span
+              aria-hidden="true"
+              className={`absolute h-[1.5px] w-5 rounded-full bg-current transition-transform duration-500 ease-[var(--ease-out-soft)] ${
+                open ? "-rotate-45" : "translate-y-[4px]"
+              }`}
+            />
           </button>
         </div>
-      </Container>
+      </div>
 
-      <div id="mobile-nav" hidden={!open} className="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-line bg-paper lg:hidden">
+      <div
+        id="mobile-nav"
+        hidden={!open}
+        className="mx-auto mt-2 max-h-[calc(100dvh-6.5rem)] max-w-7xl overflow-y-auto rounded-[1.75rem] bg-surface/95 shadow-[var(--shadow-lift)] ring-1 ring-ink/[0.07] backdrop-blur-xl lg:hidden"
+      >
         <Container className="py-4">
           <nav aria-label="Mobile">
             <ul className="divide-y divide-line">
               {navLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} onClick={() => setOpen(false)} className="block py-3.5 text-base font-medium text-ink">
+                  <Link href={link.href} onClick={() => setOpen(false)} className="block py-3.5 text-lg font-medium tracking-tight text-ink">
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
-            <p className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-muted">Industries</p>
+            <p className="mt-5 text-sm font-medium text-muted">Industries</p>
             <ul className="mt-2 grid grid-cols-2 gap-x-4">
               {industryLinks.map((link) => (
                 <li key={link.href}>

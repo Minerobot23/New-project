@@ -46,7 +46,7 @@ export default function RequestCallPage() {
             <p className="mt-5 max-w-md text-lg leading-relaxed text-ink-soft">
               Tell us a little about your business. We&apos;ll follow up to coordinate a time to talk.
             </p>
-            <div className="relative mt-8 hidden aspect-[16/9] overflow-hidden rounded-xl bg-sunken sm:block">
+            <div className="relative mt-8 hidden aspect-[16/9] overflow-hidden rounded-[1.25rem] bg-sunken sm:block">
               <Image src={PHOTOS.ownerCall.src} alt={PHOTOS.ownerCall.alt} fill sizes="(min-width: 1024px) 40vw, 90vw" placeholder="blur" className="object-cover" />
             </div>
             <ul className="mt-10 hidden space-y-6 sm:block">
@@ -69,7 +69,7 @@ export default function RequestCallPage() {
               </a>
             </p>
           </div>
-          <div className="rounded-xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(15,26,36,0.04),0_12px_32px_-16px_rgba(15,26,36,0.16)] sm:p-8">
+          <div className="rounded-[1.25rem] border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(15,26,36,0.04),0_12px_32px_-16px_rgba(15,26,36,0.16)] sm:p-8">
             <RequestCallForm />
           </div>
           <p className="text-sm text-muted lg:hidden">

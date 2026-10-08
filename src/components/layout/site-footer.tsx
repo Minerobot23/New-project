@@ -15,11 +15,11 @@ const companyLinks = [
 function FooterList({ title, links }: { title: string; links: readonly { href: string; label: string }[] }) {
   return (
     <nav aria-label={title}>
-      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">{title}</p>
+      <p className="text-sm font-medium text-white">{title}</p>
       <ul className="mt-4 space-y-2.5 text-sm">
         {links.map((link) => (
           <li key={link.href}>
-            <Link href={link.href} className="transition-colors hover:text-white">
+            <Link href={link.href} className="text-slate-400 transition-colors duration-300 hover:text-white">
               {link.label}
             </Link>
           </li>
@@ -33,8 +33,8 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer data-track-location="footer" className="border-t border-night-line bg-night text-slate-300">
-      <Container className="grid max-w-7xl gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1.2fr_1fr]">
+    <footer data-track-location="footer" className="bg-night text-slate-300">
+      <Container className="grid max-w-7xl gap-10 border-t border-night-line py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1.2fr_1fr]">
         <div>
           <Wordmark tone="light" />
           <p className="mt-4 text-sm font-medium text-white">{site.name}</p>

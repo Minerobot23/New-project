@@ -40,7 +40,7 @@ export default function WorkPage() {
             <ul className="mt-8 grid gap-4 md:grid-cols-2">
               {CASE_STUDIES.map((study) => (
                 <li key={study.slug}>
-                  <Link href={`/work/${study.slug}`} className="block rounded-xl border border-line bg-surface p-6 hover:border-ink/30">
+                  <Link href={`/work/${study.slug}`} className="block rounded-[1.25rem] border border-line bg-surface p-6 hover:border-ink/30">
                     <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">{study.industry}</p>
                     <p className="mt-2 text-lg font-semibold text-ink">{study.client}</p>
                     <p className="mt-2 text-[15px] leading-relaxed text-ink-soft">{study.summary}</p>

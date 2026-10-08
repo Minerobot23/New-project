@@ -9,14 +9,16 @@ export function FaqList({ faqs, withSchema = true }: { faqs: Faq[]; withSchema?:
   return (
     <>
       {withSchema && <JsonLd data={faqSchema(faqs)} />}
-      <div className="divide-y divide-line border-y border-line">
+      <div className="space-y-3">
         {faqs.map((item) => (
-          <details key={item.q} className="group">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-left text-base font-medium text-ink [&::-webkit-details-marker]:hidden">
+          <details key={item.q} className="group rounded-[1.25rem] bg-paper ring-1 ring-line transition-colors open:bg-surface open:shadow-[var(--shadow-soft)]">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-6 rounded-[1.25rem] px-6 py-5 text-left text-base font-medium text-ink [&::-webkit-details-marker]:hidden">
               {item.q}
-              <Plus aria-hidden="true" className="size-4 shrink-0 text-muted transition-transform duration-200 group-open:rotate-45" />
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-surface ring-1 ring-line transition-transform duration-300 ease-[var(--ease-out-soft)] group-open:rotate-45 group-open:bg-accent group-open:text-white group-open:ring-accent">
+                <Plus aria-hidden="true" strokeWidth={1.75} className="size-4" />
+              </span>
             </summary>
-            <p className="-mt-1 pb-5 pr-10 text-[15px] leading-relaxed text-ink-soft">{item.a}</p>
+            <p className="-mt-1 max-w-[65ch] px-6 pb-6 pr-14 text-[15px] leading-relaxed text-ink-soft">{item.a}</p>
           </details>
         ))}
       </div>

@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 /*
- * Fluxline palette: warm neutral paper, deep ink, one restrained blue accent (matches the logo).
- * The site is intentionally light-only; a B2B credibility site reads best with a single, controlled palette.
+ * Fluxline palette: cool neutral paper, deep ink, one restrained blue accent (matches the logo).
+ * The site is intentionally light-only, bookended by a dark hero and a dark footer. All grays share the ink's cool hue.
  */
 @theme {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
-  --color-paper: #fafaf8;
-  --color-surface: #ffffff;
-  --color-sunken: #f3f3ef;
-  --color-line: #e4e4de;
-  --color-line-strong: #d3d3cb;
+  --color-paper: #f7f8fa;
+  --color-surface: #fdfdfe;
+  --color-sunken: #eef1f4;
+  --color-line: #e1e5ea;
+  --color-line-strong: #cdd3db;
 
   --color-ink: #0f1a24;
   --color-ink-soft: #3b4652;
@@ -22,11 +22,20 @@
   --color-accent-strong: #1747ad;
   --color-accent-soft: #e8effd;
 
-  --color-night: #0d1720;
+  --color-night: #0b141d;
+  --color-night-soft: #111d29;
   --color-night-line: #22303c;
+  --color-accent-on-night: #6ea8ff;
 
   --color-danger: #b42318;
   --color-danger-soft: #fef3f2;
+
+  /* Motion: one heavy, spring-like curve for everything interactive. */
+  --ease-out-soft: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Ink-tinted shadows (never pure black on the light page). */
+  --shadow-soft: 0 1px 2px rgba(15, 26, 36, 0.04), 0 12px 32px -12px rgba(15, 26, 36, 0.14);
+  --shadow-lift: 0 2px 4px rgba(15, 26, 36, 0.04), 0 24px 48px -20px rgba(15, 26, 36, 0.22);
 }
 
 html {
@@ -62,6 +71,85 @@ section[id] {
 ::selection {
   background-color: var(--color-accent-soft);
   color: var(--color-ink);
+}
+
+/*
+ * Z-index scale: header 50, mobile menu 40 (inside the header), skip link 60.
+ */
+
+/*
+ * Scroll reveal: a heavy fade-up driven by the native scroll timeline. No JavaScript, no scroll listeners.
+ * Browsers without scroll-driven animations (or with reduced motion) simply show the content.
+ */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0 entry 260px;
+    }
+  }
+}
+
+/* Hero entrance: copy cascades in once on load. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rise {
+    animation: rise-in 900ms var(--ease-out-soft) both;
+    animation-delay: calc(var(--i, 0) * 90ms + 60ms);
+  }
+}
+
+/* Film grain for dark bookend sections. Static SVG noise on a pointer-events-none layer. */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/*
+ * Double-bezel frame: an outer tray with a hairline and a concentric inner core.
+ * Used for featured imagery and cards that need to feel like physical objects.
+ */
+@layer components {
+.bezel {
+  border-radius: 1.75rem;
+  padding: 0.375rem;
+  background: color-mix(in srgb, var(--color-ink) 4%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 6%, transparent);
+}
+.bezel > * {
+  border-radius: calc(1.75rem - 0.375rem);
+}
+.bezel-dark {
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
 }
 
 @media (prefers-reduced-motion: reduce) {

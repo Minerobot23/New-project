@@ -4,7 +4,7 @@ Website for **Fluxline Solutions** (Fluxline LLC), web design and development fo
 
 Built with Next.js (App Router), TypeScript, Tailwind CSS, and Lucide icons. Deployed on Vercel.
 
-How we approach any website, from discovery to launch: [WEBSITE-PROCESS.md](WEBSITE-PROCESS.md).
+How we approach any website, from discovery to launch: [WEBSITE-PROCESS.md](WEBSITE-PROCESS.md) ([PDF](WEBSITE-PROCESS.pdf)).
 
 ## Development
 

@@ -2,34 +2,24 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { CinematicImage, CompareStage, ContextCTA, originOf } from "@/experience";
+import { CinematicImage, ContextCTA, originOf } from "@/experience";
 import { AREA_BY_ID, type AreaId } from "../content";
 import { useHome } from "../context";
 
 /**
- * One part of the house. When there is a mid-project / finished pair, the whole scene is the comparison;
- * the gallery swaps the photograph; the material choice travels with the visitor into the estimate.
+ * One part of the house: the finished work fills the scene, the gallery swaps the photograph, and the
+ * material choice travels with the visitor into the estimate.
  */
 export function Area({ id }: { id: AreaId }) {
   const area = AREA_BY_ID[id];
   const { go, back, selections, choose } = useHome();
-  const [view, setView] = useState<number | "compare">(area.compare ? "compare" : -1);
+  const [view, setView] = useState(-1);
   const chosen = selections[id];
-  const photo = typeof view === "number" ? (view === -1 ? area.finished : area.gallery[view]) : null;
+  const photo = view === -1 ? area.finished : area.gallery[view];
 
   return (
     <>
-      {view === "compare" && area.compare ? (
-        <CompareStage
-          before={area.compare.before}
-          after={area.compare.after}
-          beforeLabel="Mid-project"
-          afterLabel="Finished"
-          label={`Compare a ${area.title.toLowerCase()} project mid-way and finished`}
-        />
-      ) : (
-        photo && <CinematicImage key={photo.slot + photo.src.src} image={photo} />
-      )}
+      <CinematicImage key={photo.slot + photo.src.src} image={photo} />
 
       {/* Shade under the panel so text holds on any photograph. */}
       <div
@@ -90,18 +80,6 @@ export function Area({ id }: { id: AreaId }) {
           <div className="arrive-in mt-7 [animation-delay:1200ms]">
             <p className="label text-bone/60">Projects</p>
             <div className="mt-3 flex gap-2">
-              {area.compare && (
-                <button
-                  type="button"
-                  aria-pressed={view === "compare"}
-                  onClick={() => setView("compare")}
-                  className={`label flex h-16 w-24 shrink-0 items-center justify-center text-[10px] ${
-                    view === "compare" ? "bg-bone text-[#0b1220]" : "text-bone/80 shadow-[inset_0_0_0_1px_rgba(239,234,226,0.3)]"
-                  }`}
-                >
-                  Compare
-                </button>
-              )}
               {[area.finished, ...area.gallery].map((image, index) => {
                 const key = index - 1;
                 return (
@@ -132,12 +110,9 @@ export function Area({ id }: { id: AreaId }) {
           <div className="arrive-in mt-8 [animation-delay:1400ms]">
             <ContextCTA onClick={(event) => go("estimate", originOf(event.currentTarget))}>Get my estimate</ContextCTA>
           </div>
-          {area.compare && (
-            <p className="mt-5 max-w-[40ch] text-xs leading-relaxed text-bone/50">
-              Concept: mid-project and finished photos are stand-ins from different homes. A real site shows the client&apos;s own
-              projects.
-            </p>
-          )}
+          <p className="mt-5 max-w-[40ch] text-xs leading-relaxed text-bone/50">
+            Concept: photos are licensed stand-ins from different homes. A real site shows the client&apos;s own projects.
+          </p>
         </div>
       </div>
     </>

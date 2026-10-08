@@ -17,8 +17,8 @@ import porch from "../../../public/experiences/home/gallery/porch.webp";
 
 /**
  * Every photograph in the Saltbox Home Co. concept, by capture slot (see ASSET_CAPTURE_GUIDE.md).
- * Stand-in photography (Unsplash License): "mid-project" and "finished" frames are different homes,
- * labeled as such in the experience. A real client's site uses its own before, during, and after shots.
+ * Stand-in photography (Unsplash License) from different homes, labeled as such in the experience.
+ * A real client's site uses its own during and after shots.
  */
 export const ASSETS = {
   house: {

@@ -24,7 +24,6 @@ export type Service = {
   hero: ExperienceImage;
   /** Zoom on the hero, for frames where the subject is a detail of a wider shot. */
   zoom?: number;
-  compare?: { before: ExperienceImage; after: ExperienceImage; beforeLabel: string; afterLabel: string };
   includes: string[];
   time: string;
 };
@@ -61,7 +60,6 @@ export const SERVICES: Service[] = [
     at: { x: 0.88, y: 0.5 },
     align: "left",
     hero: ASSETS.paintCloseUp,
-    compare: { before: ASSETS.handWash, after: ASSETS.paintCloseUp, beforeLabel: "In the bay", afterLabel: "Corrected" },
     includes: ["Decontamination wash and clay", "One- or two-step correction", "Ceramic coating options", "Touch-up for chips"],
     time: "One to two days",
   },
@@ -71,7 +69,6 @@ export const SERVICES: Service[] = [
     line: "A full reset, outside and in, done by hand.",
     at: { x: 0.47, y: 0.57 },
     hero: ASSETS.pressureWash,
-    compare: { before: ASSETS.pressureWash, after: ASSETS.paintCloseUp, beforeLabel: "Foam and rinse", afterLabel: "Finished" },
     includes: ["Foam pre-wash and hand wash", "Wheels, tires, and arches", "Interior refresh", "Sealant to finish"],
     time: "Most of a day",
   },

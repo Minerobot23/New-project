@@ -5,7 +5,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "Saltbox Home Co.: Home Services Experience (Interactive Concept)",
   description:
-    "Explore a house at dusk and choose what to transform: roof, siding, windows, kitchen, bathroom, or outdoor living. An immersive home services website concept by Fluxline Solutions, with project comparisons, materials, and an estimate request.",
+    "Explore a house at dusk and choose what to transform: roof, siding, windows, kitchen, bathroom, or outdoor living. An immersive home services website concept by Fluxline Solutions, with project photos, materials, and an estimate request.",
   path: "/experiences/home",
 });
 

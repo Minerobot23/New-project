@@ -311,19 +311,14 @@ Back home: merge brackets, straighten verticals, match white balance across the 
 ## Home services: Saltbox Home Co.
 
 The house is the interface. Visitors see the client's own house at dusk, the lights come on, and every part of the
-house they can change (roof, siding, windows, kitchen, bathroom, outdoor) is a hotspot. Each area opens on a
-"mid-project / finished" comparison when the client has both photos, or a finished photo when they don't.
+house they can change (roof, siding, windows, kitchen, bathroom, outdoor) is a hotspot. Each area opens on its
+finished photo, with a strip of project photos (finished work and work in progress) the visitor can switch between.
 
 Files live in `public/experiences/home/`. After exporting, update `src/experiences/home/assets.ts` (and the hotspot
 coordinates in `content.ts` if the house photo changes framing). Every slot below is currently a **Placeholder**: licensed
 stock from Unsplash, listed in `docs/PHOTO-CREDITS.md`.
 
-**The honesty rule for comparisons:** only pair two photos of the **same job**, taken from the **same spot**. Never put a
-different house in the "before" frame. If a client has no matching pair, the area shows its finished photo alone.
-
-**How to get matching pairs:** on the first day of a job, put a strip of gaffer tape on the ground where the tripod's
-legs stand and note the focal length and height. Come back on the last day and shoot from the tape. Same time of day
-if possible.
+**The honesty rule:** every photo must be the client's own work. Never show another company's job as theirs.
 
 ### H1. `arrival/house-dusk.webp`: the house at dusk
 
@@ -344,43 +339,43 @@ if possible.
 
 | | |
 | --- | --- |
-| Purpose | Left side of the roof comparison (mid-project) and the "on the job" gallery photo (crew). |
+| Purpose | "On the job" gallery photos for the roof: the tear-off underway (mid-project) and the crew at work. |
 | Orientation | Landscape 3:2 |
 | Resolution | Export 2400 long edge |
-| Camera position | Mid-project: from the ground, same tape mark as the finished roof photo (H3), whole roof plane in frame. Crew: from a ladder or the roof edge (with the crew's permission and a harness), workers at a third of the frame. |
+| Camera position | Mid-project: from the ground, whole roof plane in frame. Crew: from a ladder or the roof edge (with the crew's permission and a harness), workers at a third of the frame. |
 | Focal length | 24–35 mm for mid-project; 18 mm for crew |
-| Tripod | Mid-project yes (it has to match H3); crew handheld, 1/500 s |
+| Tripod | Mid-project optional; crew handheld, 1/500 s |
 | Lighting | Overcast daylight is best (no hard shadows across shingles). |
 | Photo / video | Photo. Optional 5 s clip of the crew working for the gallery. |
-| Transitions | The comparison slider wipes between this and the finished roof. |
+| Transitions | None (gallery). |
 
 ### H3. `roof/finished.webp`: the finished roof
 
 | | |
 | --- | --- |
-| Purpose | Right side of the roof comparison; the area's hero when there is no pair. Currently the concept uses the dusk house (H1) cropped to the roof. |
+| Purpose | The roof area's hero. Currently the concept uses the dusk house (H1) cropped to the roof. |
 | Orientation | Landscape 3:2 |
 | Resolution | Export 2400 long edge |
-| Camera position | From the tape mark used for H2, same height and focal length. |
-| Focal length | Match H2 |
+| Camera position | From the ground or a neighbor's yard (with permission), whole roof plane in frame, level. |
+| Focal length | 24–35 mm |
 | Tripod | Yes |
-| Lighting | Same time of day as H2 if possible; low sun from the side shows shingle texture. |
+| Lighting | Low sun from the side shows shingle texture. |
 | Photo / video | Photo |
-| Transitions | Comparison wipe from H2. |
+| Transitions | Travel from the roof hotspot on H1. |
 
 ### H4. `siding/mid-project.webp` and `siding/finished.webp`: a wall during and after
 
 | | |
 | --- | --- |
-| Purpose | The siding comparison. |
+| Purpose | Siding hero (finished) and a gallery photo of the work underway (mid-project). |
 | Orientation | Landscape 3:2 |
 | Resolution | Export 2400 long edge |
-| Camera position | Square-on to one wall, 4–6 m back, a window or corner in frame for scale. Same tape mark for both. |
+| Camera position | Square-on to one wall, 4–6 m back, a window or corner in frame for scale. |
 | Focal length | 24–35 mm (less distortion than 18 mm) |
 | Tripod | Yes |
 | Lighting | Raking light (sun at 30–45° to the wall) shows lap lines and texture. Avoid noon. |
 | Photo / video | Photo |
-| Transitions | Comparison wipe. |
+| Transitions | Travel from the siding hotspot on H1. |
 
 ### H5. `windows/finished.webp`: new windows
 
@@ -400,29 +395,29 @@ if possible.
 
 | | |
 | --- | --- |
-| Purpose | Kitchen comparison (mid-project / finished) and a close detail for the gallery (hardware, counter edge, backsplash). |
+| Purpose | Kitchen hero (finished), plus gallery photos: a close detail (hardware, counter edge, backsplash) and the work underway. |
 | Orientation | Landscape 3:2 for finished and mid-project; detail can be portrait 2:3 |
 | Resolution | Export 2400 long edge |
-| Camera position | Finished and mid-project: from the kitchen doorway, chest height (1.3 m), level, island or counter run leading into the frame. Same tape mark. Detail: 30–50 cm from the subject. |
+| Camera position | Finished and mid-project: from the kitchen doorway, chest height (1.3 m), level, island or counter run leading into the frame. Detail: 30–50 cm from the subject. |
 | Focal length | 18 mm for the room; 55 mm for the detail |
 | Tripod | Yes |
 | Lighting | All under-cabinet and pendant lights on, daylight from windows; bracket ±2. Remove clutter from counters (ask first). |
 | Photo / video | Photo. Optional 6 s slow push-in clip on the finished kitchen. |
-| Transitions | Travel from the kitchen hotspot (a ground-floor window on H1), then the comparison wipe. |
+| Transitions | Travel from the kitchen hotspot (a ground-floor window on H1). |
 
 ### H7. `bathroom/finished.webp`, `bathroom/shower.webp`, `bathroom/mid-project.webp`
 
 | | |
 | --- | --- |
-| Purpose | Bathroom comparison and a shower or tile detail for the gallery. |
+| Purpose | Bathroom hero (finished), plus gallery photos: a shower or tile detail and the work underway. |
 | Orientation | Landscape 3:2; shower detail can be portrait |
 | Resolution | Export 2400 long edge |
-| Camera position | From the doorway or a corner, as low as chest height allows, vanity and shower in frame. Same tape mark for the pair. Turn off the camera's flash; avoid catching yourself in the mirror (shoot at an angle to it). |
+| Camera position | From the doorway or a corner, as low as chest height allows, vanity and shower in frame. Turn off the camera's flash; avoid catching yourself in the mirror (shoot at an angle to it). |
 | Focal length | 18 mm |
 | Tripod | Yes |
 | Lighting | All lights on, bracket ±2; match white balance to the vanity lights. |
 | Photo / video | Photo |
-| Transitions | Travel from the bathroom hotspot (an upstairs window on H1), then the comparison wipe. |
+| Transitions | Travel from the bathroom hotspot (an upstairs window on H1). |
 
 ### H8. `outdoor/night.webp` and `outdoor/deck.webp`
 
@@ -457,23 +452,21 @@ if possible.
 1. **Afternoon, finished job:** siding (H4), windows (H5), porch (H9), deck (H8 day).
 2. **Inside:** kitchen (H6), bathroom (H7).
 3. **Blue hour:** house lights off then on (H1), outdoor at night (H8).
-4. **On other days, at active jobs:** every "mid-project" and crew frame (H2, H4, H6, H7), from tape marks you will
-   return to.
+4. **On other days, at active jobs:** every "mid-project" and crew frame (H2, H4, H6, H7).
 
 ---
 
 ## Automotive: Halden Motor Works
 
 The garage door lifts, the visitor pulls into the bay, and the car itself is the menu: hotspots on the paint, wheels,
-brakes, interior, and engine bay. Each service opens on a close photograph (zoomed into the hero for brakes) or a
-comparison for paint and detailing.
+brakes, interior, and engine bay. Each service opens on a close photograph (zoomed into the hero for brakes).
 
 Files live in `public/experiences/automotive/`. After exporting, update `src/experiences/automotive/assets.ts` (focus
 points) and the hotspot coordinates in `content.ts`. Every slot is currently a **Placeholder** (Unsplash, see
 `docs/PHOTO-CREDITS.md`).
 
 **Always:** get the vehicle owner's permission, and blur or remove license plates before export (the concept's
-placeholders have their plates blurred). Comparisons follow the same rule as home services: same car, same spot.
+placeholders have their plates blurred). Every photo must be the shop's own work.
 
 ### A1. `arrival/garage-door.webp`: the car at the open door
 
@@ -517,25 +510,25 @@ placeholders have their plates blurred). Comparisons follow the same rule as hom
 | Photo / video | Photo |
 | Transitions | Fade into the schedule screen. |
 
-### A4. `paint/hand-wash.webp` and `paint/close-up.webp`: paint correction
+### A4. `paint/close-up.webp`: corrected paint
 
 | | |
 | --- | --- |
-| Purpose | The paint comparison ("In the bay" / "Corrected") and the finished close-up, also used as "Finished" for detailing. |
+| Purpose | The paint service hero: a panel after correction. |
 | Orientation | Landscape 3:2 |
 | Resolution | Export 2400 long edge |
-| Camera position | One body panel (hood or door) at a low angle so reflections run across it, 1–1.5 m away. Same tape mark before and after correction; same panel. |
+| Camera position | One body panel (hood or door) at a low angle so reflections run across it, 1–1.5 m away. |
 | Focal length | 35–55 mm |
 | Tripod | Yes |
-| Lighting | A single hard light reflected in the panel shows swirls before and clarity after. Same light position for both. |
+| Lighting | A single hard light reflected in the panel shows the clarity of the finish. |
 | Photo / video | Photo. Optional clip of the polisher working. |
-| Transitions | Comparison wipe. |
+| Transitions | Travel from the body-panel hotspot. |
 
 ### A5. `detailing/pressure-wash.webp`: foam and rinse
 
 | | |
 | --- | --- |
-| Purpose | Left side of the detailing comparison. |
+| Purpose | The detailing service hero. |
 | Orientation | Landscape 3:2 |
 | Resolution | Export 2400 long edge |
 | Camera position | Side-on to the car during the foam stage, 2–3 m away, detailer in frame. Blur the plate. |
@@ -543,7 +536,7 @@ placeholders have their plates blurred). Comparisons follow the same rule as hom
 | Tripod | Optional; 1/500 s to freeze spray |
 | Lighting | Backlight (sun or a light behind the spray) makes the water glow. |
 | Photo / video | Photo, plus a 6 s slow-motion clip (the T7 records 1080p at 30 fps; slow it in editing). |
-| Transitions | Comparison wipe to the finished close-up. |
+| Transitions | Travel from the front-bumper hotspot. |
 
 ### A6. `wheels/tires.webp`: wheels and tires
 
@@ -604,6 +597,6 @@ placeholders have their plates blurred). Comparisons follow the same rule as hom
 ### Automotive: on-site order
 
 1. **Morning, shop quiet:** bay vehicle (A2), service bay and tools (A3), tires (A6), caliper (A7), engine (A9).
-2. **During work:** foam and rinse (A5), paint before correction (A4), under the hood and the pour (A9).
-3. **After correction:** paint corrected from the same tape mark (A4).
+2. **During work:** foam and rinse (A5), under the hood and the pour (A9).
+3. **After correction:** corrected paint (A4).
 4. **Dusk:** car at the open door (A1), interior (A8).

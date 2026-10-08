@@ -65,8 +65,8 @@ capture-slot folders so real photography can replace them in place (see `ASSET_C
 
 The Saltbox Home Co. (`/experiences/home`) and Halden Motor Works (`/experiences/automotive`) concepts use photos from
 Unsplash under the [Unsplash License](https://unsplash.com/license), downloaded from the Unsplash image CDN and stored in
-capture-slot folders so real photography can replace them in place (see `ASSET_CAPTURE_GUIDE.md`). Comparison pairs are
-different stand-in photos, and both experiences say so on screen. License plates were blurred before export.
+capture-slot folders so real photography can replace them in place (see `ASSET_CAPTURE_GUIDE.md`). The photos come
+from different homes and cars, and both experiences say so on screen. License plates were blurred before export.
 
 | File | Source |
 | --- | --- |
@@ -90,7 +90,6 @@ different stand-in photos, and both experiences say so on screen. License plates
 | `/experiences/automotive/bay/service-bay.webp` | https://images.unsplash.com/photo-1486006920555-c77dcf18193c |
 | `/experiences/automotive/bay/tools.webp` | https://images.unsplash.com/photo-1530046339160-ce3e530c7d2f |
 | `/experiences/automotive/paint/close-up.webp` | https://images.unsplash.com/photo-1614026480209-cd9934144671 |
-| `/experiences/automotive/paint/hand-wash.webp` | https://images.unsplash.com/photo-1607860108855-64acf2078ed9 |
 | `/experiences/automotive/wheels/tires.webp` | https://images.unsplash.com/photo-1578844251758-2f71da64c96f |
 | `/experiences/automotive/brakes/caliper.webp` | https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8 |
 | `/experiences/automotive/interior/cockpit.webp` | https://images.unsplash.com/photo-1449965408869-eaa3f722e40d |

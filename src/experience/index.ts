@@ -10,7 +10,6 @@ export { CinematicImage, ParallaxImage } from "./cinematic-image";
 export { Hotspot } from "./hotspot";
 export { EntranceSequence } from "./entrance-sequence";
 export { InteractivePanorama } from "./interactive-panorama";
-export { CompareStage } from "./compare-stage";
 export { ShutterReveal } from "./shutter-reveal";
 export { BeforeAfter } from "./before-after";
 export { ExperienceLoader, useAssetPreload, warmImages, type PreloadImage } from "./experience-loader";

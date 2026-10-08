@@ -22,8 +22,6 @@ export type Area = {
   at: { x: number; y: number };
   align?: "left" | "right";
   finished: ExperienceImage;
-  /** Mid-project vs finished comparison (different homes, labeled as stand-ins). */
-  compare?: { before: ExperienceImage; after: ExperienceImage };
   gallery: ExperienceImage[];
   materialLabel: string;
   materials: Material[];
@@ -40,8 +38,7 @@ export const AREAS: Area[] = [
     at: { x: 0.66, y: 0.28 },
     align: "left",
     finished: { ...ASSETS.house, focus: { x: 0.6, y: 0.3 } },
-    compare: { before: ASSETS.roofMid, after: ASSETS.house },
-    gallery: [ASSETS.roofCrew, ASSETS.sidingFinished, ASSETS.porch],
+    gallery: [ASSETS.roofCrew, ASSETS.roofMid, ASSETS.porch],
     materialLabel: "Shingle",
     materials: [
       { id: "charcoal", label: "Charcoal architectural", swatch: "#2b2d31" },
@@ -57,8 +54,7 @@ export const AREAS: Area[] = [
     line: "New siding changes how the whole house reads from the street, and how it holds up to salt air.",
     at: { x: 0.24, y: 0.58 },
     finished: ASSETS.sidingFinished,
-    compare: { before: ASSETS.sidingMid, after: ASSETS.sidingFinished },
-    gallery: [ASSETS.porch, ASSETS.house],
+    gallery: [ASSETS.sidingMid, ASSETS.porch, ASSETS.house],
     materialLabel: "Siding",
     materials: [
       { id: "clapboard-white", label: "Clapboard, white", swatch: "#eceae4" },
@@ -99,8 +95,7 @@ export const AREAS: Area[] = [
     at: { x: 0.6, y: 0.66 },
     align: "left",
     finished: ASSETS.kitchenFinished,
-    compare: { before: ASSETS.kitchenMid, after: ASSETS.kitchenFinished },
-    gallery: [ASSETS.kitchenDetail, ASSETS.kitchenFinished],
+    gallery: [ASSETS.kitchenDetail, ASSETS.kitchenMid],
     materialLabel: "Finish",
     materials: [
       { id: "white-shaker", label: "White shaker", swatch: "#f3f1ec" },
@@ -116,8 +111,7 @@ export const AREAS: Area[] = [
     line: "A walk-in shower, a tub worth soaking in, and tile that will still look right in twenty years.",
     at: { x: 0.2, y: 0.42 },
     finished: ASSETS.bathFinished,
-    compare: { before: ASSETS.bathMid, after: ASSETS.bathFinished },
-    gallery: [ASSETS.bathShower, ASSETS.bathFinished],
+    gallery: [ASSETS.bathShower, ASSETS.bathMid],
     materialLabel: "Finish",
     materials: [
       { id: "porcelain", label: "Porcelain tile", swatch: "#e6e3dd" },

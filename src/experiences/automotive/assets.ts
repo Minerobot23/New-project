@@ -4,7 +4,6 @@ import vehicle from "../../../public/experiences/automotive/bay/vehicle.webp";
 import serviceBay from "../../../public/experiences/automotive/bay/service-bay.webp";
 import tools from "../../../public/experiences/automotive/bay/tools.webp";
 import paintCloseUp from "../../../public/experiences/automotive/paint/close-up.webp";
-import handWash from "../../../public/experiences/automotive/paint/hand-wash.webp";
 import tires from "../../../public/experiences/automotive/wheels/tires.webp";
 import caliper from "../../../public/experiences/automotive/brakes/caliper.webp";
 import cockpit from "../../../public/experiences/automotive/interior/cockpit.webp";
@@ -42,12 +41,6 @@ export const ASSETS = {
     src: paintCloseUp,
     alt: "Deep blue paint and a headlight, reflections sharp after correction",
     focus: { x: 0.3, y: 0.45 },
-  },
-  handWash: {
-    slot: "paint/hand-wash",
-    src: handWash,
-    alt: "A detailer hand-washing a black car with two buckets",
-    focus: { x: 0.55, y: 0.55 },
   },
   tires: { slot: "wheels/tires", src: tires, alt: "Stacked tires in the tire room", focus: { x: 0.45, y: 0.5 } },
   caliper: {

@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { CinematicImage, CompareStage, ContextCTA, originOf } from "@/experience";
+import { CinematicImage, ContextCTA, originOf } from "@/experience";
 import { SERVICE_BY_ID, SERVICES, type ServiceId } from "../content";
 import { useAuto } from "../context";
 
@@ -9,35 +8,24 @@ import { useAuto } from "../context";
 export function Service({ id }: { id: ServiceId }) {
   const service = SERVICE_BY_ID[id];
   const { go, back } = useAuto();
-  const [comparing, setComparing] = useState(Boolean(service.compare));
   const index = SERVICES.findIndex((item) => item.id === id);
   const next = SERVICES[(index + 1) % SERVICES.length];
 
   return (
     <>
-      {comparing && service.compare ? (
-        <CompareStage
-          before={service.compare.before}
-          after={service.compare.after}
-          beforeLabel={service.compare.beforeLabel}
-          afterLabel={service.compare.afterLabel}
-          label={`Compare ${service.title.toLowerCase()}: ${service.compare.beforeLabel} and ${service.compare.afterLabel}`}
-        />
-      ) : (
-        <div
-          className="absolute inset-0"
-          style={
-            service.zoom
-              ? {
-                  transform: `scale(${service.zoom})`,
-                  transformOrigin: `${(service.hero.focus?.x ?? 0.5) * 100}% ${(service.hero.focus?.y ?? 0.5) * 100}%`,
-                }
-              : undefined
-          }
-        >
-          <CinematicImage image={service.hero} />
-        </div>
-      )}
+      <div
+        className="absolute inset-0"
+        style={
+          service.zoom
+            ? {
+                transform: `scale(${service.zoom})`,
+                transformOrigin: `${(service.hero.focus?.x ?? 0.5) * 100}% ${(service.hero.focus?.y ?? 0.5) * 100}%`,
+              }
+            : undefined
+        }
+      >
+        <CinematicImage image={service.hero} />
+      </div>
 
       <div
         aria-hidden="true"
@@ -72,16 +60,6 @@ export function Service({ id }: { id: ServiceId }) {
               </li>
             ))}
           </ul>
-          {service.compare && (
-            <button
-              type="button"
-              aria-pressed={comparing}
-              onClick={() => setComparing((value) => !value)}
-              className="label arrive-in mt-6 flex h-11 items-center text-bone/75 underline-offset-4 hover:text-bone hover:underline [animation-delay:1200ms]"
-            >
-              {comparing ? "Show the photo" : "Compare before and after"}
-            </button>
-          )}
           <div className="arrive-in mt-6 flex flex-wrap items-center gap-4 [animation-delay:1300ms]">
             <ContextCTA onClick={(event) => go("schedule", originOf(event.currentTarget))}>Schedule service</ContextCTA>
             <button
@@ -95,11 +73,9 @@ export function Service({ id }: { id: ServiceId }) {
               </span>
             </button>
           </div>
-          {service.compare && (
-            <p className="mt-5 max-w-[40ch] text-xs leading-relaxed text-bone/50">
-              Concept: comparison photos are stand-ins from different cars. A real site shows the shop&apos;s own work.
-            </p>
-          )}
+          <p className="mt-5 max-w-[40ch] text-xs leading-relaxed text-bone/50">
+            Concept: photos are licensed stand-ins from different cars. A real site shows the shop&apos;s own work.
+          </p>
         </div>
       </div>
     </>

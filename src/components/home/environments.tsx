@@ -83,6 +83,9 @@ export function EnvironmentChooser() {
     const W = window.innerWidth;
     const H = window.innerHeight;
     const inset = `inset(${box.top}px ${W - box.right}px ${H - box.bottom}px ${box.left}px)`;
+    curtain.current.querySelectorAll<HTMLElement>("[data-curtain]").forEach((layer) => {
+      layer.style.opacity = layer.dataset.curtain === environment.id ? "1" : "0";
+    });
     gsap
       .timeline({ onComplete: () => router.push(href) })
       .set(curtain.current, { display: "block", clipPath: inset })
@@ -172,7 +175,20 @@ export function EnvironmentChooser() {
       {/* The chosen environment grows to fill the screen before the experience begins. */}
       <div ref={curtain} aria-hidden="true" className="fixed inset-0 z-[70] hidden overflow-hidden bg-stage">
         <div ref={curtainImage} className="absolute inset-0">
-          <Image src={mainRoom} alt="" fill sizes="100vw" className="object-cover" />
+          {/* One layer per environment, same sizes as the panels so the photo is already cached; only the chosen one shows. */}
+          {ENVIRONMENTS.map((environment) => (
+            <Image
+              key={environment.id}
+              data-curtain={environment.id}
+              src={environment.image}
+              alt=""
+              fill
+              sizes="(min-width: 768px) 50vw, 100vw"
+              loading="eager"
+              className="object-cover opacity-0"
+              style={{ objectPosition: environment.focus }}
+            />
+          ))}
         </div>
       </div>
     </section>

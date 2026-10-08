@@ -41,7 +41,7 @@ const ENTRIES: Entry[] = [
   {
     name: "Saltbox Home Co.",
     kind: "Home Services",
-    line: "The lights come on in a house at dusk. Choose the roof, siding, windows, kitchen, bath, or backyard, compare mid-project and finished, pick materials, and request an estimate.",
+    line: "The lights come on in a house at dusk. Choose the roof, siding, windows, kitchen, bath, or backyard, browse the work, pick materials, and request an estimate.",
     image: house,
     alt: "A two-story house at dusk with its windows lit",
     focus: "50% 45%",

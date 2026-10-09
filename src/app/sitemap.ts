@@ -19,6 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     entry("", 1, "weekly"),
     entry("/services", 0.9),
+    entry("/pricing", 0.9),
     entry("/request-a-call", 0.9),
     entry("/website-check", 0.9),
     entry("/experiences", 0.8),

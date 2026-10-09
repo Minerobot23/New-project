@@ -51,3 +51,6 @@ media/**/renders/
 media/**/*.blend
 media/**/renders-mobile/
 __pycache__/
+
+# local embedded database (PGlite) for development
+/.data/

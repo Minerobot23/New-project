@@ -36,6 +36,7 @@ export const navLinks = [
   { href: "/experiences", label: "Experiences" },
   { href: "/services", label: "Services" },
   { href: "/resources", label: "Resources" },
+  { href: "/pricing", label: "Pricing" },
 ] as const;
 
 export const industryLinks = [

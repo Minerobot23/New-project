@@ -7,18 +7,26 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --conditions=react-server --import tsx --test \"tests/**/*.test.ts\"",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx scripts/db-migrate.mts",
+    "stripe:setup": "tsx scripts/stripe-setup.mts"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@gsap/react": "^2.1.2",
     "@vercel/analytics": "^2.0.1",
+    "drizzle-orm": "^0.45.4",
     "geist": "^1.7.2",
     "gsap": "^3.15.0",
     "lucide-react": "^1.52.0",
     "next": "16.3.8",
+    "postgres": "^3.4.9",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "server-only": "^0.0.1",
+    "stripe": "^23.0.0",
     "zod": "^4.6.5"
   },
   "devDependencies": {
@@ -26,9 +34,11 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^9",
     "eslint-config-next": "16.3.8",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

@@ -6,6 +6,7 @@ const companyLinks = [
   { href: "/experiences", label: "Experiences" },
   { href: "/services", label: "Services" },
   { href: "/resources", label: "Resources" },
+  { href: "/pricing", label: "Pricing" },
   { href: CHECK_PATH, label: "Website Check" },
   { href: CALL_PATH, label: CALL_CTA_LABEL },
 ];
@@ -85,6 +86,11 @@ export function SiteFooter() {
           <li>
             <Link href="/terms" className="transition-colors hover:text-white">
               Terms
+            </Link>
+          </li>
+          <li>
+            <Link href="/login" className="transition-colors hover:text-white">
+              Client login
             </Link>
           </li>
         </ul>

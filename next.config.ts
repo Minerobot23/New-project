@@ -10,6 +10,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // The embedded development database loads its WebAssembly from disk; bundling it breaks that.
+  serverExternalPackages: ["@electric-sql/pglite"],
   // AVIF first (smaller for photography-heavy scenes), WebP as the fallback.
   images: { formats: ["image/avif", "image/webp"] },
   async headers() {

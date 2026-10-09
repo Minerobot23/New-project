@@ -19,7 +19,9 @@ export type AnalyticsEvent =
   | "simulator_after_viewed"
   | "simulator_mobile_viewed"
   | "portfolio_view"
-  | "service_page_view";
+  | "service_page_view"
+  | "pricing_view"
+  | "checkout_started";
 
 type EventProps = Record<string, string | number | boolean | null>;
 

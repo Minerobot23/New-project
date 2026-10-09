@@ -128,3 +128,25 @@ charcoal and blue palette and mirrored horizontally.
 `/portfolio/*.webp` are screenshots of Fluxline's own work, captured from the live sites in October 2026: the Miami Restaurant
 & Bar and Casa Catracha concepts (their Vercel deployments), procamsolutionsli.com, and the Clean Slate concept on this site.
 Any photography visible inside them carries the license recorded by that project.
+
+### Clean Slate concept: service areas and gallery (added later)
+
+Location photos show local housing types and are captioned as illustrative; they do not claim to show a specific
+neighborhood. They were lightly desaturated for consistency.
+
+| File | Source |
+| --- | --- |
+| `/demos/cleanslate/loc-brooklyn.webp` | https://unsplash.com/photos/brownstone-townhouses-with-iron-railings-tHOYEWuIsjQ |
+| `/demos/cleanslate/loc-queens.webp` | https://unsplash.com/photos/row-houses-line-a-city-street-with-parked-cars-AC-XNAN5Uek |
+| `/demos/cleanslate/loc-manhattan.webp` | https://unsplash.com/photos/an-apartment-building-entrance-in-new-york-city-rKBMUlrpO7Y |
+| `/demos/cleanslate/loc-bronx.webp` | https://unsplash.com/photos/row-of-old-brick-townhouses-with-fire-escapes-43M9W_o64Fs |
+| `/demos/cleanslate/loc-staten-island.webp` | https://unsplash.com/photos/grey-cloudy-sky-over-the-bay-at-sunset-CpK4N2-1qvI |
+| `/demos/cleanslate/loc-brookhaven.webp` | https://unsplash.com/photos/gray-wooden-house-178j8tJrNlc |
+| `/demos/cleanslate/loc-oakdale.webp` | https://unsplash.com/photos/white-and-blue-house-beside-fence-nEvzSXBIhiU |
+| `/demos/cleanslate/loc-newtown.webp` | https://unsplash.com/photos/a-white-colonial-house-with-black-shutters-YcWBKNRwwIs |
+| `/demos/cleanslate/finished-basement.webp` | https://unsplash.com/photos/an-empty-room-with-white-walls-and-wooden-floors-TcnHgP7Nf5I |
+| `/demos/cleanslate/finished-basement-stairs.webp` | https://unsplash.com/photos/an-empty-room-with-a-staircase-and-hard-wood-floors-vBBr-MOWhaY |
+| `/demos/cleanslate/finished-exterior.webp` | https://unsplash.com/photos/modern-two-story-house-with-a-dark-garage-door-HckCpdBDeDk |
+
+`/demos/cleanslate/current-site-mobile.webp` is a screenshot of cleanslateservicesny.com's homepage on a phone (October 9, 2026),
+shown in the concept's proposal section for comparison.

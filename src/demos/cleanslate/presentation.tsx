@@ -156,7 +156,7 @@ function PresenterDock({ onExit }: { onExit: () => void }) {
     <div
       role="region"
       aria-label="Presenter controls"
-      className="cs-swap fixed inset-x-3 bottom-[5.25rem] z-[70] mx-auto flex max-w-xl items-center gap-2 border border-white/15 bg-cs-night/95 p-2 text-white shadow-2xl backdrop-blur md:inset-x-auto md:bottom-5 md:right-5 md:w-[26rem]"
+      className="cs-swap fixed inset-x-3 bottom-[5.25rem] z-[70] mx-auto flex max-w-xl items-center gap-2 border border-white/15 bg-cs-night p-2 text-white shadow-2xl md:inset-x-auto md:bottom-5 md:right-5 md:w-[26rem]"
     >
       <button
         type="button"

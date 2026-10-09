@@ -477,17 +477,29 @@ section[id] {
   }
 }
 
-/* The live dot next to "24/7": a slow pulse, so the line reads as staffed. */
-@keyframes cs-pulse {
-  0% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-cs-alert) 55%, transparent);
+/* The live dot next to "24/7": a slow pulse, so the line reads as staffed.
+   A pseudo-element scales and fades (compositor-only), instead of animating box-shadow, which repaints every frame. */
+@keyframes cs-ping {
+  from {
+    transform: scale(1);
+    opacity: 0.55;
   }
-  100% {
-    box-shadow: 0 0 0 10px transparent;
+  to {
+    transform: scale(2.6);
+    opacity: 0;
   }
 }
 .cs-live {
-  animation: cs-pulse 2.2s ease-out infinite;
+  position: relative;
+}
+.cs-live::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  animation: cs-ping 2.2s ease-out infinite;
+  will-change: transform, opacity;
 }
 
 /* Crossfade for the service selector and process stages. */

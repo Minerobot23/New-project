@@ -1,22 +1,36 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CornerDownRight } from "lucide-react";
+import { ArrowRight, CornerDownRight, MoveRight } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
 import { LogoMark } from "@/components/brand/logo-mark";
 import { site } from "@/lib/site";
 import { BASE, improvements, services } from "./content";
+import { AUDIT } from "./guides";
+import currentSite from "../../../public/demos/cleanslate/current-site-mobile.webp";
+import conceptSite from "../../../public/portfolio/cleanslate-mobile.webp";
 
 /** Their current URLs, as found on cleanslateservicesny.com. A migration keeps every one of them. */
 const ARCHITECTURE: { path: string; label: string; demo?: string; children?: string[] }[] = [
   { path: "/", label: "Home: emergency first, then services, process, proof, areas, assessment", demo: BASE },
   ...services.map((service) => ({ path: `/${service.slug}`, label: service.name, demo: `${BASE}/${service.slug}` })),
-  { path: "/emergency-board-up-service", label: "Emergency Board-Up" },
   {
-    path: "/locations/…",
-    label: "One page per service area",
-    children: ["brookhaven-ny", "queens-ny", "brooklyn-ny", "manhattan-ny", "bronx-ny", "staten-island-ny", "newton-ct"],
+    path: "/locations",
+    label: "Service-area hub, then one page per area, written for that place",
+    demo: `${BASE}/locations`,
+    children: [
+      "oakdale-ny (new: home base)",
+      "brookhaven-ny (rewritten for Brookhaven)",
+      "queens-ny",
+      "brooklyn-ny",
+      "manhattan-ny",
+      "bronx-ny",
+      "staten-island-ny",
+      "newtown-ct (301 from newton-ct)",
+    ],
   },
   { path: "/blog/…", label: "Existing articles, kept and linked to the service they support" },
-  { path: "/contact-us", label: "Contact and assessment request" },
+  { path: "/contact-us", label: "Contact and emergency request" },
+  { path: "/sitemap", label: "Human-readable sitemap, linked from every footer", demo: `${BASE}/sitemap` },
 ];
 
 const MIGRATION = [
@@ -48,9 +62,9 @@ export function ProposedImprovements() {
           </p>
         </Reveal>
 
-        <ol className="mt-14 grid gap-x-10 border-t border-ink sm:grid-cols-2 lg:grid-cols-3">
+        <ol className="mt-14 grid gap-x-10 border-t border-ink sm:grid-cols-2 lg:grid-cols-4">
           {improvements.map((item, index) => (
-            <Reveal as="li" key={item.title} delay={index % 3} className="border-b border-ink py-8">
+            <Reveal as="li" key={item.title} delay={index % 4} className="border-b border-ink py-8">
               <p className="font-mono text-sm text-accent">{String(index + 1).padStart(2, "0")}</p>
               <h3 className="display-tight mt-4 text-2xl">{item.title}</h3>
               <p className="mt-3 leading-relaxed text-ink-soft">{item.body}</p>
@@ -59,11 +73,54 @@ export function ProposedImprovements() {
         </ol>
 
         <div className="mt-20 grid gap-12 lg:grid-cols-12">
+          <Reveal className="lg:col-span-5">
+            <h3 className="display-tight text-3xl">The first screen on a phone</h3>
+            <p className="mt-3 max-w-[48ch] leading-relaxed text-ink-soft">
+              Where most emergency visitors land. Both captured on October 9, 2026, at the same phone size.
+            </p>
+            <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6">
+              {[
+                { src: currentSite, label: "Current site", alt: "The current Clean Slate Services homepage on a phone, headed Home Remodeling Long Island NY" },
+                { src: conceptSite, label: "This concept", alt: "This concept's homepage on a phone, headed When Disaster Strikes, We're Ready" },
+              ].map((shot) => (
+                <figure key={shot.label}>
+                  <div className="rounded-[26px] bg-ink p-[6px] shadow-[0_24px_60px_-24px_rgba(0,0,0,0.5)]">
+                    <div className="relative aspect-[390/844] overflow-hidden rounded-[20px] bg-white">
+                      <Image src={shot.src} alt={shot.alt} fill sizes="(min-width: 1024px) 18vw, 42vw" className="object-cover object-top" />
+                    </div>
+                  </div>
+                  <figcaption className="mt-3 text-center font-mono text-[11px] uppercase tracking-[0.14em] text-ink-soft">{shot.label}</figcaption>
+                </figure>
+              ))}
+            </div>
+          </Reveal>
+          <Reveal className="lg:col-span-7" delay={1}>
+            <h3 className="display-tight text-3xl">What we found on the current site</h3>
+            <p className="mt-3 max-w-[60ch] leading-relaxed text-ink-soft">
+              Checked on cleanslateservicesny.com on October 9, 2026, on desktop and phone. Each is fixable, and each is handled in this concept.
+            </p>
+            <ol className="mt-8 border-t border-ink">
+              {AUDIT.map((item, index) => (
+                <li key={item.found} className="grid gap-3 border-b border-line py-5 sm:grid-cols-[2rem_1fr_1.25rem_1fr] sm:gap-4">
+                  <span className="font-mono text-sm text-accent">{String(index + 1).padStart(2, "0")}</span>
+                  <p className="text-[15px] leading-relaxed text-ink">{item.found}</p>
+                  <MoveRight aria-hidden="true" className="hidden size-4 translate-y-1 text-line-strong sm:block" />
+                  <p className="text-[15px] leading-relaxed text-ink-soft">
+                    <span className="mr-1 font-mono text-[11px] uppercase tracking-[0.12em] text-accent sm:sr-only">In this concept:</span>
+                    {item.fix}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </Reveal>
+        </div>
+
+        <div className="mt-20 grid gap-12 lg:grid-cols-12">
           <Reveal className="lg:col-span-7">
             <h3 className="display-tight text-3xl">Search-friendly page structure</h3>
             <p className="mt-3 max-w-[58ch] leading-relaxed text-ink-soft">
-              One topic per page, one H1 per page, and the URLs Clean Slate already uses. The three service pages in this concept are built at
-              those same paths.
+              One topic per page, one H1 per page, and the URLs Clean Slate already uses. The service pages in this concept are built at those
+              same paths.
             </p>
             <ul className="mt-8 border border-ink bg-surface font-mono text-[13px]">
               <li className="border-b border-line px-4 py-3 text-muted">cleanslateservicesny.com</li>

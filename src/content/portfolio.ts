@@ -122,10 +122,11 @@ export const CONCEPT: PortfolioProject = {
   objective:
     "For a business whose customers find it in an emergency: put the phone call first, make water, fire, and mold easy to tell apart, and look like a company you'd trust inside your home.",
   built: [
-    "A 24/7 emergency hero with tap-to-call on every screen and a call bar that stays on phones",
-    "An interactive water / fire / mold selector and an animated four-stage restoration process",
-    "A before-and-after slider, clearly labeled sample imagery, ready for the company's own job photos",
-    "Service pages at the company's existing URLs, with LocalBusiness and FAQ structured data",
+    "An emergency-first homepage with tap-to-call on every screen, and one phone number displayed and dialed everywhere",
+    "\u201CWhat to do right now\u201D safety guidance and an insurance-claim guide, each ending in a call or a request",
+    "A two-step emergency request built around damage type, urgency, and ZIP code",
+    "Eight service-area pages written for each place, plus service pages at the company's existing URLs",
+    "A filterable project gallery, structured data, a real sitemap, and an audit of the current site's issues",
     "A presentation mode with proposal notes for walking management through the concept",
   ],
   focus: ["Emergency conversion", "Local SEO architecture", "Sales presentation"],

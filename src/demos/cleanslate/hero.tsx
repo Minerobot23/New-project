@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
-import { BASE, business, photos, services } from "./content";
+import { BASE, business, photos, primaryServices } from "./content";
 import { EmergencyCallButton } from "./chrome";
 import { Annotation } from "./presentation";
 
@@ -90,7 +90,7 @@ export function CsHero() {
 
         <div className="mt-auto pt-14">
           <ul className="grid border-t border-white/15 sm:grid-cols-3">
-            {services.map((service, index) => (
+            {primaryServices.map((service, index) => (
               <li key={service.slug} className={`border-white/15 ${index > 0 ? "border-t sm:border-l sm:border-t-0" : ""}`}>
                 <Link
                   href={`${BASE}/${service.slug}`}

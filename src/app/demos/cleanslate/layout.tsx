@@ -64,10 +64,7 @@ const localBusiness = {
   hasOfferCatalog: {
     "@type": "OfferCatalog",
     name: "Restoration services",
-    itemListElement: [
-      ...services.map((service) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: service.name } })),
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Emergency Board-Up" } },
-    ],
+    itemListElement: services.map((service) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: service.name } })),
   },
 };
 

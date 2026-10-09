@@ -1,16 +1,21 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, ChevronRight, CircleAlert } from "lucide-react";
+import { ArrowRight, ChevronRight, CircleAlert, MapPin, Phone } from "lucide-react";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Reveal } from "@/components/motion/reveal";
 import { EmergencyCallButton } from "@/demos/cleanslate/chrome";
 import { CsHeading } from "@/demos/cleanslate/parts";
 import { Annotation } from "@/demos/cleanslate/presentation";
 import { RestorationProcess } from "@/demos/cleanslate/process";
+import { InquiryForm } from "@/demos/cleanslate/inquiry-form";
+import { locations } from "@/demos/cleanslate/locations";
 import { BASE, business, serviceAreas, serviceBySlug, services } from "@/demos/cleanslate/content";
 
 export const dynamicParams = false;
+
+/** Preselects the request form's damage type on each service page. */
+const DAMAGE_FOR = { water: "Water or flooding", fire: "Fire or smoke", mold: "Mold", boardup: "Board-up needed" } as const;
 
 export function generateStaticParams() {
   return services.map((service) => ({ service: service.slug }));
@@ -101,10 +106,10 @@ export default async function CleanSlateServicePage({ params }: PageProps<"/demo
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <EmergencyCallButton size="lg" label={service.cta} className="w-full sm:w-auto" />
               <Link
-                href={`${BASE}#assessment`}
+                href="#request"
                 className="inline-flex h-14 w-full items-center justify-center px-7 text-[15px] font-semibold text-white shadow-[inset_0_0_0_1.5px_rgba(255,255,255,0.5)] transition-colors hover:bg-white hover:text-cs-ink sm:w-auto"
               >
-                Request an Assessment
+                Send an Emergency Request
               </Link>
             </div>
           </div>
@@ -173,6 +178,27 @@ export default async function CleanSlateServicePage({ params }: PageProps<"/demo
         </div>
       </section>
 
+      <section id="request" data-present="Emergency request" aria-labelledby="request-title" className="bg-cs-mist py-20 sm:py-24">
+        <div className="mx-auto grid max-w-[84rem] gap-12 px-5 sm:px-8 lg:grid-cols-12">
+          <Reveal className="lg:col-span-5">
+            <CsHeading
+              id="request-title"
+              eyebrow="Get help"
+              title="Call now, or send the details."
+              intro="If it's happening right now, calling is fastest. Otherwise, two quick steps and the office follows up."
+            />
+            <a href={business.phoneHref} className="mt-8 flex items-center gap-3 text-2xl font-bold hover:text-cs-blue">
+              <Phone aria-hidden="true" className="size-6 text-cs-blue" />
+              {business.phoneDisplay}
+            </a>
+            <p className="mt-1 text-sm text-cs-slate">24/7 emergency service</p>
+          </Reveal>
+          <Reveal className="lg:col-span-7" delay={1}>
+            <InquiryForm compact defaultDamage={DAMAGE_FOR[service.id]} />
+          </Reveal>
+        </div>
+      </section>
+
       <section id="faq" data-present="Questions" aria-labelledby="faq-title" className="py-20 sm:py-24">
         <div className="mx-auto grid max-w-[84rem] gap-12 px-5 sm:px-8 lg:grid-cols-12">
           <Reveal className="lg:col-span-4">
@@ -195,6 +221,24 @@ export default async function CleanSlateServicePage({ params }: PageProps<"/demo
         </div>
       </section>
 
+      <nav aria-labelledby="by-area-title" className="border-t border-cs-ink/10 bg-cs-cloud">
+        <div className="mx-auto max-w-[84rem] px-5 py-12 sm:px-8">
+          <h2 id="by-area-title" className="text-sm font-semibold uppercase tracking-[0.16em] text-cs-slate">
+            {service.name} by area
+          </h2>
+          <ul className="mt-5 grid gap-px bg-cs-ink/10 sm:grid-cols-2 lg:grid-cols-4">
+            {locations.map((location) => (
+              <li key={location.slug} className="bg-cs-cloud">
+                <Link href={`${BASE}/locations/${location.slug}`} className="group flex items-center gap-2.5 py-3.5 pr-4 text-[15px] font-medium hover:text-cs-blue sm:px-4">
+                  <MapPin aria-hidden="true" className="size-4 shrink-0 text-cs-blue" />
+                  {service.tab} in {location.full}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </nav>
+
       <section aria-labelledby="related-title" className="bg-cs-blue text-white">
         <div className="mx-auto grid max-w-[84rem] gap-10 px-5 py-14 sm:px-8 lg:grid-cols-12 lg:items-center">
           <div className="lg:col-span-5">
@@ -205,7 +249,7 @@ export default async function CleanSlateServicePage({ params }: PageProps<"/demo
               Call {business.phoneDisplay}, 24/7
             </a>
           </div>
-          <ul className="grid gap-px bg-white/20 sm:grid-cols-2 lg:col-span-7">
+          <ul className="grid gap-px bg-white/20 sm:grid-cols-3 lg:col-span-7">
             {others.map((item) => (
               <li key={item.slug} className="bg-cs-blue">
                 <Link href={`${BASE}/${item.slug}`} className="group flex items-center justify-between gap-4 p-6 text-lg font-semibold hover:bg-cs-blue-deep">

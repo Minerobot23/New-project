@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, Building2, Camera, Clock, FileCheck2, Hammer, MapPin, MessageSquareQuote, Microscope, Phone, ShieldCheck, Star } from "lucide-react";
+import { ArrowRight, BadgeCheck, Building2, Camera, Clock, ExternalLink, FileCheck2, Hammer, MapPin, MessageSquareQuote, Microscope, Phone, ShieldCheck, Star } from "lucide-react";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Reveal } from "@/components/motion/reveal";
 import { CsHero } from "@/demos/cleanslate/hero";
 import { ServiceSelector } from "@/demos/cleanslate/service-selector";
@@ -10,7 +11,10 @@ import { CsHeading } from "@/demos/cleanslate/parts";
 import { Annotation } from "@/demos/cleanslate/presentation";
 import { EmergencyCallButton } from "@/demos/cleanslate/chrome";
 import { ProposedImprovements } from "@/demos/cleanslate/proposal";
-import { business, publishedReview, serviceAreas } from "@/demos/cleanslate/content";
+import { TriagePanel } from "@/demos/cleanslate/triage";
+import { CLAIM_STEPS, HOME_FAQS, SOURCES } from "@/demos/cleanslate/guides";
+import { LOCATION_GROUPS, locationBySlug } from "@/demos/cleanslate/locations";
+import { BASE, business, publishedReview } from "@/demos/cleanslate/content";
 
 export const metadata = {
   title: { absolute: "Clean Slate Services | 24/7 Water, Fire & Mold Restoration, Long Island & NYC (Concept)" },
@@ -45,8 +49,8 @@ export default function CleanSlateHome() {
       <section id="emergency" data-present="Emergency contact" aria-labelledby="cs-emergency-title" className="bg-cs-blue text-white">
         <div className="mx-auto max-w-[84rem] px-5 py-12 sm:px-8 sm:py-14">
           <Annotation n={2} title="Faster emergency contact" tone="dark">
-            The number appears in the header, the hero, here, beside every service, and in a call bar that stays on screen on phones. Every
-            instance is a working tap-to-call link.
+            One number, (631) 977-9300, displayed and dialed everywhere: the header, the hero, here, beside every service, and in a call bar
+            that stays on screen on phones. On the current site, the most visible phone links dial a different number than the one they show.
           </Annotation>
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
             <div>
@@ -71,11 +75,32 @@ export default function CleanSlateHome() {
         </div>
       </section>
 
+      <section id="right-now" data-present="What to do right now" aria-labelledby="cs-now-title" className="bg-cs-night py-20 text-white sm:py-28">
+        <div className="mx-auto max-w-[84rem] px-5 sm:px-8">
+          <Annotation n={3} title="Helpful before it's persuasive" tone="dark">
+            Someone standing in a flooded basement wants to know what to do this minute. Answering that first builds the trust that makes them
+            call, and every answer ends in the same two actions: call, or send a request with the damage type already filled in.
+          </Annotation>
+          <Reveal>
+            <CsHeading
+              id="cs-now-title"
+              tone="dark"
+              eyebrow="Right now"
+              title="What's happening? Here's what to do first."
+              intro="General safety steps for the first few minutes, while help is on the way."
+            />
+          </Reveal>
+          <Reveal className="mt-12" delay={1}>
+            <TriagePanel />
+          </Reveal>
+        </div>
+      </section>
+
       <section id="services" data-present="Service navigation" aria-labelledby="cs-services-title" className="py-20 sm:py-28">
         <div className="mx-auto max-w-[84rem] px-5 sm:px-8">
-          <Annotation n={3} title="Clearer service navigation">
-            Visitors arrive with one problem. The selector lets them pick it and see what happens next, and each service leads to its own page
-            for search and for sharing.
+          <Annotation n={4} title="Emergency restoration first">
+            The current homepage headline is &ldquo;Home Remodeling Long Island NY.&rdquo; Here, water, fire, and mold lead. Each opens its own
+            page; rebuilding appears as the last step of restoration, not as a separate pitch.
           </Annotation>
           <Reveal>
             <CsHeading
@@ -88,12 +113,19 @@ export default function CleanSlateHome() {
           <Reveal className="mt-12" delay={1}>
             <ServiceSelector />
           </Reveal>
+          <p className="mt-10 text-[15px] text-cs-slate">
+            Storm damage or a break-in?{" "}
+            <Link href={`${BASE}/emergency-board-up-service`} className="font-semibold text-cs-ink underline decoration-cs-blue/40 underline-offset-4 hover:text-cs-blue">
+              Emergency board-up
+            </Link>{" "}
+            secures openings until repairs can start.
+          </p>
         </div>
       </section>
 
       <section id="process" data-present="Restoration process" aria-labelledby="cs-process-title" className="bg-cs-charcoal py-20 text-white sm:py-28">
         <div className="mx-auto max-w-[84rem] px-5 sm:px-8">
-          <Annotation n={4} title="Trust through a clear plan" tone="dark">
+          <Annotation n={5} title="Trust through a clear plan" tone="dark">
             People in a crisis want to know what happens next. Four stages, shown in order, answer that before they ask.
           </Annotation>
           <Reveal>
@@ -111,19 +143,59 @@ export default function CleanSlateHome() {
         </div>
       </section>
 
-      <section id="results" data-present="Before & after" aria-labelledby="cs-results-title" className="py-20 sm:py-28">
+      <section id="insurance" data-present="Insurance claims" aria-labelledby="cs-insurance-title" className="py-20 sm:py-28">
         <div className="mx-auto max-w-[84rem] px-5 sm:px-8">
-          <Annotation n={5} title="Finished work, presented honestly">
-            Before-and-after photos are the strongest proof a restoration company has. This slider is ready for Clean Slate&apos;s own job photos;
-            the samples here are labeled as stock.
+          <Annotation n={6} title="Answer the question behind the call">
+            Almost every restoration customer is also starting an insurance claim. Explaining how that usually goes, with sources, earns trust
+            and attracts better-qualified inquiries than another &ldquo;call now&rdquo; banner.
+          </Annotation>
+          <div className="grid gap-12 lg:grid-cols-12">
+            <Reveal className="lg:col-span-5">
+              <CsHeading
+                id="cs-insurance-title"
+                eyebrow="Insurance claims"
+                title="Filing a claim? Start here."
+                intro="Clean Slate works with your insurance company to make the process as smooth as possible. These are the steps that usually matter most."
+              />
+              <div className="mt-8 border-l-2 border-cs-blue pl-5">
+                <p className="font-semibold">Flood is usually a separate policy.</p>
+                <p className="mt-1.5 leading-relaxed text-cs-slate">
+                  Most homeowners insurance does not cover flood damage, which needs separate flood insurance. Water from a burst pipe is a
+                  different kind of claim.
+                </p>
+                <a href={SOURCES.floodsmart.href} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-sm text-cs-blue underline underline-offset-2">
+                  Source: {SOURCES.floodsmart.label}
+                  <ExternalLink aria-hidden="true" className="size-3" />
+                </a>
+              </div>
+            </Reveal>
+            <ol className="grid gap-px self-start bg-cs-ink/10 sm:grid-cols-2 lg:col-span-7">
+              {CLAIM_STEPS.map((step, index) => (
+                <Reveal as="li" key={step.title} delay={index % 2} className="bg-white p-6 sm:p-8">
+                  <span className="font-mono text-sm text-cs-blue">0{index + 1}</span>
+                  <h3 className="mt-3 text-lg font-semibold">{step.title}</h3>
+                  <p className="mt-2 leading-relaxed text-cs-slate">{step.body}</p>
+                </Reveal>
+              ))}
+            </ol>
+          </div>
+          <p className="mt-8 text-[13px] text-cs-slate">General information, not insurance or legal advice. Coverage depends on your policy and your insurer.</p>
+        </div>
+      </section>
+
+      <section id="results" data-present="Project gallery" aria-labelledby="cs-results-title" className="bg-cs-cloud py-20 sm:py-28">
+        <div className="mx-auto max-w-[84rem] px-5 sm:px-8">
+          <Annotation n={7} title="Finished work, presented honestly">
+            Before-and-after photos are the strongest proof a restoration company has, and the current site has none. Each card is ready for a
+            real Clean Slate job: photos, scope, location, timeline, and the customer&apos;s own review. The samples here are labeled as stock.
           </Annotation>
           <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
             <Reveal className="lg:col-span-7">
-              <CsHeading id="cs-results-title" eyebrow="Before & after" title="Drag to see the difference." />
+              <CsHeading id="cs-results-title" eyebrow="Project gallery" title="Before and after. Drag to compare." />
             </Reveal>
             <Reveal className="lg:col-span-5" delay={1}>
               <p className="text-lg leading-relaxed text-cs-slate">
-                A presentation format for completed jobs. The pairs shown are illustrative sample imagery, not Clean Slate projects.
+                Filter by damage type and pick a project. The pairs shown are illustrative sample imagery, not Clean Slate projects.
               </p>
             </Reveal>
           </div>
@@ -133,9 +205,9 @@ export default function CleanSlateHome() {
         </div>
       </section>
 
-      <section id="trust" data-present="Trust & credentials" aria-labelledby="cs-trust-title" className="bg-cs-cloud py-20 sm:py-28">
+      <section id="trust" data-present="Trust & credentials" aria-labelledby="cs-trust-title" className="py-20 sm:py-28">
         <div className="mx-auto max-w-[84rem] px-5 sm:px-8">
-          <Annotation n={6} title="Only claims that can be verified">
+          <Annotation n={8} title="Only claims that can be verified">
             Everything in this section comes from Clean Slate&apos;s current website. The credential spaces stay empty until Clean Slate supplies
             proof; nothing is invented to fill them.
           </Annotation>
@@ -145,7 +217,7 @@ export default function CleanSlateHome() {
 
           <ul className="mt-14 grid gap-px bg-cs-ink/10 sm:grid-cols-2 lg:grid-cols-3">
             {FACTS.map((fact, index) => (
-              <Reveal as="li" key={fact.title} delay={index % 3} className="bg-cs-cloud p-6 sm:p-8">
+              <Reveal as="li" key={fact.title} delay={index % 3} className="bg-white p-6 sm:p-8">
                 <fact.icon aria-hidden="true" className="size-6 text-cs-blue" strokeWidth={1.75} />
                 <h3 className="mt-5 text-lg font-semibold">{fact.title}</h3>
                 <p className="mt-2 leading-relaxed text-cs-slate">{fact.body}</p>
@@ -185,12 +257,12 @@ export default function CleanSlateHome() {
 
       <section id="areas" data-present="Service areas" aria-labelledby="cs-areas-title" className="py-20 sm:py-28">
         <div className="mx-auto max-w-[84rem] px-5 sm:px-8">
-          <Annotation n={7} title="Local SEO foundations">
-            The areas below match the location pages Clean Slate already has. In a launch, each keeps its current URL (for example,
-            /locations/queens-ny) and gains real local content.
+          <Annotation n={9} title="Local pages worth ranking">
+            Each area links to its own page, written for that place instead of one template with the city swapped in. The current URLs are kept,
+            the misspelled /locations/newton-ct redirects to newtown-ct, and Oakdale finally gets a page of its own.
           </Annotation>
           <div className="grid gap-12 lg:grid-cols-12">
-            <Reveal className="lg:col-span-5">
+            <Reveal className="lg:col-span-4">
               <CsHeading
                 id="cs-areas-title"
                 eyebrow="Service areas"
@@ -201,36 +273,56 @@ export default function CleanSlateHome() {
                   </>
                 }
               />
-              <div className="mt-8">
-                <EmergencyCallButton label={`Call ${business.phoneDisplay}`} />
+              <div className="mt-8 flex flex-col gap-4">
+                <EmergencyCallButton label={`Call ${business.phoneDisplay}`} className="self-start" />
+                <Link href={`${BASE}/locations`} className="inline-flex items-center gap-2 text-sm font-semibold text-cs-blue hover:underline">
+                  All service areas <ArrowRight aria-hidden="true" className="size-3.5" />
+                </Link>
               </div>
             </Reveal>
-            <Reveal as="ul" className="grid grid-cols-2 gap-px self-start bg-cs-ink/10 sm:grid-cols-3 lg:col-span-7" delay={1}>
-              {serviceAreas.map((area) => (
-                <li key={area.name} className="bg-white p-5 last:col-span-2 sm:last:col-span-1">
-                  <MapPin aria-hidden="true" className="size-4 text-cs-blue" />
-                  <p className="mt-3 font-semibold">{area.name}</p>
-                  <p className="text-sm text-cs-slate">{area.note}</p>
-                </li>
+            <Reveal className="space-y-8 lg:col-span-8" delay={1}>
+              {LOCATION_GROUPS.map((group) => (
+                <div key={group.title}>
+                  <h3 className="text-[12px] font-semibold uppercase tracking-[0.18em] text-cs-slate">{group.title}</h3>
+                  <ul className="mt-3 grid border-l border-t border-cs-ink/10 sm:grid-cols-2 lg:grid-cols-3">
+                    {group.slugs.map((slug) => {
+                      const location = locationBySlug(slug);
+                      if (!location) return null;
+                      return (
+                        <li key={slug} className="border-b border-r border-cs-ink/10 bg-white">
+                          <Link href={`${BASE}/locations/${slug}`} className="group flex h-full items-start gap-3 p-5 transition-colors hover:bg-cs-cloud">
+                            <MapPin aria-hidden="true" className="mt-1 size-4 shrink-0 text-cs-blue" />
+                            <span className="flex-1">
+                              <span className="block font-semibold group-hover:text-cs-blue">{location.full}</span>
+                              <span className="block text-sm text-cs-slate">{location.risks[0].title}</span>
+                            </span>
+                            <ArrowRight aria-hidden="true" className="mt-1 size-4 shrink-0 text-cs-slate transition-transform duration-300 group-hover:translate-x-1 group-hover:text-cs-blue" />
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
               ))}
             </Reveal>
           </div>
         </div>
       </section>
 
-      <section id="assessment" data-present="Lead capture" aria-labelledby="cs-assessment-title" className="bg-cs-mist py-20 sm:py-28">
+      <section id="assessment" data-present="Emergency request" aria-labelledby="cs-assessment-title" className="bg-cs-mist py-20 sm:py-28">
         <div className="mx-auto max-w-[84rem] px-5 sm:px-8">
-          <Annotation n={8} title="Lead capture built for phones">
-            Six short fields, large touch targets, and the questions the office needs to triage: damage type, ZIP code, and urgency. Choosing
-            &ldquo;Emergency&rdquo; points the customer to the phone instead of a callback.
+          <Annotation n={10} title="Qualified requests, built for phones">
+            The current forms ask only for name, email, phone, and a message. This request starts with two taps (damage type and urgency),
+            then asks for ZIP code and contact details, so the office can triage before calling back. &ldquo;Happening now&rdquo; points the
+            customer straight to the phone.
           </Annotation>
           <div className="grid gap-12 lg:grid-cols-12">
             <Reveal className="lg:col-span-4">
               <CsHeading
                 id="cs-assessment-title"
-                eyebrow="Request an assessment"
+                eyebrow="Emergency request"
                 title="Tell us what happened."
-                intro="For anything happening right now, calling is faster. For everything else, send the details and the office will follow up."
+                intro="Two quick steps. For anything happening right now, calling is faster; for everything else, the office follows up with the details in hand."
               />
               <a href={business.phoneHref} className="mt-8 flex items-center gap-3 text-2xl font-bold hover:text-cs-blue">
                 <Phone aria-hidden="true" className="size-6 text-cs-blue" />
@@ -249,20 +341,56 @@ export default function CleanSlateHome() {
         </div>
       </section>
 
+      <section id="faq" data-present="Common questions" aria-labelledby="cs-faq-title" className="py-20 sm:py-28">
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: HOME_FAQS.map((faq) => ({ "@type": "Question", name: faq.q, acceptedAnswer: { "@type": "Answer", text: faq.a } })),
+          }}
+        />
+        <div className="mx-auto grid max-w-[84rem] gap-12 px-5 sm:px-8 lg:grid-cols-12">
+          <Reveal className="lg:col-span-4">
+            <CsHeading id="cs-faq-title" eyebrow="Questions" title="Before you call" />
+            <a href={business.phoneHref} className="mt-8 flex items-center gap-3 text-xl font-bold hover:text-cs-blue">
+              <Phone aria-hidden="true" className="size-5 text-cs-blue" />
+              {business.phoneDisplay}
+            </a>
+          </Reveal>
+          <Reveal className="border-b border-cs-ink/15 lg:col-span-8" delay={1}>
+            {HOME_FAQS.map((faq) => (
+              <details key={faq.q} className="group border-t border-cs-ink/15">
+                <summary className="flex cursor-pointer list-none items-start justify-between gap-6 py-6 text-lg font-semibold leading-snug transition-colors hover:text-cs-blue [&::-webkit-details-marker]:hidden">
+                  {faq.q}
+                  <span aria-hidden="true" className="relative mt-1.5 size-4 shrink-0">
+                    <span className="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 bg-current" />
+                    <span className="absolute inset-y-0 left-1/2 w-[2px] -translate-x-1/2 bg-current transition-transform duration-300 group-open:scale-y-0" />
+                  </span>
+                </summary>
+                <p className="-mt-2 max-w-[62ch] pb-6 pr-10 leading-relaxed text-cs-slate">{faq.a}</p>
+              </details>
+            ))}
+          </Reveal>
+        </div>
+      </section>
+
       <ProposedImprovements />
 
-      <nav aria-label="Service pages" className="border-t border-cs-ink/10 bg-white">
+      <nav aria-label="Pages in this concept" className="border-t border-cs-ink/10 bg-white">
         <div className="mx-auto flex max-w-[84rem] flex-wrap items-center gap-x-8 gap-y-3 px-5 py-6 text-sm sm:px-8">
-          <span className="font-semibold text-cs-ink">Service pages in this concept:</span>
-          <Link href="/demos/cleanslate/flood-and-water-damage" className="group inline-flex items-center gap-1.5 text-cs-slate hover:text-cs-blue">
-            Water damage <ArrowRight aria-hidden="true" className="size-3.5" />
-          </Link>
-          <Link href="/demos/cleanslate/fire-restoration" className="group inline-flex items-center gap-1.5 text-cs-slate hover:text-cs-blue">
-            Fire &amp; smoke <ArrowRight aria-hidden="true" className="size-3.5" />
-          </Link>
-          <Link href="/demos/cleanslate/mold-remediation" className="group inline-flex items-center gap-1.5 text-cs-slate hover:text-cs-blue">
-            Mold remediation <ArrowRight aria-hidden="true" className="size-3.5" />
-          </Link>
+          <span className="font-semibold text-cs-ink">Pages in this concept:</span>
+          {[
+            { href: `${BASE}/flood-and-water-damage`, label: "Water damage" },
+            { href: `${BASE}/fire-restoration`, label: "Fire & smoke" },
+            { href: `${BASE}/mold-remediation`, label: "Mold remediation" },
+            { href: `${BASE}/emergency-board-up-service`, label: "Board-up" },
+            { href: `${BASE}/locations`, label: "8 service areas" },
+            { href: `${BASE}/sitemap`, label: "Sitemap" },
+          ].map((link) => (
+            <Link key={link.href} href={link.href} className="group inline-flex items-center gap-1.5 text-cs-slate hover:text-cs-blue">
+              {link.label} <ArrowRight aria-hidden="true" className="size-3.5" />
+            </Link>
+          ))}
         </div>
       </nav>
     </>

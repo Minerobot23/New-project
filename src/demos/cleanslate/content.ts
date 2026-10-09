@@ -13,6 +13,9 @@ import finishedLiving from "../../../public/demos/cleanslate/finished-living.web
 import finishedLounge from "../../../public/demos/cleanslate/finished-lounge.webp";
 import finishedDen from "../../../public/demos/cleanslate/finished-den.webp";
 import guttedRoom from "../../../public/demos/cleanslate/gutted-room.webp";
+import finishedBasement from "../../../public/demos/cleanslate/finished-basement.webp";
+import finishedBasementStairs from "../../../public/demos/cleanslate/finished-basement-stairs.webp";
+import finishedExterior from "../../../public/demos/cleanslate/finished-exterior.webp";
 
 /**
  * Clean Slate Services: an unsolicited redesign concept, not their official website.
@@ -75,12 +78,17 @@ export const photos = {
   finishedLounge: { src: finishedLounge, alt: "A finished, bright living room" },
   finishedDen: { src: finishedDen, alt: "A finished den with a fireplace" },
   guttedRoom: { src: guttedRoom, alt: "A gutted room with peeling walls and a damaged floor" },
+  finishedBasement: { src: finishedBasement, alt: "A finished basement with white walls and wood-look flooring" },
+  finishedBasementStairs: { src: finishedBasementStairs, alt: "A finished basement with a staircase" },
+  finishedExterior: { src: finishedExterior, alt: "A finished two-story house exterior" },
 } satisfies Record<string, Photo>;
 
-export type ServiceId = "water" | "fire" | "mold";
+export type ServiceId = "water" | "fire" | "mold" | "boardup";
 
 export type Service = {
   id: ServiceId;
+  /** Primary services lead the homepage (hero links, selector). Board-up is a supporting emergency service. */
+  primary: boolean;
   /** Kept identical to the slug on their current site, so a migration preserves the URL. */
   slug: string;
   currentUrl: string;
@@ -101,6 +109,7 @@ export type Service = {
 export const services: Service[] = [
   {
     id: "water",
+    primary: true,
     slug: "flood-and-water-damage",
     currentUrl: "https://www.cleanslateservicesny.com/flood-and-water-damage",
     tab: "Water Damage",
@@ -142,6 +151,7 @@ export const services: Service[] = [
   },
   {
     id: "fire",
+    primary: true,
     slug: "fire-restoration",
     currentUrl: "https://www.cleanslateservicesny.com/fire-restoration",
     tab: "Fire & Smoke",
@@ -164,8 +174,8 @@ export const services: Service[] = [
       { title: "Rebuild", body: "Structural repair and finish work to bring the home back." },
     ],
     cta: "Fire or smoke damage? Call now",
-    image: photos.fireHome,
-    detail: photos.fireInterior,
+    image: photos.fireInterior,
+    detail: photos.fireHome,
     faqs: [
       {
         q: "Do you board up a property after a fire?",
@@ -183,6 +193,7 @@ export const services: Service[] = [
   },
   {
     id: "mold",
+    primary: true,
     slug: "mold-remediation",
     currentUrl: "https://www.cleanslateservicesny.com/mold-remediation",
     tab: "Mold Remediation",
@@ -222,7 +233,51 @@ export const services: Service[] = [
       },
     ],
   },
+  {
+    id: "boardup",
+    primary: false,
+    slug: "emergency-board-up-service",
+    currentUrl: "https://www.cleanslateservicesny.com/emergency-board-up-service",
+    tab: "Board-Up",
+    name: "Emergency Board-Up",
+    pageTitle: "Emergency Board-Up Service | Long Island & NYC",
+    metaDescription:
+      "24/7 emergency board-up from Clean Slate Services in Oakdale, NY: windows, doors, and openings secured after a fire, storm, or break-in across Long Island, NYC, and the Tri-State Area. Call (631) 977-9300.",
+    h1: "Emergency board-up after a fire, storm, or break-in",
+    lede: "Broken windows, forced doors, and openings left by a fire or a storm leave a property exposed to weather, theft, and further damage. Boarding up secures it until repairs can start.",
+    signs: [
+      "Broken or blown-out windows",
+      "A door forced open or off its frame",
+      "Openings left after firefighting",
+      "Storm damage to walls or the roofline",
+    ],
+    steps: [
+      { title: "Make it safe", body: "Check the opening and the area around it before anyone works near it." },
+      { title: "Secure openings", body: "Board windows, doors, and wall openings to keep out weather and intruders." },
+      { title: "Document", body: "Photograph the damage before and after, for the insurance claim." },
+      { title: "Plan the repair", body: "Scope the permanent repair, which Clean Slate can also handle." },
+    ],
+    cta: "Need a board-up? Call now",
+    image: photos.fireHome,
+    detail: photos.rebuildFraming,
+    faqs: [
+      {
+        q: "Is emergency board-up available at night?",
+        a: "Clean Slate Services offers 24/7 emergency service, and emergency board-up is one of its core services.",
+      },
+      {
+        q: "Will my insurance pay for a board-up?",
+        a: "Insurers generally expect reasonable steps to prevent further damage, and emergency board-up is a common one. What your policy covers depends on the policy, so check with your insurer.",
+      },
+      {
+        q: "Can you do the permanent repair too?",
+        a: "Yes. Clean Slate Services also handles construction and repairs, so the same company can follow the board-up with the rebuild.",
+      },
+    ],
+  },
 ];
+
+export const primaryServices = services.filter((service) => service.primary);
 
 export const serviceBySlug = (slug: string) => services.find((service) => service.slug === slug);
 
@@ -255,12 +310,70 @@ export const stages: Stage[] = [
   },
 ];
 
-/** Illustrative pairs: unrelated stock photos chosen to show the gallery format, labeled as such on the page. */
-export const comparisons = [
-  { label: "Interior rebuild", before: photos.guttedRoom, after: photos.finishedLounge },
-  { label: "Leak-damaged ceiling", before: photos.waterCeiling, after: photos.finishedDen },
-  { label: "Framing to finish", before: photos.rebuildFraming, after: photos.finishedLiving },
-] as const;
+/**
+ * Project gallery. Every pair is two unrelated stock photos chosen to show the presentation format,
+ * and is labeled that way on screen. At launch each entry becomes a real Clean Slate job.
+ */
+export type GalleryItem = {
+  id: string;
+  type: Exclude<ServiceId, "boardup">;
+  label: string;
+  before: Photo;
+  after: Photo;
+  /** The scope a real job card would list. Generic to the damage type, not a claim about a specific job. */
+  scope: string[];
+};
+
+export const gallery: GalleryItem[] = [
+  {
+    id: "interior-water",
+    type: "water",
+    label: "Interior rebuild after a water loss",
+    before: photos.guttedRoom,
+    after: photos.finishedLounge,
+    scope: ["Water extraction and drying", "Damaged drywall and flooring removed", "Walls, floors, and paint rebuilt"],
+  },
+  {
+    id: "ceiling-leak",
+    type: "water",
+    label: "Ceiling collapse after a leak",
+    before: photos.waterCeiling,
+    after: photos.finishedDen,
+    scope: ["Leak source found and stopped", "Wet ceiling material removed", "Ceiling rebuilt and finished"],
+  },
+  {
+    id: "fire-interior",
+    type: "fire",
+    label: "Fire-damaged interior to finished room",
+    before: photos.fireInterior,
+    after: photos.finishedLiving,
+    scope: ["Charred material removed", "Soot and odor treated", "Framing, drywall, and finishes rebuilt"],
+  },
+  {
+    id: "fire-exterior",
+    type: "fire",
+    label: "Exterior after a house fire",
+    before: photos.fireHome,
+    after: photos.finishedExterior,
+    scope: ["Openings boarded up", "Damaged structure removed", "Exterior rebuilt"],
+  },
+  {
+    id: "basement-mold",
+    type: "mold",
+    label: "Basement mold to finished basement",
+    before: photos.moldWall,
+    after: photos.finishedBasement,
+    scope: ["Samples taken before work", "Area contained and affected material removed", "Samples taken again afterward"],
+  },
+  {
+    id: "framing-basement",
+    type: "mold",
+    label: "Open framing to finished basement",
+    before: photos.rebuildFraming,
+    after: photos.finishedBasementStairs,
+    scope: ["Moisture source corrected", "Framing dried and treated", "Basement finished"],
+  },
+];
 
 /** The one customer review on their current homepage, quoted verbatim with its source. */
 export const publishedReview = {
@@ -274,27 +387,35 @@ export const publishedReview = {
 /** The proposal: what the concept changes, and why it matters to an emergency-services business. */
 export const improvements = [
   {
-    title: "Stronger first impression",
-    body: "The first screen says what happened, what to do, and who to call. Calm, dark, and premium, the way a homeowner wants their restoration company to feel at 2 AM.",
+    title: "Emergency restoration first",
+    body: "Water, fire, and mold lead the homepage, with 24/7 call buttons from the first screen. Rebuilding is presented as the last step of restoration, not the headline.",
   },
   {
-    title: "Faster emergency contact",
-    body: "The phone number is one tap from every screen: in the header, in the hero, in a bar that stays on phones, and beside every service.",
+    title: "Local pages written for the place",
+    body: "Eight location pages about each area's housing and risks, instead of one template with the city swapped in. Current URLs are kept; a misspelled one redirects.",
   },
   {
-    title: "Clearer service navigation",
-    body: "Water, fire, and mold each get a selector on the homepage and a dedicated page, so visitors land on the problem they actually have.",
+    title: "An established, trustworthy presence",
+    body: "Consistent type, color, and photography across every page, one phone number everywhere, and an independent-concept label nobody can miss.",
   },
   {
-    title: "Better mobile usability",
-    body: "Thumb-sized buttons, a persistent call bar, and a short form designed for someone standing in a wet basement with one hand free.",
+    title: "A request that qualifies the lead",
+    body: "Two steps: damage type and urgency, then ZIP code and contact details. Emergencies are pointed to the phone; everything else arrives ready to triage.",
   },
   {
-    title: "Local SEO foundations",
-    body: "Semantic headings, one service per page, LocalBusiness structured data from verified details, and the current URLs kept as they are.",
+    title: "Proof that's real",
+    body: "A project gallery, the published review, and spaces for certifications, insurance, and reviews that are filled only with what Clean Slate supplies and verifies.",
   },
   {
-    title: "More effective lead capture",
-    body: "The inquiry asks for damage type, ZIP code, and urgency up front, so the office can triage a call before calling back.",
+    title: "Technical SEO done properly",
+    body: "Unique titles and descriptions, canonical URLs, LocalBusiness, Service, FAQ, and breadcrumb data, a real sitemap, one H1 per page, and no broken links.",
+  },
+  {
+    title: "Helpful, not pushy",
+    body: "What to do in the first ten minutes, how insurance claims usually go, and plain answers. Every section ends with a call or a request, without a hard sell.",
+  },
+  {
+    title: "Fast on a phone",
+    body: "Responsive images, a persistent call bar, thumb-sized controls, and motion that respects reduced-motion settings.",
   },
 ] as const;

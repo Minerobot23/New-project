@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, ClipboardList, Phone } from "lucide-react";
 import { brandFont } from "@/components/brand/fonts";
-import { BASE, business, serviceAreas, services } from "./content";
+import { BASE, business, services } from "./content";
+import { locations } from "./locations";
 import { PresentationToggle } from "./presentation";
 
 /** Shield monogram in Clean Slate's colors: a blue half with a C, a charcoal (or white, on dark) half with an S. */
@@ -86,8 +87,8 @@ export function EmergencyCallButton({ size = "md", className = "", label = "Call
 
 const NAV = [
   ...services.map((service) => ({ href: `${BASE}/${service.slug}`, label: service.tab })),
-  { href: `${BASE}#process`, label: "Our Process" },
-  { href: `${BASE}#areas`, label: "Service Areas" },
+  { href: `${BASE}/locations`, label: "Service Areas" },
+  { href: `${BASE}#insurance`, label: "Insurance Claims" },
 ];
 
 export function CsHeader() {
@@ -113,14 +114,14 @@ export function CsHeader() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-cs-ink/10 bg-white/95 backdrop-blur">
+    <header role="banner" className="sticky top-0 z-50 border-b border-cs-ink/10 bg-white">
       <div className="mx-auto flex h-[4.5rem] max-w-[84rem] items-center justify-between gap-6 px-5 sm:px-8">
         <CsWordmark />
 
         <nav aria-label="Clean Slate primary" className="hidden xl:block">
-          <ul className="flex items-center gap-7">
+          <ul className="flex items-center gap-6">
             {NAV.map((link) => {
-              const active = pathname === link.href;
+              const active = pathname === link.href || (link.href.endsWith("/locations") && pathname.startsWith(link.href));
               return (
                 <li key={link.href}>
                   <Link
@@ -212,7 +213,7 @@ export function MobileCallBar() {
 
 export function CsFooter() {
   return (
-    <footer className="bg-cs-night pb-24 text-white/70 md:pb-0">
+    <footer role="contentinfo" className="bg-cs-night pb-24 text-white/70 md:pb-0">
       <div className="mx-auto grid max-w-[84rem] gap-12 px-5 py-16 sm:px-8 lg:grid-cols-12">
         <div className="lg:col-span-4">
           <CsWordmark tone="light" />
@@ -235,15 +236,18 @@ export function CsFooter() {
                   </Link>
                 </li>
               ))}
-              <li>Emergency Board-Up</li>
-              <li>Construction &amp; Home Improvement</li>
+              <li>Reconstruction after damage</li>
             </ul>
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white">Service areas</p>
             <ul className="mt-4 space-y-2.5 text-sm">
-              {serviceAreas.map((area) => (
-                <li key={area.name}>{area.name}</li>
+              {locations.map((location) => (
+                <li key={location.slug}>
+                  <Link href={`${BASE}/locations/${location.slug}`} className="hover:text-white">
+                    {location.full}
+                  </Link>
+                </li>
               ))}
             </ul>
           </div>
@@ -261,7 +265,7 @@ export function CsFooter() {
                 </a>
               </p>
             </address>
-            <ul className="mt-4 flex gap-4 text-sm">
+            <ul className="mt-4 flex flex-wrap gap-4 text-sm">
               {business.social.map((item) => (
                 <li key={item.label}>
                   <a href={item.href} target="_blank" rel="noopener noreferrer" className="hover:text-white">
@@ -287,8 +291,17 @@ export function CsFooter() {
             . Business details were taken from that site; process and service copy is proposed wording for Clean Slate to review and approve.
           </p>
           <p>
+            <Link href={`${BASE}/sitemap`} className="underline underline-offset-2 hover:text-white">
+              Sitemap
+            </Link>{" "}
+            ·{" "}
+            <a href={`${BASE}/sitemap.xml`} className="underline underline-offset-2 hover:text-white">
+              XML sitemap
+            </a>
+          </p>
+          <p>
             Photography is licensed stock (Unsplash License) used for illustration only. It does not show Clean Slate Services projects, staff, or
-            equipment. The inquiry form is a demonstration and does not send or store anything.
+            equipment. The request form is a demonstration and does not send or store anything.
           </p>
         </div>
       </div>

@@ -22,6 +22,8 @@ const nextConfig: NextConfig = {
       { source: "/call", destination: "/request-a-call", permanent: true },
       // The portfolio became /experiences when projects started opening as experiences.
       { source: "/work", destination: "/experiences", permanent: true },
+      // Clean Slate concept: their /locations/newton-ct misspells Newtown; a migration would redirect it the same way.
+      { source: "/demos/cleanslate/locations/newton-ct", destination: "/demos/cleanslate/locations/newtown-ct", permanent: true },
       {
         source: "/:path*",
         has: [{ type: "host", value: "www.fluxlinesolutions.com" }],

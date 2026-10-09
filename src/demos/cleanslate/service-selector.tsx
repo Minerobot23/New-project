@@ -4,10 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState, type KeyboardEvent } from "react";
 import { ArrowRight, Droplets, Flame, Microscope } from "lucide-react";
-import { BASE, services, type ServiceId } from "./content";
+import { BASE, primaryServices as services, type ServiceId } from "./content";
 import { EmergencyCallButton } from "./chrome";
 
-const ICONS: Record<ServiceId, typeof Droplets> = { water: Droplets, fire: Flame, mold: Microscope };
+const ICONS: Record<Exclude<ServiceId, "boardup">, typeof Droplets> = { water: Droplets, fire: Flame, mold: Microscope };
 
 /**
  * Water / Fire & Smoke / Mold: one choice swaps the photograph, the copy, and the call to action.
@@ -18,10 +18,10 @@ export function ServiceSelector() {
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const service = services[active];
 
-  const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+  const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>, from: number) => {
     const keys: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
     let next: number | null = null;
-    if (event.key in keys) next = (active + keys[event.key] + services.length) % services.length;
+    if (event.key in keys) next = (from + keys[event.key] + services.length) % services.length;
     if (event.key === "Home") next = 0;
     if (event.key === "End") next = services.length - 1;
     if (next === null) return;
@@ -34,7 +34,7 @@ export function ServiceSelector() {
     <div>
       <div role="tablist" aria-label="Type of damage" className="grid grid-cols-3 border-b border-cs-ink/15">
         {services.map((item, index) => {
-          const Icon = ICONS[item.id];
+          const Icon = ICONS[item.id as keyof typeof ICONS];
           const selected = index === active;
           return (
             <button
@@ -49,7 +49,7 @@ export function ServiceSelector() {
               aria-controls="cs-service-panel"
               tabIndex={selected ? 0 : -1}
               onClick={() => setActive(index)}
-              onKeyDown={onKeyDown}
+              onKeyDown={(event) => onKeyDown(event, index)}
               className={`group relative flex flex-col items-start gap-2 px-1 pb-5 pt-2 text-left transition-colors sm:flex-row sm:items-center sm:gap-3 sm:px-2 ${
                 selected ? "text-cs-ink" : "text-cs-slate hover:text-cs-ink"
               }`}

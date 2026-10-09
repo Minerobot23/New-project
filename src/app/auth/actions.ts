@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { LOGIN_LINK_MINUTES, consumeLoginToken, createLoginToken, findUserForLogin } from "@/lib/auth/core";
 import { endSession, startSession } from "@/lib/auth/session";
-import { getDb } from "@/lib/db";
+import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { sendNotification } from "@/lib/notify/send";
 import { templates } from "@/lib/notify/templates";
 import { createRateLimiter } from "@/lib/rate-limit";
@@ -20,6 +20,7 @@ const emailLimiter = createRateLimiter({ limit: 4, windowMs: 15 * 60_000 });
 export async function requestLoginLink(_previous: LoginState, formData: FormData): Promise<LoginState> {
   const parsed = z.email().max(200).safeParse(String(formData.get("email") ?? "").trim());
   if (!parsed.success) return { error: "Enter a valid email address." };
+  if (!isDatabaseConfigured()) return { error: "The client portal isn't open yet. Please email us and we'll help directly." };
   const email = parsed.data.toLowerCase();
   const ip = clientIpFrom(await headers());
   if (!ipLimiter(ip).allowed || !emailLimiter(email).allowed) return { error: "Too many requests. Please wait a few minutes and try again." };

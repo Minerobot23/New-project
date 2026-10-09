@@ -2,7 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { getDb } from "@/lib/db";
+import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { canAccessProject, createSession, deleteSession, userForSessionToken, type SessionUser } from "./core";
 
 /*
@@ -14,6 +14,8 @@ export const SESSION_COOKIE = "fx_session";
 
 export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
+  // Before a database is connected, nobody is signed in (rather than an error page).
+  if (!isDatabaseConfigured()) return null;
   return userForSessionToken(await getDb(), token);
 });
 

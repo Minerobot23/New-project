@@ -6,24 +6,20 @@ import mainRoom from "../../../public/experiences/restaurant/interior/main-room.
 
 const STEPS = [
   {
-    title: "We visit",
-    body: "We spend time in the business: how customers arrive, what they look at first, what they ask, and what they came to do.",
+    title: "Plan",
+    body: "We learn how customers arrive, what they look at first, and what they came to do, then decide what the website needs to show and ask for.",
   },
   {
-    title: "We capture",
-    body: "Photography, video, and spatial shots planned around the experience, not taken at random. Every frame has a job.",
+    title: "Capture",
+    body: "Photography and film planned around the website, not taken at random. Every frame has a job.",
   },
   {
-    title: "We design the experience",
-    body: "We decide what customers should see, explore, and do, and where in the place each of those things lives.",
+    title: "Build",
+    body: "Responsive, interactive development that works as well on a phone in a parking lot as on a desktop at home.",
   },
   {
-    title: "We build",
-    body: "Responsive, interactive development that feels as deliberate on a phone in a parking lot as on a desktop at home.",
-  },
-  {
-    title: "We convert",
-    body: "Calls, reservations, orders, appointments, and quote requests are built into the experience, where the decision happens.",
+    title: "Launch",
+    body: "Calls, reservations, appointments, and quote requests are built in where the decision happens, with tracking set up from day one.",
   },
 ];
 
@@ -62,7 +58,7 @@ export function ProcessStory() {
       <div className="mx-auto max-w-[90rem] px-5 pt-24 sm:px-8 sm:pt-32">
         <p className="label text-bone/50">How we work</p>
         <h2 id="process-title" className="display mt-5 max-w-[16ch] text-[2.4rem] uppercase sm:text-[clamp(3rem,5vw,4.75rem)]">
-          From the front door to the booking.
+          Plan, capture, build, launch.
         </h2>
       </div>
 
@@ -107,8 +103,8 @@ export function ProcessStory() {
                 ))}
               </div>
 
-              {/* 04: the interface around the room. */}
-              <div aria-hidden="true" className={`absolute inset-0 transition-opacity duration-700 ${on(3)}`}>
+              {/* 03: the interface around the room. */}
+              <div aria-hidden="true" className={`absolute inset-0 transition-opacity duration-700 ${on(2)}`}>
                 <div className="absolute inset-x-0 top-0 flex items-center justify-between bg-gradient-to-b from-black/60 to-transparent px-[4%] pb-8 pt-[3%]">
                   <span className="font-serif text-sm text-bone sm:text-lg">Maison Arden</span>
                   <span className="label text-[9px] text-bone/70">Exit</span>
@@ -123,7 +119,7 @@ export function ProcessStory() {
               </div>
 
               {/* 05: the booking, made from inside the experience. */}
-              <div aria-hidden="true" className={`absolute bottom-[8%] right-[4%] bg-stage/90 px-4 py-3 text-bone transition-all duration-700 sm:px-6 sm:py-5 ${active >= 4 ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}>
+              <div aria-hidden="true" className={`absolute bottom-[8%] right-[4%] bg-stage/90 px-4 py-3 text-bone transition-all duration-700 sm:px-6 sm:py-5 ${active >= 3 ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}>
                 <p className="label text-[9px] text-bone/60">Reservation requested</p>
                 <p className="mt-1 font-serif text-base sm:text-2xl">A table for 2, Friday, 7:30</p>
               </div>
@@ -140,7 +136,7 @@ export function ProcessStory() {
                 steps.current[index] = element;
               }}
               data-step={index}
-              className={`flex flex-col justify-center border-t border-bone/15 py-14 transition-opacity duration-700 lg:min-h-[78svh] lg:py-0 ${
+              className={`flex flex-col justify-center border-t border-bone/15 py-14 transition-opacity duration-700 lg:min-h-[52svh] lg:py-0 ${
                 active === index ? "opacity-100" : "opacity-35"
               }`}
             >

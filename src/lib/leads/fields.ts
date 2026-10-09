@@ -44,6 +44,12 @@ export const businessEmail = singleLine("Business email", LIMITS.email).pipe(
   z.email("Please enter a valid email address."),
 );
 
+/** Email is optional on the call request: a phone number is enough to call someone back. */
+export const emailOptional = z.preprocess(
+  (value) => (typeof value === "string" && value.trim() === "" ? undefined : clean(value)),
+  z.string().max(LIMITS.email).pipe(z.email("Please enter a valid email address.")).optional(),
+);
+
 export const countDigits = (value: string) => value.replace(/\D/g, "").length;
 
 const phoneRules = (schema: z.ZodType<string>) =>

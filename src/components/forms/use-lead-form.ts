@@ -49,7 +49,11 @@ export function useLeadForm({ endpoint, schema, fieldOrder, startedEvent, submit
   const focusFirstError = useCallback(
     (fieldErrors: Record<string, string>) => {
       const first = fieldOrder.find((field) => fieldErrors[field]);
-      formRef.current?.querySelector<HTMLElement>(`[name="${first}"]`)?.focus();
+      const field = formRef.current?.querySelector<HTMLElement>(`[name="${first}"]`);
+      // A field inside a collapsed <details> cannot take focus until the section is open.
+      const section = field?.closest("details");
+      if (section) section.open = true;
+      field?.focus();
     },
     [fieldOrder],
   );

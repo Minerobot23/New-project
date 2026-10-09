@@ -82,31 +82,41 @@ export function SelectField({
   label,
   options,
   error,
+  optional,
+  defaultValue = "",
+  hint,
   onInput,
 }: {
   name: string;
   label: string;
   options: Record<string, string>;
   error?: string;
+  optional?: boolean;
+  /** Pre-selected option; the visitor can change it. */
+  defaultValue?: string;
+  hint?: string;
   onInput: () => void;
 }) {
   const errorId = `${name}-error`;
+  const hintId = `${name}-hint`;
   return (
     <div>
-      <Label htmlFor={name}>{label}</Label>
+      <Label htmlFor={name} optional={optional}>
+        {label}
+      </Label>
       <div className="relative">
         <select
           id={name}
           name={name}
-          required
-          defaultValue=""
+          required={!optional}
+          defaultValue={defaultValue}
           aria-invalid={error ? true : undefined}
-          aria-describedby={error ? errorId : undefined}
+          aria-describedby={[hint ? hintId : null, error ? errorId : null].filter(Boolean).join(" ") || undefined}
           onChange={onInput}
           className={inputClasses(Boolean(error), "h-11 appearance-none pr-10")}
         >
-          <option value="" disabled>
-            Select one
+          <option value="" disabled={!optional}>
+            {optional ? "Not sure / prefer not to say" : "Select one"}
           </option>
           {Object.entries(options).map(([value, text]) => (
             <option key={value} value={value}>
@@ -116,6 +126,11 @@ export function SelectField({
         </select>
         <ChevronDown aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 mt-[3px] size-4 -translate-y-1/2 text-muted" />
       </div>
+      {hint && (
+        <p id={hintId} className="mt-1.5 text-sm text-muted">
+          {hint}
+        </p>
+      )}
       {error && <FieldError id={errorId}>{error}</FieldError>}
     </div>
   );

@@ -76,7 +76,7 @@ export const ASSETS = {
   },
 } satisfies Record<string, ExperienceImage>;
 
-export const CRITICAL_IMAGES = [{ src: garageDoor }, { src: vehicle }];
+export const CRITICAL_IMAGES = [{ src: vehicle }];
 export const DEFERRED_IMAGES = [
   { src: paintCloseUp },
   { src: tires },
@@ -86,3 +86,15 @@ export const DEFERRED_IMAGES = [
   { src: underHood },
   { src: serviceBay },
 ];
+
+/** The arrival film. See media/README.md. */
+export const ARRIVAL_FILM = {
+  sources: {
+    landscape: "/experiences/automotive/film/arrival-desktop.mp4",
+    portrait: "/experiences/automotive/film/arrival-mobile.mp4",
+  },
+  poster: {
+    landscape: "/experiences/automotive/film/arrival-desktop-poster.jpg",
+    portrait: "/experiences/automotive/film/arrival-mobile-poster.jpg",
+  },
+};

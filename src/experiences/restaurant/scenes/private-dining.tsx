@@ -146,6 +146,7 @@ export function PrivateDining() {
             </div>
             {sent ? (
               <div aria-live="polite" className="mt-16">
+                <p className="label mb-4 text-bone/80">Enquiry preview</p>
                 <p id="plan-event-title" className="font-serif text-5xl leading-none">
                   Thank you, {sent}.
                 </p>

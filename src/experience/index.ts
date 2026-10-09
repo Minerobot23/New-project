@@ -9,6 +9,7 @@ export { CoverStage, coverBox } from "./cover-stage";
 export { CinematicImage, ParallaxImage } from "./cinematic-image";
 export { Hotspot } from "./hotspot";
 export { EntranceSequence } from "./entrance-sequence";
+export { HeroFilm } from "./hero-film";
 export { InteractivePanorama } from "./interactive-panorama";
 export { ShutterReveal } from "./shutter-reveal";
 export { BeforeAfter } from "./before-after";

@@ -70,7 +70,8 @@ type LeadEmailInput = {
   businessName: string;
   rows: LeadRow[];
   phone?: string;
-  replyTo: string;
+  /** The prospect's email, when they gave one. */
+  replyTo?: string;
   recipients: string[];
   attribution?: Attribution;
   isTest?: boolean;
@@ -137,7 +138,9 @@ export function buildLeadEmail(input: LeadEmailInput): OutgoingEmail {
                 <a href="${escapeHtml(toTelHref(input.phone))}" style="display:block;background:#1d5bd8;color:#ffffff;text-decoration:none;text-align:center;font-size:17px;font-weight:600;line-height:24px;padding:14px 16px;border-radius:6px;">Call ${escapeHtml(input.phone)}</a>
               </td>
             </tr>`
-    : `
+    : !input.replyTo
+      ? ""
+      : `
             <tr>
               <td style="padding:16px 20px 4px 20px;">
                 <a href="${escapeHtml(mailtoHref(input.replyTo))}" style="display:block;background:#1d5bd8;color:#ffffff;text-decoration:none;text-align:center;font-size:17px;font-weight:600;line-height:24px;padding:14px 16px;border-radius:6px;">Email ${escapeHtml(input.replyTo)}</a>
@@ -183,7 +186,7 @@ ${attributionRows.map((row) => renderRow(row, true)).join("\n")}
             </tr>
             <tr>
               <td style="padding:4px 20px 20px 20px;font-size:13px;line-height:18px;color:#5c6670;">
-                Sent from fluxlinesolutions.com. Replying to this email replies to the prospect.
+                Sent from fluxlinesolutions.com. ${input.replyTo ? "Replying to this email replies to the prospect." : "No email address was provided: call the number above."}
               </td>
             </tr>
           </table>

@@ -28,7 +28,7 @@ export function useExperienceShell(
   id: string,
   critical: PreloadImage[],
   deferred: PreloadImage[],
-  { inside, minDuration = 1600 }: { inside: boolean; minDuration?: number },
+  { inside, minDuration = 300 }: { inside: boolean; minDuration?: number },
 ) {
   const viaHome = useSyncExternalStore(
     subscribeNoop,
@@ -47,7 +47,7 @@ export function useExperienceShell(
 
   useEffect(() => {
     if (!done) return;
-    const fade = window.setTimeout(() => setLoaderGone(true), 700);
+    const fade = window.setTimeout(() => setLoaderGone(true), 450);
     return () => window.clearTimeout(fade);
   }, [done]);
 

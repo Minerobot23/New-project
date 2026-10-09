@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import {
   ConceptNote,
@@ -17,6 +18,7 @@ import { AREAS, COMPANY, type AreaId } from "./content";
 import { HomeContext, SCENE_LABELS, type SceneId } from "./context";
 import { House } from "./scenes/house";
 import { Area } from "./scenes/area";
+import { Arrival } from "./scenes/arrival";
 import { Estimate } from "./scenes/estimate";
 
 const label = (id: SceneId) => SCENE_LABELS[id];
@@ -24,7 +26,7 @@ const isArea = (id: SceneId): id is AreaId => AREAS.some((area) => area.id === i
 
 /** Saltbox Home Co.: a Fluxline Interactive Concept. The house is the interface. */
 export function HomeExperience() {
-  const director = useSceneDirector<SceneId>("house");
+  const director = useSceneDirector<SceneId>("arrival");
   const scene = director.current.id;
   const shell = useExperienceShell("home", CRITICAL_IMAGES, DEFERRED_IMAGES, { inside: true });
   const [selections, setSelections] = useState<Partial<Record<AreaId, string>>>({});
@@ -48,18 +50,22 @@ export function HomeExperience() {
     [directorGo, directorBack, note, selections, visited, setChromeHidden],
   );
 
-  const render = useCallback((id: SceneId) => {
-    if (id === "house") return <House />;
-    if (id === "estimate") return <Estimate />;
-    return <Area id={id} />;
-  }, []);
+  const render = useCallback(
+    (id: SceneId) => {
+      if (id === "arrival") return <Arrival onEntered={(held) => directorGo("house", { kind: held ? "cut" : "fade" })} />;
+      if (id === "house") return <House />;
+      if (id === "estimate") return <Estimate />;
+      return <Area id={id} />;
+    },
+    [directorGo],
+  );
 
   const jump = (id: SceneId) => () => api.go(id);
   const call = () => note(`On a real site this calls ${COMPANY.name}: ${COMPANY.phoneDisplay}.`);
 
   return (
     <HomeContext.Provider value={api}>
-      <div className="fixed inset-0 h-[100svh] overflow-hidden bg-[#060b17] text-bone">
+      <div className="experience experience--home fixed inset-0 h-[100svh] overflow-hidden bg-[#060b17] text-bone">
         <SceneStack director={director} label={label} render={render} className="bg-[#060b17]!" />
 
         <ExperienceNavigation
@@ -68,11 +74,19 @@ export function HomeExperience() {
               <span className="block font-display text-lg font-light uppercase leading-none tracking-[0.04em]">
                 {COMPANY.name}
               </span>
-              <span className="label mt-1 block text-[10px] text-bone/55">{COMPANY.kicker}</span>
+              <span className="label mt-1 block text-bone/75">{COMPANY.kicker}</span>
             </button>
           }
-          credit={<p className="label text-bone/50">Fluxline Interactive Concept</p>}
-          exitHref="/#after"
+          credit={
+            <p className="label text-bone/85">
+              Fluxline interactive concept ·{" "}
+              <Link href="/request-a-call?from=home" className="border-b border-bone/50 text-bone hover:border-bone">
+                Want this for your business?
+              </Link>
+            </p>
+          }
+          exitHref="/#demos"
+          exitLabel="All demos"
           items={[
             ...AREAS.map((area) => ({ id: area.id, label: area.title, onSelect: jump(area.id), active: scene === area.id })),
             { id: "call", label: "Call", onSelect: call },
@@ -100,6 +114,11 @@ export function HomeExperience() {
               onSelect: jump(area.id),
             })),
             { id: "call", label: `Call ${COMPANY.phoneDisplay}`, onSelect: call },
+            {
+              id: "fluxline",
+              label: "Want this for your business?",
+              onSelect: () => window.location.assign("/request-a-call?from=home"),
+            },
           ]}
           sticky={scene !== "estimate" ? { id: "estimate", label: "Estimate", onSelect: jump("estimate") } : undefined}
         />

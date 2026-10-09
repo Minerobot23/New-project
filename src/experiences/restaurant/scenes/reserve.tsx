@@ -106,7 +106,7 @@ export function Reserve() {
             </>
           ) : (
             <div aria-live="polite">
-              <p className="label text-bone/60">Held for you</p>
+              <p className="label text-bone/80">Reservation preview</p>
               <p
                 data-scene-focus
                 tabIndex={-1}

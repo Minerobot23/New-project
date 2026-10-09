@@ -1,7 +1,7 @@
 "use client";
 
 import { gsap } from "gsap";
-import { useCallback, useLayoutEffect, useRef, useState, type ComponentType } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ComponentType } from "react";
 import { CoverStage, coverBox } from "./cover-stage";
 import { prefersReducedMotion } from "./use-reduced-motion";
 import type { ExperienceImage } from "./types";
@@ -19,8 +19,10 @@ type Props = {
     image: ExperienceImage;
     door: { x: number; y: number; width: number; height: number };
   };
-  /** Signage and copy around the door (name, kicker, ENTER button). Receives the enter trigger. */
-  Copy: ComponentType<{ enter: () => void; entering: boolean }>;
+  /** Signage and copy around the door (name, kicker, a skip control). */
+  Copy: ComponentType<{ enter: () => void; skip: () => void; entering: boolean }>;
+  /** Start the walk-in without a click, this many seconds after mounting. Omit to wait for `enter`. */
+  autoStart?: number;
   /** Called when the camera has passed through the door and the interior fills the screen. */
   onEntered: () => void;
 };
@@ -30,7 +32,7 @@ type Props = {
  * the copy clears, the camera walks toward the door (the door grows faster than the room inside it: depth),
  * then the doorway opens past the edges of the screen and the room becomes the scene.
  */
-export function EntranceSequence({ interior, exterior, Copy, onEntered }: Props) {
+export function EntranceSequence({ interior, exterior, Copy, onEntered, autoStart }: Props) {
   const root = useRef<HTMLDivElement>(null);
   const mask = useRef<HTMLDivElement>(null);
   const room = useRef<HTMLDivElement>(null);
@@ -39,6 +41,34 @@ export function EntranceSequence({ interior, exterior, Copy, onEntered }: Props)
   const copy = useRef<HTMLDivElement>(null);
   const door = useRef<Door | null>(null);
   const [entering, setEntering] = useState(false);
+  const started = useRef(false);
+  const finished = useRef(false);
+  const timeline = useRef<gsap.core.Timeline | null>(null);
+  const guard = useRef<number | undefined>(undefined);
+  const onEnteredRef = useRef(onEntered);
+  useEffect(() => {
+    onEnteredRef.current = onEntered;
+  });
+
+  // The one way out of the sequence: animation finished, visitor skipped, or the timer ran out.
+  // The walk-in is decoration; it never owns access to the room.
+  const finish = useCallback(() => {
+    if (finished.current) return;
+    finished.current = true;
+    window.clearTimeout(guard.current);
+    timeline.current?.kill();
+    onEnteredRef.current();
+  }, []);
+
+  // Leaving by another route (a navigation control) must not fire a late "entered".
+  useEffect(
+    () => () => {
+      finished.current = true;
+      window.clearTimeout(guard.current);
+      timeline.current?.kill();
+    },
+    [],
+  );
 
   // The doorway's resting geometry: from the exterior photo when there is one, otherwise a proportioned arch.
   const restingDoor = useCallback((): Door => {
@@ -97,7 +127,8 @@ export function EntranceSequence({ interior, exterior, Copy, onEntered }: Props)
   }, [restingDoor, paint, entering]);
 
   const enter = useCallback(() => {
-    if (entering || !door.current) return;
+    if (started.current || finished.current || !door.current) return;
+    started.current = true;
     setEntering(true);
     const d = door.current;
     const W = window.innerWidth;
@@ -106,15 +137,18 @@ export function EntranceSequence({ interior, exterior, Copy, onEntered }: Props)
     // Reduced motion: open the doorway at once; the experience crossfades into the room.
     if (prefersReducedMotion()) {
       paint({ cx: W / 2, cy: H / 2, w: W, h: H, r: 0 });
-      onEntered();
+      finish();
       return;
     }
+    // The timeline below runs about 2.95s. If animation frames are not being delivered, go in anyway.
+    guard.current = window.setTimeout(finish, 3600);
 
     const approach = 1.55;
     const tl = gsap.timeline({
-      onComplete: onEntered,
+      onComplete: finish,
       defaults: { ease: "power2.inOut" },
     });
+    timeline.current = tl;
 
     // Beat 1: the copy clears.
     tl.to(copy.current, { opacity: 0, y: -18, duration: 0.6, ease: "power2.in" }, 0);
@@ -154,7 +188,13 @@ export function EntranceSequence({ interior, exterior, Copy, onEntered }: Props)
       .to(facade.current, { opacity: 0, scale: approach * 1.4, duration: 1.2, ease: "power2.in" }, 1.45)
       // Ends at 1.06: the first frame of the interior scene's drift, so the hand-over is invisible.
       .to(room.current, { scale: 1.06, duration: 1.5, ease: "power3.out" }, 1.45);
-  }, [entering, onEntered, paint]);
+  }, [finish, paint]);
+
+  useEffect(() => {
+    if (autoStart === undefined) return;
+    const timer = window.setTimeout(enter, autoStart * 1000);
+    return () => window.clearTimeout(timer);
+  }, [autoStart, enter]);
 
   return (
     <div ref={root} className="absolute inset-0 overflow-hidden bg-stage">
@@ -183,7 +223,7 @@ export function EntranceSequence({ interior, exterior, Copy, onEntered }: Props)
       </div>
 
       <div ref={copy} className="absolute inset-0">
-        <Copy enter={enter} entering={entering} />
+        <Copy enter={enter} skip={finish} entering={entering} />
       </div>
     </div>
   );

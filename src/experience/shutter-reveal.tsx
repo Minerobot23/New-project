@@ -1,7 +1,7 @@
 "use client";
 
 import { gsap } from "gsap";
-import { useLayoutEffect, useRef, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
 import { prefersReducedMotion } from "./use-reduced-motion";
 
 type Props = {
@@ -11,40 +11,68 @@ type Props = {
   panels?: number;
   /** Seconds before the door starts to lift. */
   delay?: number;
-  /** Called when the door has fully opened. */
+  /** Called once, when the door is open (animated, skipped, or forced). */
   onOpen?: () => void;
   /** Hold the door shut until this is true (e.g. while a loader covers the scene). */
   start?: boolean;
+  /** Open at once: the visitor chose to skip, or moved on. */
+  skip?: boolean;
 };
+
+/** Length of the lift once it starts, in seconds. */
+const LIFT_SECONDS = 3.05;
 
 /**
  * A sectional door that lifts to reveal the scene: garages, loading bays, shop shutters.
  * The door rises with a little hesitation at the start (the motor taking the weight),
  * and the light under it reaches the floor before the room is seen.
+ *
+ * The door is decoration. It never owns access to what is behind it: a timer opens it if the
+ * animation has not finished on schedule, and `skip` opens it immediately.
  */
-export function ShutterReveal({ children, panels = 7, delay = 0.6, onOpen, start = true }: Props) {
+export function ShutterReveal({ children, panels = 7, delay = 0.6, onOpen, start = true, skip = false }: Props) {
   const door = useRef<HTMLDivElement>(null);
   const spill = useRef<HTMLDivElement>(null);
+  const opened = useRef(false);
+  const timeline = useRef<gsap.core.Timeline | null>(null);
+  const onOpenRef = useRef(onOpen);
+  useEffect(() => {
+    onOpenRef.current = onOpen;
+  });
+
+  const finish = useRef(() => {
+    if (opened.current) return;
+    opened.current = true;
+    timeline.current?.kill();
+    // Direct style writes: correct even if no animation frame is ever delivered.
+    if (door.current) door.current.style.transform = "translateY(-100%)";
+    if (spill.current) spill.current.style.opacity = "0";
+    onOpenRef.current?.();
+  });
 
   useLayoutEffect(() => {
-    if (!door.current || !start) return;
+    if (!door.current || !start || opened.current) return;
     if (prefersReducedMotion()) {
-      gsap.set(door.current, { yPercent: -100 });
-      onOpen?.();
+      finish.current();
       return;
     }
-    const tl = gsap
-      .timeline({ delay, onComplete: onOpen })
+    const done = finish.current;
+    timeline.current = gsap
+      .timeline({ delay, onComplete: done })
       .to(door.current, { yPercent: -4, duration: 0.5, ease: "power1.inOut" })
       .to(spill.current, { opacity: 1, duration: 0.4 }, "<")
       .to(door.current, { yPercent: -100, duration: 2.4, ease: "power2.inOut" }, "+=0.15")
       .to(spill.current, { opacity: 0, duration: 0.8 }, "-=0.9");
+    const guard = window.setTimeout(done, (delay + LIFT_SECONDS) * 1000 + 600);
     return () => {
-      tl.kill();
+      window.clearTimeout(guard);
+      timeline.current?.kill();
     };
-    // Runs once, when the door is allowed to open.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [start]);
+  }, [start, delay]);
+
+  useEffect(() => {
+    if (skip) finish.current();
+  }, [skip]);
 
   return (
     <div className="absolute inset-0 overflow-hidden">

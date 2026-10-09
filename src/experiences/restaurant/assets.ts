@@ -1,4 +1,5 @@
 import type { ExperienceImage } from "@/experience";
+import arrivalEnd from "../../../public/experiences/restaurant/film/arrival-end.webp";
 import mainRoom from "../../../public/experiences/restaurant/interior/main-room.webp";
 import sala from "../../../public/experiences/restaurant/private-dining/sala.webp";
 import tableService from "../../../public/experiences/restaurant/food/table-service.webp";
@@ -13,6 +14,13 @@ import wineGlass from "../../../public/experiences/restaurant/bar/wine-glass.web
  * placeholder (licensed stock); each has its own dedicated shot in the guide.
  */
 export const ASSETS = {
+  /** Last frame of the arrival film (a 3D render, not a photograph): the room the visitor lands in. */
+  arrivalEnd: {
+    slot: "film/arrival-end",
+    src: arrivalEnd,
+    alt: "The dining room at night: a lit back bar with bottles, a chandelier, round tables with candles, and wall lamps",
+    focus: { x: 0.5, y: 0.5 },
+  },
   mainRoom: {
     slot: "interior/main-room",
     src: mainRoom,
@@ -65,8 +73,22 @@ export const reframe = (
 });
 
 /** Loaded behind the opening screen: the first two scenes. Everything else streams in after entry. */
-export const CRITICAL_IMAGES = [{ src: mainRoom }];
+export const CRITICAL_IMAGES = [{ src: arrivalEnd }];
+
+/** The arrival film: one continuous move from the street into the dining room. See media/README.md. */
+export const ARRIVAL_FILM = {
+  sources: {
+    landscape: "/experiences/restaurant/film/arrival-desktop.mp4",
+    portrait: "/experiences/restaurant/film/arrival-mobile.mp4",
+  },
+  poster: {
+    landscape: "/experiences/restaurant/film/arrival-desktop-poster.jpg",
+    portrait: "/experiences/restaurant/film/arrival-mobile-poster.jpg",
+  },
+};
+
 export const DEFERRED_IMAGES = [
+  { src: mainRoom },
   { src: wineGlass },
   { src: sala },
   { src: tableService },

@@ -66,7 +66,7 @@ The publishable key is not needed: the site uses hosted Checkout only.
    ```bash
    DATABASE_URL="postgres://..." npm run db:migrate
    ```
-   Run it again whenever a change adds files to `drizzle/`.
+   Deployments also apply it automatically before each build, so this step is optional.
 2. **Environment variables.** Vercel → **Settings → Environment Variables**. Add these, all as server-side variables (never `NEXT_PUBLIC_`):
 
 | Variable | Value |

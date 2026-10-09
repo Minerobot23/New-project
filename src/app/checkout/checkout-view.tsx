@@ -55,6 +55,7 @@ export function CheckoutView({ plan, amounts, cancelled, quote }: Props) {
                 Request a call
               </Link>{" "}
               and we&apos;ll get your project started.
+              {process.env.VERCEL_ENV !== "production" && <span className="mt-2 block text-white/60">Setup check (not shown on the live site): {status.reason}</span>}
             </Notice>
           )}
         </div>

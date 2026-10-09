@@ -95,7 +95,12 @@ Redeploy after changing variables.
 
 Dashboard (test mode) → **Developers → Webhooks → Add endpoint**.
 
-- URL: `https://fluxlinesolutions.com/api/stripe/webhook` (or a preview URL with the protection bypass, for preview testing)
+- Events from: **Your account**. Payload style: **Snapshot**. API version: the newest offered (the code targets `2026-09-30.endive`). Destination type: **Webhook endpoint**.
+- URL: `https://fluxlinesolutions.com/api/stripe/webhook` for the live site.
+  For testing on a preview, use the branch's preview address plus the automation bypass, because previews require a Vercel login:
+  `https://<branch-preview-domain>/api/stripe/webhook?x-vercel-protection-bypass=<secret>`
+  - The preview domain is listed under **Domains** on the branch's latest deployment. Vercel shortens long branch names (for example `fluxline-solutions-git-claude-peaceful-m-d3a350-procamsolutions.vercel.app`), so copy it rather than building it by hand.
+  - The secret comes from Vercel → Settings → **Deployment Protection** → **Protection Bypass for Automation**.
 - Events:
   `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, `checkout.session.expired`,
   `invoice.finalized`, `invoice.paid`, `invoice.payment_failed`, `invoice.voided`, `invoice.marked_uncollectible`,

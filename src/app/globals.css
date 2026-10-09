@@ -41,6 +41,20 @@
 
   --font-serif: var(--font-cormorant), ui-serif, Georgia, serif;
 
+  /* Clean Slate Services concept (/demos/cleanslate): charcoal, white, and the blue of their logo. */
+  --color-cs-night: #0d0f12;
+  --color-cs-charcoal: #16181c;
+  --color-cs-panel: #1f2227;
+  --color-cs-rule: #2c3036;
+  --color-cs-ink: #1b1c1c;
+  --color-cs-slate: #4a5059;
+  --color-cs-mist: #eef1f5;
+  --color-cs-cloud: #f7f8fa;
+  --color-cs-blue: #16479f;
+  --color-cs-blue-deep: #0f3478;
+  --color-cs-sky: #6aa6ec;
+  --color-cs-alert: #e5484d;
+
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
   /* Camera moves: slow start, long weighted settle. */
   --ease-camera: cubic-bezier(0.65, 0, 0.15, 1);
@@ -406,4 +420,103 @@ section[id] {
   text-transform: uppercase;
   letter-spacing: -0.005em;
   line-height: 0.88;
+}
+
+/* ---------- Scroll reveal (portfolio and concept demos) ---------- */
+
+/*
+ * Content is visible by default. <Reveal> arms an element only when it starts below the fold,
+ * so nothing hides without JavaScript and above-the-fold content never flashes.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    transition:
+      opacity 900ms var(--ease-out-soft),
+      transform 1100ms var(--ease-out-soft);
+    transition-delay: calc(var(--d, 0) * 90ms);
+  }
+  .reveal[data-armed]:not([data-shown]) {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0);
+  }
+}
+
+/* A device that drifts slightly against the page as it scrolls past (scroll timelines; static elsewhere). */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .scroll-float {
+      animation: scroll-float linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+  }
+}
+@keyframes scroll-float {
+  from {
+    transform: translate3d(0, 48px, 0);
+  }
+  to {
+    transform: translate3d(0, -48px, 0);
+  }
+}
+
+/* ---------- Clean Slate concept ---------- */
+
+/* Slow push-in on the hero photograph, once. */
+@keyframes cs-push {
+  from {
+    transform: scale(1.12);
+  }
+  to {
+    transform: scale(1.02);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cs-push {
+    animation: cs-push 9s var(--ease-out-soft) both;
+  }
+}
+
+/* The live dot next to "24/7": a slow pulse, so the line reads as staffed. */
+@keyframes cs-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-cs-alert) 55%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 10px transparent;
+  }
+}
+.cs-live {
+  animation: cs-pulse 2.2s ease-out infinite;
+}
+
+/* Crossfade for the service selector and process stages. */
+@keyframes cs-swap {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cs-swap {
+    animation: cs-swap 600ms var(--ease-out-soft) both;
+  }
+}
+
+/* Process stage timer: fills over the stage's dwell time. */
+@keyframes cs-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.cs-fill {
+  transform-origin: left;
+  animation: cs-fill var(--dwell, 6s) linear both;
 }

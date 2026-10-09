@@ -97,3 +97,34 @@ from different homes and cars, and both experiences say so on screen. License pl
 | `/experiences/automotive/maintenance/oil.webp` | https://images.unsplash.com/photo-1487754180451-c456f719a1fc |
 | `/experiences/automotive/maintenance/under-hood.webp` | https://images.unsplash.com/photo-1625047509248-ec889cbff17f |
 | `/experiences/automotive/maintenance/engine.webp` | https://images.unsplash.com/photo-1486262715619-67b85e0b08d3 |
+
+
+## Clean Slate Services concept
+
+The unofficial concept at `/demos/cleanslate` uses photos from Unsplash under the [Unsplash License](https://unsplash.com/license),
+downloaded from the Unsplash image CDN as free (non-Unsplash+) images. They are labeled on screen as illustrative and
+do not show Clean Slate Services projects, staff, or equipment. `hero-storm.webp` was color-graded to the concept's
+charcoal and blue palette and mirrored horizontally.
+
+| File | Source |
+| --- | --- |
+| `/demos/cleanslate/hero-storm.webp` | https://unsplash.com/photos/a-lightning-bolt-strikes-over-a-house-at-night-ofGaKR4QLWg |
+| `/demos/cleanslate/water-ceiling.webp` | https://unsplash.com/photos/a-room-with-a-ceiling-that-has-been-torn-off-CNkOUScVCqE |
+| `/demos/cleanslate/water-flood.webp` | https://unsplash.com/photos/a-flooded-house-with-a-house-NvzUyc9VifQ |
+| `/demos/cleanslate/fire-home.webp` | https://unsplash.com/photos/a-car-parked-in-front-of-a-fire-damaged-house-RafVj10lx48 |
+| `/demos/cleanslate/fire-interior.webp` | https://unsplash.com/photos/interior-of-a-burnt-wooden-structure-with-charred-beams-NSDui5wRVM4 |
+| `/demos/cleanslate/mold-wall.webp` | https://unsplash.com/photos/a-wall-that-has-some-dirt-on-it-IbNuthxvUM8 |
+| `/demos/cleanslate/mold-technician.webp` | https://unsplash.com/photos/a-person-in-a-white-suit-and-blue-gloves-gKRatcDnkUM |
+| `/demos/cleanslate/rebuild-framing.webp` | https://unsplash.com/photos/interior-room-under-construction-with-exposed-framing-and-ceiling-XhH64XAmzNc |
+| `/demos/cleanslate/rebuild-plaster.webp` | https://unsplash.com/photos/hands-applying-plaster-to-a-wall-with-trowels-Re1O5byZ8bY |
+| `/demos/cleanslate/rebuild-tearout.webp` | https://unsplash.com/photos/pile-of-broken-drywall-and-construction-debris-mv5ECoJ118E |
+| `/demos/cleanslate/finished-living.webp` | https://unsplash.com/photos/living-room-with-open-kitchen-mGZX2MOPR-s |
+| `/demos/cleanslate/finished-lounge.webp` | https://unsplash.com/photos/living-room-L7EwHkq1B2s |
+| `/demos/cleanslate/finished-den.webp` | https://unsplash.com/photos/living-room-set-with-green-dumb-cane-plant-R-LK3sqLiBw |
+| `/demos/cleanslate/gutted-room.webp` | https://unsplash.com/photos/abandoned-room-with-peeling-wallpaper-K5sjajgbTFw |
+
+## Portfolio screenshots
+
+`/portfolio/*.webp` are screenshots of Fluxline's own work, captured from the live sites in October 2026: the Miami Restaurant
+& Bar and Casa Catracha concepts (their Vercel deployments), procamsolutionsli.com, and the Clean Slate concept on this site.
+Any photography visible inside them carries the license recorded by that project.

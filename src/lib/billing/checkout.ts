@@ -106,6 +106,12 @@ export async function startDepositCheckout(
     });
   }
 
+  // Stripe replays an idempotent request only if its parameters are identical, so the expiry is derived from when
+  // the intent was created, not from "now". A retry after a crash then gets the same session back.
+  const [stored] = await db.select({ createdAt: checkoutIntents.createdAt }).from(checkoutIntents).where(eq(checkoutIntents.id, input.intentId)).limit(1);
+  const expiresAt = Math.floor(stored.createdAt.getTime() / 1000) + 60 * 60;
+  if (expiresAt - Math.floor(Date.now() / 1000) < 31 * 60) return { ok: false, error: "This checkout expired. Please reload the page to start again." };
+
   const plan = PLANS[pricing.plan];
   const session = await stripe.checkout.sessions.create(
     {
@@ -133,7 +139,7 @@ export async function startDepositCheckout(
       },
       success_url: `${appUrl()}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: input.quoteToken ? `${appUrl()}/checkout/quote/${encodeURIComponent(input.quoteToken)}?cancelled=1` : `${appUrl()}/checkout/${pricing.plan}?cancelled=1`,
-      expires_at: Math.floor(Date.now() / 1000) + 60 * 60,
+      expires_at: expiresAt,
     },
     { idempotencyKey: `deposit-checkout:${input.intentId}` },
   );

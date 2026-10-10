@@ -14,6 +14,7 @@ import { PROJECT_STATUSES } from "@/lib/db/schema";
 import { statusLabel } from "@/lib/notify/templates";
 import { listUploads } from "@/lib/portal/uploads";
 import { cancelCareAdminAction, finalInvoiceAction, inviteCareAction, refundAction, setStatusAction, syncAction } from "../../actions";
+import { StepUpPanel } from "../../step-up-panel";
 
 const PAYMENT_LABELS = { deposit: "Deposit", final: "Final balance", subscription: "Website Care" } as const;
 
@@ -56,6 +57,10 @@ export default async function AdminProjectPage({ params }: PageProps<"/admin/pro
           </p>
         </div>
         <StatusBadge status={project.status} />
+      </div>
+
+      <div className="mt-6">
+        <StepUpPanel />
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">

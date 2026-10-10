@@ -188,19 +188,23 @@ describe("uploads", () => {
 });
 
 describe("notifications", () => {
-  test("a dedupe key sends at most once, and a failed send can be retried", async () => {
-    const message = { template: "supportConfirmation" as const, to: "pat@example.com", dedupeKey: "support:1", rendered: templates.supportConfirmation({ name: "Pat", subject: "Hi" }) };
-    assert.equal(await sendNotification(db, message), "sent");
-    assert.equal(await sendNotification(db, message), "duplicate");
+  test("a dedupe key queues at most once, and a failed send stays queued for retry (more in hardening.test.ts)", async () => {
+    const message = { template: "supportConfirmation" as const, to: "pat@example.com", dedupeKey: "support:1", data: { name: "Pat", subject: "Hi" } };
+    assert.equal(await sendNotification(db, message), "suppressed");
+    assert.equal(await sendNotification(db, message), "skipped");
+    assert.equal((await db.select().from(t.emailLog)).length, 1);
 
     process.env.EMAIL_DELIVERY = "sandbox";
     delete process.env.EMAIL_SANDBOX_TO;
     const failing = { ...message, dedupeKey: "support:2" };
+    const quiet = console.error;
+    console.error = () => {};
     assert.equal(await sendNotification(db, failing), "failed");
+    console.error = quiet;
     const [row] = await db.select().from(t.emailLog).where(eq(t.emailLog.dedupeKey, "support:2"));
     assert.equal(row.status, "failed");
+    assert.ok(row.nextAttemptAt);
     process.env.EMAIL_DELIVERY = "log";
-    assert.equal(await sendNotification(db, failing), "sent");
   });
 
   test("templates escape customer-supplied text", () => {

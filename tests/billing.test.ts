@@ -117,11 +117,17 @@ describe("deposit checkout", () => {
   });
 });
 
+/** The paid session Stripe would send for this checkout: same session id, amount, and currency as stored. */
+async function sessionFor(intentId: string, over: Record<string, unknown> = {}) {
+  const [intent] = await db.select().from(t.checkoutIntents).where(eq(t.checkoutIntents.id, intentId));
+  return depositSession(intentId, { id: intent.stripeSessionId, ...over });
+}
+
 async function paidProject(stripe = makeStripe().stripe) {
   const data = input();
   await startDepositCheckout(db, stripe, data, req);
   const [intent] = await db.select().from(t.checkoutIntents).where(eq(t.checkoutIntents.id, data.intentId));
-  await processStripeEvent(db, stripe, event("checkout.session.completed", depositSession(data.intentId, { id: intent.stripeSessionId })));
+  await processStripeEvent(db, stripe, event("checkout.session.completed", await sessionFor(data.intentId)));
   const [project] = await db.select().from(t.projects).where(eq(t.projects.checkoutIntentId, data.intentId));
   return { data, intent, project };
 }
@@ -159,7 +165,7 @@ describe("webhook: deposit confirmation", () => {
     const { stripe } = makeStripe();
     const data = input();
     await startDepositCheckout(db, stripe, data, req);
-    const completed = event("checkout.session.completed", depositSession(data.intentId));
+    const completed = event("checkout.session.completed", await sessionFor(data.intentId));
     assert.equal(await processStripeEvent(db, stripe, completed), "processed");
     assert.equal(await processStripeEvent(db, stripe, completed), "duplicate");
     assert.equal(await processStripeEvent(db, stripe, completed), "duplicate");
@@ -172,8 +178,8 @@ describe("webhook: deposit confirmation", () => {
     const { stripe } = makeStripe();
     const data = input();
     await startDepositCheckout(db, stripe, data, req);
-    await processStripeEvent(db, stripe, event("checkout.session.completed", depositSession(data.intentId)));
-    await processStripeEvent(db, stripe, event("checkout.session.async_payment_succeeded", depositSession(data.intentId)));
+    await processStripeEvent(db, stripe, event("checkout.session.completed", await sessionFor(data.intentId)));
+    await processStripeEvent(db, stripe, event("checkout.session.async_payment_succeeded", await sessionFor(data.intentId)));
     assert.equal((await db.select().from(t.projects)).length, 1);
     assert.equal((await db.select().from(t.customers)).length, 1);
     assert.equal((await db.select().from(t.emailLog)).length, 3);
@@ -183,7 +189,7 @@ describe("webhook: deposit confirmation", () => {
     const { stripe } = makeStripe();
     const data = input();
     await startDepositCheckout(db, stripe, data, req);
-    await processStripeEvent(db, stripe, event("checkout.session.completed", depositSession(data.intentId, { payment_status: "unpaid" })));
+    await processStripeEvent(db, stripe, event("checkout.session.completed", await sessionFor(data.intentId, { payment_status: "unpaid" })));
     assert.equal((await db.select().from(t.projects)).length, 0);
   });
 
@@ -191,9 +197,96 @@ describe("webhook: deposit confirmation", () => {
     const { stripe } = makeStripe();
     const data = input();
     await startDepositCheckout(db, stripe, data, req);
-    await processStripeEvent(db, stripe, event("checkout.session.expired", depositSession(data.intentId, { status: "expired", payment_status: "unpaid" })));
+    await processStripeEvent(db, stripe, event("checkout.session.expired", await sessionFor(data.intentId, { status: "expired", payment_status: "unpaid" })));
     const [intent] = await db.select().from(t.checkoutIntents);
     assert.equal(intent.status, "expired");
+  });
+
+  test("a session whose amount, currency, session id, or checkout mode differs is quarantined, not fulfilled", async () => {
+    const cases: [string, Record<string, unknown>][] = [
+      ["amount_mismatch", { amount_total: 100 }],
+      ["currency_mismatch", { currency: "eur" }],
+      ["session_mismatch", { id: "cs_test_someone_else" }],
+      ["checkout_mode_mismatch", { mode: "subscription" }],
+      ["intent_reference_mismatch", { client_reference_id: randomUUID() }],
+    ];
+    for (const [reason, over] of cases) {
+      db = await makeDb();
+      const { stripe } = makeStripe();
+      const data = input();
+      await startDepositCheckout(db, stripe, data, req);
+      const outcome = await processStripeEvent(db, stripe, event("checkout.session.completed", await sessionFor(data.intentId, over)));
+      assert.equal(outcome, "rejected", reason);
+      assert.equal((await db.select().from(t.projects)).length, 0, reason);
+      assert.equal((await db.select().from(t.payments)).length, 0, reason);
+      const [row] = await db.select().from(t.billingQuarantine);
+      assert.equal(row.reason, reason);
+      assert.equal(row.checkoutIntentId, data.intentId);
+      const [intent] = await db.select().from(t.checkoutIntents);
+      assert.equal(intent.status, "quarantined", reason);
+      // The administrator is alerted; the customer gets nothing.
+      assert.deepEqual((await db.select().from(t.emailLog)).map((email) => email.template), ["adminAlert"], reason);
+      // A later, correct event for the quarantined checkout still fulfils nothing.
+      await processStripeEvent(db, stripe, event("checkout.session.async_payment_succeeded", await sessionFor(data.intentId)));
+      assert.equal((await db.select().from(t.projects)).length, 0, reason);
+    }
+  });
+
+  test("an event from the other Stripe mode is refused (a test event can't fulfil in live, or the reverse)", async () => {
+    const { stripe } = makeStripe();
+    const data = input();
+    await startDepositCheckout(db, stripe, data, req);
+    const liveEvent = { ...event("checkout.session.completed", await sessionFor(data.intentId, { livemode: true })), livemode: true };
+    assert.equal(await processStripeEvent(db, stripe, liveEvent), "rejected");
+    assert.equal((await db.select().from(t.projects)).length, 0);
+    const [row] = await db.select().from(t.billingQuarantine);
+    assert.equal(row.reason, "wrong_mode");
+
+    // And in a live deployment, a test-mode event is refused the same way.
+    const saved = process.env.STRIPE_SECRET_KEY;
+    process.env.STRIPE_SECRET_KEY = "sk_live_unit";
+    try {
+      assert.equal(await processStripeEvent(db, stripe, event("checkout.session.completed", await sessionFor(data.intentId))), "rejected");
+      assert.equal((await db.select().from(t.projects)).length, 0);
+    } finally {
+      process.env.STRIPE_SECRET_KEY = saved;
+    }
+  });
+
+  test("an event for an unknown checkout is quarantined", async () => {
+    const { stripe } = makeStripe();
+    const outcome = await processStripeEvent(db, stripe, event("checkout.session.completed", depositSession(randomUUID())));
+    assert.equal(outcome, "rejected");
+    assert.equal((await db.select().from(t.billingQuarantine))[0].reason, "unknown_intent");
+    assert.equal((await db.select().from(t.projects)).length, 0);
+  });
+
+  test("out of order: the payment event arrives before the session id was saved", async () => {
+    const { stripe } = makeStripe();
+    const data = input();
+    await startDepositCheckout(db, stripe, data, req);
+    const paid = await sessionFor(data.intentId);
+    // Simulate the checkout request dying after Stripe created the session but before the id was stored.
+    await db.update(t.checkoutIntents).set({ stripeSessionId: null }).where(eq(t.checkoutIntents.id, data.intentId));
+    assert.equal(await processStripeEvent(db, stripe, event("checkout.session.completed", paid)), "processed");
+    assert.equal((await db.select().from(t.projects)).length, 1);
+    const [intent] = await db.select().from(t.checkoutIntents);
+    assert.equal(intent.stripeSessionId, paid.id);
+    assert.equal(intent.status, "completed");
+    // Retrying the checkout request now finds the completed checkout rather than making a second session.
+    const retry = await startDepositCheckout(db, stripe, data, req);
+    assert.equal(retry.ok, false);
+  });
+
+  test("out of order: an unpaid completion followed by async success fulfils once", async () => {
+    const { stripe } = makeStripe();
+    const data = input();
+    await startDepositCheckout(db, stripe, data, req);
+    await processStripeEvent(db, stripe, event("checkout.session.async_payment_succeeded", await sessionFor(data.intentId)));
+    await processStripeEvent(db, stripe, event("checkout.session.completed", await sessionFor(data.intentId, { payment_status: "unpaid" })));
+    assert.equal((await db.select().from(t.projects)).length, 1);
+    assert.equal((await db.select().from(t.payments)).length, 1);
+    assert.equal((await db.select().from(t.billingQuarantine)).length, 0);
   });
 
   test("ignores event types it doesn't handle", async () => {

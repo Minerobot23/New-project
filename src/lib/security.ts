@@ -22,13 +22,13 @@ export function safeEqual(a: string, b: string) {
   return left.length === right.length && timingSafeEqual(left, right);
 }
 
+/**
+ * The client IP, from headers only Vercel's edge sets (it overwrites any client-supplied value).
+ * Outside Vercel (local development) there's no trusted proxy, so a client-sent header is never believed.
+ */
 export function clientIpFrom(headers: Headers) {
-  return (
-    headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() ||
-    headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    headers.get("x-real-ip") ||
-    "unknown"
-  );
+  if (!process.env.VERCEL) return "local";
+  return headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() || headers.get("x-real-ip")?.trim() || "unknown";
 }
 
 /** Only same-site relative paths are allowed as post-login destinations (no open redirects). */

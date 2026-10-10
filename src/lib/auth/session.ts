@@ -3,7 +3,9 @@ import { cache } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
+import { sha256 } from "@/lib/security";
 import { canAccessProject, createSession, deleteSession, userForSessionToken, type SessionUser } from "./core";
+import { sessionElevatedUntil } from "./step-up-core";
 
 /*
  * The Data Access Layer for authentication. Every protected page, server action, and route handler
@@ -55,4 +57,16 @@ export async function endSession() {
   const store = await cookies();
   await deleteSession(await getDb(), store.get(SESSION_COOKIE)?.value);
   store.delete(SESSION_COOKIE);
+}
+
+/** The current session's id (the hash of its cookie token), for step-up checks. */
+export async function currentSessionId() {
+  const token = (await cookies()).get(SESSION_COOKIE)?.value;
+  return token ? sha256(token) : null;
+}
+
+/** When the current admin session's step-up verification expires, or null if it isn't elevated. */
+export async function adminElevatedUntil() {
+  const id = await currentSessionId();
+  return id ? sessionElevatedUntil(await getDb(), id) : null;
 }

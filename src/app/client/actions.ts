@@ -10,7 +10,7 @@ import { cancelCare, createPortalSession, createSupportRequest, startCareCheckou
 import { getDb } from "@/lib/db";
 import { saveOnboarding, type SaveResult } from "@/lib/portal/onboarding";
 import { deleteUpload } from "@/lib/portal/uploads";
-import { createRateLimiter } from "@/lib/rate-limit";
+import { RATE_LIMITS, checkRateLimits } from "@/lib/rate-limit";
 import { clientIpFrom } from "@/lib/security";
 
 /* Every action re-checks the session and project ownership itself; the UI is not a security boundary. */
@@ -53,7 +53,6 @@ export async function openBillingPortal() {
 
 export type FormState = { ok?: boolean; error?: string; message?: string } | null;
 
-const supportLimiter = createRateLimiter({ limit: 6, windowMs: 60 * 60_000 });
 const supportSchema = z.object({
   projectId: z.string().max(40).optional(),
   kind: z.enum(["support", "additional_service"]),
@@ -63,7 +62,8 @@ const supportSchema = z.object({
 
 export async function supportRequestAction(_previous: FormState, formData: FormData): Promise<FormState> {
   const user = await clientUser();
-  if (!supportLimiter(user.id).allowed) return { error: "You've sent several requests recently. Please email us if it's urgent." };
+  const rate = await checkRateLimits(await getDb(), [["support:user", user.id, RATE_LIMITS.supportPerUser]]);
+  if (!rate.allowed) return { error: "You've sent several requests recently. Please email us if it's urgent." };
   const parsed = supportSchema.safeParse({
     projectId: formData.get("projectId") || undefined,
     kind: formData.get("kind"),

@@ -5,7 +5,6 @@ import { canAccessProject, type SessionUser } from "@/lib/auth/core";
 import type { Db } from "@/lib/db";
 import { customers, onboarding, projectEvents, projects } from "@/lib/db/schema";
 import { adminRecipient, sendNotification } from "@/lib/notify/send";
-import { templates } from "@/lib/notify/templates";
 import { appUrl } from "@/lib/security";
 
 export type SaveResult = { ok: true; savedAt: string; submitted: boolean } | { ok: false; error: string; fieldErrors?: Record<string, string> };
@@ -59,11 +58,11 @@ export async function saveOnboarding(
       template: "adminAlert",
       to: adminRecipient(),
       dedupeKey: `admin-onboarding:${projectId}:${now.getTime()}`,
-      rendered: templates.adminAlert({
+      data: {
         title: `Onboarding submitted: ${customer?.businessName ?? "client"}`,
         lines: [["Project", projectId]],
         link: `${appUrl()}/admin/projects/${projectId}`,
-      }),
+      },
     });
   }
   return { ok: true, savedAt: saved.updatedAt.toISOString(), submitted: Boolean(saved.submittedAt) };

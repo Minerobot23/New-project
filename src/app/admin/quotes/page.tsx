@@ -6,6 +6,7 @@ import { PLANS, formatCents } from "@/lib/billing/plans";
 import { QUOTE_VALID_DAYS } from "@/lib/billing/service";
 import { getDb } from "@/lib/db";
 import { createQuoteAction, voidQuoteAction } from "../actions";
+import { StepUpPanel } from "../step-up-panel";
 
 function Input({ name, label, type = "text", min, step, defaultValue }: { name: string; label: string; type?: string; min?: number; step?: string; defaultValue?: string }) {
   return (
@@ -29,6 +30,10 @@ export default async function AdminQuotesPage() {
       <p className="mt-2 max-w-[64ch] text-sm text-white/60">
         A quote emails the customer a private link to review the agreed scope and pay the 50% deposit. It&apos;s valid for {QUOTE_VALID_DAYS} days and works once.
       </p>
+
+      <div className="mt-6">
+        <StepUpPanel />
+      </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-12">
         <Panel title="New quote" className="lg:col-span-5">

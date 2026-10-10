@@ -3,7 +3,7 @@ import { createResendProvider } from "./resend";
 import { EmailConfigError, type EmailProvider } from "./types";
 
 export { EmailConfigError } from "./types";
-export type { EmailProvider, OutgoingEmail } from "./types";
+export type { EmailProvider, OutgoingEmail, SendOptions, SendResult } from "./types";
 
 /**
  * Returns the configured transactional email provider.

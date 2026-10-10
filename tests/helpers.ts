@@ -50,6 +50,8 @@ export function makeStripe(overrides: Record<string, (...args: never[]) => unkno
   let counter = 0;
   const id = (prefix: string) => `${prefix}_test_${++counter}`;
   const idempotent = new Map<string, unknown>();
+  /** Sessions Stripe actually created (idempotent replays don't add to this). */
+  const sessionsCreated: string[] = [];
   const real = new Stripe("sk_test_unit");
 
   const record = (method: string, fallback: (...args: never[]) => unknown) =>
@@ -57,10 +59,16 @@ export function makeStripe(overrides: Record<string, (...args: never[]) => unkno
       calls.push({ method, args });
       const options = args.find((arg) => typeof arg === "object" && arg !== null && "idempotencyKey" in (arg as object)) as { idempotencyKey?: string } | undefined;
       const cacheKey = options?.idempotencyKey ? `${method}:${options.idempotencyKey}` : null;
+      // Like Stripe: the same idempotency key returns the first request's result, even while it's still in flight.
       if (cacheKey && idempotent.has(cacheKey)) return idempotent.get(cacheKey);
-      const result = await (overrides[method] ?? fallback)(...(args as never[]));
-      if (cacheKey) idempotent.set(cacheKey, result);
-      return result;
+      const pending = Promise.resolve().then(() => (overrides[method] ?? fallback)(...(args as never[])));
+      if (cacheKey) idempotent.set(cacheKey, pending);
+      try {
+        return await pending;
+      } catch (error) {
+        if (cacheKey) idempotent.delete(cacheKey);
+        throw error;
+      }
     };
 
   const stub = {
@@ -68,16 +76,18 @@ export function makeStripe(overrides: Record<string, (...args: never[]) => unkno
       sessions: {
         create: record("checkout.sessions.create", () => {
           const sessionId = id("cs");
+          sessionsCreated.push(sessionId);
           return { id: sessionId, url: `https://checkout.stripe.test/${sessionId}`, livemode: false };
         }),
         retrieve: record("checkout.sessions.retrieve", (sessionId: string) => ({ id: sessionId, status: "open", metadata: {} })),
       },
     },
     invoices: {
-      create: record("invoices.create", (params: { metadata: Record<string, string> }) => ({ id: id("in"), status: "draft", metadata: params.metadata })),
+      create: record("invoices.create", (params: { metadata: Record<string, string> }) => ({ id: id("in"), status: "draft", livemode: false, metadata: params.metadata })),
       finalizeInvoice: record("invoices.finalizeInvoice", (invoiceId: string) => ({
         id: invoiceId,
         status: "open",
+        livemode: false,
         amount_due: 65_000,
         amount_paid: 0,
         attempt_count: 0,
@@ -98,6 +108,7 @@ export function makeStripe(overrides: Record<string, (...args: never[]) => unkno
         subscriptionFixture({ id: subscriptionId, cancel_at: params.cancel_at ?? (params.cancel_at_period_end ? periodEnd : null) }),
       ),
       list: record("subscriptions.list", () => listOf([])),
+      cancel: record("subscriptions.cancel", (subscriptionId: string) => subscriptionFixture({ id: subscriptionId, status: "canceled" })),
     },
     prices: { list: record("prices.list", () => ({ data: [] })) },
     charges: { list: record("charges.list", () => ({ data: [] })) },
@@ -110,6 +121,7 @@ export function makeStripe(overrides: Record<string, (...args: never[]) => unkno
   return {
     stripe: stub as unknown as Stripe,
     calls,
+    sessionsCreated,
     count: (method: string) => calls.filter((call) => call.method === method).length,
     setProject: (projectId: string) => {
       lastProjectId = projectId;
@@ -132,6 +144,7 @@ export function subscriptionFixture(over: Partial<Record<string, unknown>> & { p
   return {
     id: "sub_test_1",
     status: "active",
+    livemode: false,
     start_date: now,
     cancel_at: null,
     canceled_at: null,
@@ -150,6 +163,8 @@ export function depositSession(intentId: string, over: Record<string, unknown> =
   return {
     id: "cs_test_deposit",
     object: "checkout.session",
+    mode: "payment",
+    client_reference_id: intentId,
     status: "complete",
     payment_status: "paid",
     amount_total: 65_000,

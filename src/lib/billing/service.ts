@@ -1,4 +1,5 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { and, desc, eq, ne, sql } from "drizzle-orm";
 import type Stripe from "stripe";
 import { WEBSITE_CARE_TERMS, agreementText } from "@/content/agreements";
@@ -20,7 +21,6 @@ import {
   type ProjectStatus,
 } from "@/lib/db/schema";
 import { adminRecipient, sendAll, sendNotification, type Outgoing } from "@/lib/notify/send";
-import { templates } from "@/lib/notify/templates";
 import { appUrl, hashIp, randomToken, sha256 } from "@/lib/security";
 import { CURRENCY, PLANS, depositFor, formatCents } from "./plans";
 import { reconcileCharge, reconcileCheckoutSession, reconcileInvoice, reconcileSubscription } from "./webhook";
@@ -106,14 +106,14 @@ export async function setProjectStatus(db: Db, actor: SessionUser, projectId: st
       template: "launchConfirmation",
       to: row.user.email,
       dedupeKey: `launch:${projectId}`,
-      rendered: templates.launchConfirmation({ name: firstName(row.customer.contactName), link }),
+      data: { name: firstName(row.customer.contactName), link },
     });
   } else if (CLIENT_FACING_UPDATES.includes(next)) {
     await sendNotification(db, {
       template: "statusUpdate",
       to: row.user.email,
       dedupeKey: `status:${event.id}`,
-      rendered: templates.statusUpdate({ name: firstName(row.customer.contactName), status: next, link }),
+      data: { name: firstName(row.customer.contactName), status: next, link },
     });
   }
   return { ok: true };
@@ -181,12 +181,12 @@ export async function createFinalInvoice(db: Db, stripe: Stripe, actor: SessionU
       template: "finalInvoice",
       to: user.email,
       dedupeKey: `final-invoice:${invoice.id}`,
-      rendered: templates.finalInvoice({
+      data: {
         name: firstName(customer.contactName),
         amountCents: invoice.amount_due,
         invoiceUrl: invoice.hosted_invoice_url,
         dueDate: invoice.due_date ? formatDate(new Date(invoice.due_date * 1000)) : `${daysUntilDue} days from today`,
-      }),
+      },
     });
   }
   return { ok: true };
@@ -244,19 +244,20 @@ export async function inviteCare(db: Db, actor: SessionUser, projectId: string):
     .values({ projectId, status: "invited", invitedBy: actor.id })
     .onConflictDoUpdate({
       target: careActivations.projectId,
-      set: { status: "invited", invitedBy: actor.id, stripeSessionId: null, updatedAt: new Date() },
+      // A fresh offer (including re-activation after a cancellation) starts with no checkout attempt.
+      set: { status: "invited", invitedBy: actor.id, attemptId: null, stripeSessionId: null, stripeSessionUrl: null, sessionExpiresAt: null, updatedAt: new Date() },
     });
   await logEvent(db, projectId, actor, "care_invited", `Website Care offered at ${formatCents(row.project.monthlyCents)}/month.`);
   await sendNotification(db, {
     template: "careInvitation",
     to: row.user.email,
     dedupeKey: `care-invite:${projectId}:${Date.now()}`,
-    rendered: templates.careInvitation({
+    data: {
       name: firstName(row.customer.contactName),
       planName: PLANS[row.project.plan].name,
       monthlyCents: row.project.monthlyCents,
       link: `${appUrl()}/client/care?project=${projectId}`,
-    }),
+    },
   });
   return { ok: true };
 }
@@ -272,9 +273,62 @@ async function carePrice(stripe: Stripe, lookupKey: string, monthlyCents: number
   return null;
 }
 
+/** How long a Website Care checkout link stays usable. Stripe requires at least 30 minutes. */
+const CARE_CHECKOUT_MINUTES = 60;
+
+type CareAttempt = { attemptId: string; agreementId: string; expiresAt: Date; reuseUrl: string | null };
+
+/**
+ * Claims (or reuses) the single checkout attempt for an activation, under a row lock so concurrent submissions
+ * agree on one attempt. A new attempt (and a new recorded acceptance) is made only when there's none, or the
+ * previous checkout link has expired.
+ */
+async function claimCareAttempt(
+  db: Db,
+  projectId: string,
+  acceptance: { email: string; userId: string; ip: string; userAgent: string | null },
+): Promise<CareAttempt | { error: string }> {
+  return db.transaction(async (tx) => {
+    const [activation] = await tx.select().from(careActivations).where(eq(careActivations.projectId, projectId)).for("update").limit(1);
+    if (!activation || !["invited", "consented"].includes(activation.status)) return { error: "Website Care hasn't been offered for this project yet." };
+
+    const now = Date.now();
+    const usable = activation.attemptId && activation.agreementId && activation.sessionExpiresAt && activation.sessionExpiresAt.getTime() > now + 60_000;
+    if (usable) {
+      return { attemptId: activation.attemptId!, agreementId: activation.agreementId!, expiresAt: activation.sessionExpiresAt!, reuseUrl: activation.stripeSessionUrl };
+    }
+
+    const [recorded] = await tx
+      .insert(agreementAcceptances)
+      .values({
+        kind: "website_care",
+        version: WEBSITE_CARE_TERMS.version,
+        textHash: sha256(agreementText(WEBSITE_CARE_TERMS)),
+        email: acceptance.email,
+        projectId,
+        userId: acceptance.userId,
+        ipHash: hashIp(acceptance.ip),
+        userAgent: acceptance.userAgent?.slice(0, 300) ?? null,
+      })
+      .returning({ id: agreementAcceptances.id });
+    const attemptId = randomUUID();
+    const expiresAt = new Date(Math.ceil((now + CARE_CHECKOUT_MINUTES * 60_000) / 1000) * 1000);
+    await tx
+      .update(careActivations)
+      .set({ status: "consented", attemptId, agreementId: recorded.id, stripeSessionId: null, stripeSessionUrl: null, sessionExpiresAt: expiresAt, updatedAt: new Date() })
+      .where(eq(careActivations.projectId, projectId));
+    return { attemptId, agreementId: recorded.id, expiresAt, reuseUrl: null };
+  });
+}
+
 /**
  * Customer step 2: they accept the Website Care terms (recorded with version and text hash),
  * then authorize the subscription and payment method on Stripe's hosted page.
+ *
+ * Idempotent per activation: every retry, second tab, or concurrent submission resolves to the same attempt, and
+ * the Stripe session is created with that attempt's id as the idempotency key, with identical parameters. So a
+ * crash between Stripe creating the session and us saving it is recovered by the next call, which gets the same
+ * session back. Only one usable checkout exists per activation at a time.
  */
 export async function startCareCheckout(
   db: Db,
@@ -285,25 +339,14 @@ export async function startCareCheckout(
   if (termsVersion !== WEBSITE_CARE_TERMS.version) return { ok: false, error: "The Website Care terms were updated. Please reload and review them again." };
   const row = await loadProject(db, projectId);
   if (!row || row.user.id !== user.id) return { ok: false, error: "Project not found." };
-  const { activation, subscription } = await careState(db, projectId);
-  if (!activation || !["invited", "consented"].includes(activation.status)) return { ok: false, error: "Website Care hasn't been offered for this project yet." };
+  const { subscription } = await careState(db, projectId);
   if (!CARE_READY.includes(row.project.status)) return { ok: false, error: "Website Care starts once your site is ready for launch." };
-  if (subscription && subscription.status !== "canceled") return { ok: false, error: "Website Care is already set up for this project." };
+  if (subscription && subscription.status !== "canceled" && subscription.status !== "incomplete_expired") return { ok: false, error: "Website Care is already set up for this project." };
   if (!row.customer.stripeCustomerId) return { ok: false, error: "Your billing profile isn't ready yet. Please contact us." };
 
-  const [acceptance] = await db
-    .insert(agreementAcceptances)
-    .values({
-      kind: "website_care",
-      version: WEBSITE_CARE_TERMS.version,
-      textHash: sha256(agreementText(WEBSITE_CARE_TERMS)),
-      email: user.email,
-      projectId,
-      userId: user.id,
-      ipHash: hashIp(ip),
-      userAgent: userAgent?.slice(0, 300) ?? null,
-    })
-    .returning({ id: agreementAcceptances.id });
+  const attempt = await claimCareAttempt(db, projectId, { email: user.email, userId: user.id, ip, userAgent });
+  if ("error" in attempt) return { ok: false, error: attempt.error };
+  if (attempt.reuseUrl) return { ok: true, value: attempt.reuseUrl };
 
   const plan = PLANS[row.project.plan];
   const priceId = await carePrice(stripe, plan.careLookupKey, row.project.monthlyCents);
@@ -318,33 +361,45 @@ export async function startCareCheckout(
           product_data: { name: `Website Care: ${plan.name}` },
         },
       };
-
-  const session = await stripe.checkout.sessions.create(
-    {
-      mode: "subscription",
-      customer: row.customer.stripeCustomerId,
-      line_items: [lineItem],
-      metadata: { kind: "care", projectId, agreementId: acceptance.id },
-      subscription_data: {
-        description: `Website Care for ${row.customer.businessName}. Monthly, three-month minimum, cancel any time from your dashboard.`,
-        metadata: { kind: "care", projectId, agreementId: acceptance.id },
-      },
-      custom_text: {
-        submit: {
-          message: `You authorize Fluxline Solutions to charge ${formatCents(row.project.monthlyCents)} every month until you cancel. Three-month minimum. Cancel any time from your client dashboard.`,
-        },
-      },
-      success_url: `${appUrl()}/client/dashboard?care=started`,
-      cancel_url: `${appUrl()}/client/care?project=${projectId}&cancelled=1`,
+  const metadata = { kind: "care", projectId, agreementId: attempt.agreementId, attemptId: attempt.attemptId };
+  const params: Stripe.Checkout.SessionCreateParams = {
+    mode: "subscription",
+    customer: row.customer.stripeCustomerId,
+    line_items: [lineItem],
+    metadata,
+    subscription_data: {
+      description: `Website Care for ${row.customer.businessName}. Monthly, three-month minimum, cancel any time from your dashboard.`,
+      metadata,
     },
-    { idempotencyKey: `care-checkout:${acceptance.id}` },
-  );
-  if (!session.url) return { ok: false, error: "Stripe did not return a checkout link. Please try again." };
+    custom_text: {
+      submit: {
+        message: `You authorize Fluxline Solutions to charge ${formatCents(row.project.monthlyCents)} every month until you cancel. Three-month minimum. Cancel any time from your client dashboard.`,
+      },
+    },
+    success_url: `${appUrl()}/client/dashboard?care=started`,
+    cancel_url: `${appUrl()}/client/care?project=${projectId}&cancelled=1`,
+    expires_at: Math.floor(attempt.expiresAt.getTime() / 1000),
+  };
+
+  // Same attempt → same key and same parameters → Stripe returns the same session. A concurrent request that's
+  // still in flight with this key gets a 409 from Stripe; wait briefly and ask again.
+  let session: Stripe.Checkout.Session | null = null;
+  for (let tries = 0; tries < 4 && !session; tries++) {
+    try {
+      session = await stripe.checkout.sessions.create(params, { idempotencyKey: `care-checkout:${attempt.attemptId}` });
+    } catch (error) {
+      const conflict = (error as { statusCode?: number; type?: string }).statusCode === 409;
+      if (!conflict || tries === 3) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 500 * (tries + 1)));
+    }
+  }
+  if (!session?.url) return { ok: false, error: "Stripe did not return a checkout link. Please try again." };
+
   await db
     .update(careActivations)
-    .set({ status: "consented", agreementId: acceptance.id, stripeSessionId: session.id, updatedAt: new Date() })
-    .where(eq(careActivations.projectId, projectId));
-  await logEvent(db, projectId, user, "care_terms_accepted", `Website Care terms ${WEBSITE_CARE_TERMS.version} accepted; customer sent to Stripe to authorize.`);
+    .set({ stripeSessionId: session.id, stripeSessionUrl: session.url, updatedAt: new Date() })
+    .where(and(eq(careActivations.projectId, projectId), eq(careActivations.attemptId, attempt.attemptId)));
+  await logEvent(db, projectId, user, "care_terms_accepted", `Website Care terms ${WEBSITE_CARE_TERMS.version} accepted; checkout attempt ${attempt.attemptId}.`);
   return { ok: true, value: session.url };
 }
 
@@ -370,7 +425,7 @@ export async function cancelCare(db: Db, stripe: Stripe, actor: SessionUser, pro
     atPeriodEnd ? { cancel_at_period_end: true } : { cancel_at: Math.floor(effective.getTime() / 1000), proration_behavior: "none" },
     { idempotencyKey: `care-cancel:${subscription.stripeSubscriptionId}` },
   );
-  await reconcileSubscription(db, updated);
+  await reconcileSubscription(db, stripe, updated);
   const effectiveDate = updated.cancel_at ? new Date(updated.cancel_at * 1000) : effective;
 
   await db.insert(supportRequests).values({
@@ -387,17 +442,17 @@ export async function cancelCare(db: Db, stripe: Stripe, actor: SessionUser, pro
       template: "careCancellation",
       to: row.user.email,
       dedupeKey: `care-cancel:${subscription.stripeSubscriptionId}`,
-      rendered: templates.careCancellation({ name: firstName(row.customer.contactName), effectiveDate: formatDate(effectiveDate) }),
+      data: { name: firstName(row.customer.contactName), effectiveDate: formatDate(effectiveDate) },
     },
     {
       template: "adminAlert",
       to: adminRecipient(),
       dedupeKey: `admin-care-cancel:${subscription.stripeSubscriptionId}`,
-      rendered: templates.adminAlert({
+      data: {
         title: `Website Care cancelled: ${row.customer.businessName}`,
         lines: [["Ends", formatDate(effectiveDate)], ["By", actor.email]],
         link: `${appUrl()}/admin/projects/${projectId}`,
-      }),
+      },
     },
   ]);
   return { ok: true, value: effectiveDate };
@@ -455,7 +510,7 @@ export async function createQuote(
     template: "quote",
     to: email,
     dedupeKey: `quote:${quote.id}`,
-    rendered: templates.quote({
+    data: {
       name: firstName(input.contactName),
       scope: input.scope,
       devPriceCents: input.devPriceCents,
@@ -463,7 +518,7 @@ export async function createQuote(
       monthlyCents: input.monthlyCents,
       link,
       expires: formatDate(expiresAt),
-    }),
+    },
   });
   return { ok: true, value: link };
 }
@@ -491,7 +546,7 @@ export async function syncProjectFromStripe(db: Db, stripe: Stripe, actor: Sessi
   }
   for await (const subscription of stripe.subscriptions.list({ customer: customerId, status: "all", limit: 100 })) {
     if (subscription.metadata?.projectId !== projectId) continue;
-    await reconcileSubscription(db, subscription);
+    await reconcileSubscription(db, stripe, subscription);
     applied++;
   }
   const projectPayments = await db.select().from(payments).where(eq(payments.projectId, projectId));
@@ -556,13 +611,13 @@ export async function createSupportRequest(
       template: "supportConfirmation",
       to: user.email,
       dedupeKey: `support:${request.id}`,
-      rendered: templates.supportConfirmation({ name: firstName(customer.contactName), subject: input.subject }),
+      data: { name: firstName(customer.contactName), subject: input.subject },
     },
     {
       template: "adminAlert",
       to: adminRecipient(),
       dedupeKey: `admin-support:${request.id}`,
-      rendered: templates.adminAlert({
+      data: {
         title: `${input.kind === "additional_service" ? "Service request" : "Support request"}: ${customer.businessName}`,
         lines: [
           ["From", `${customer.contactName} <${user.email}>`],
@@ -570,7 +625,7 @@ export async function createSupportRequest(
           ["Message", input.message.slice(0, 500)],
         ],
         link: `${appUrl()}/admin${projectId ? `/projects/${projectId}` : ""}`,
-      }),
+      },
     },
   ];
   await sendAll(db, messages);

@@ -3,18 +3,14 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { LOGIN_LINK_MINUTES, consumeLoginToken, createLoginToken, findUserForLogin } from "@/lib/auth/core";
+import { LOGIN_LINK_MINUTES, consumeLoginToken, findUserForLogin } from "@/lib/auth/core";
 import { endSession, startSession } from "@/lib/auth/session";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { sendNotification } from "@/lib/notify/send";
-import { templates } from "@/lib/notify/templates";
-import { createRateLimiter } from "@/lib/rate-limit";
-import { appUrl, clientIpFrom, safeNextPath, sha256 } from "@/lib/security";
+import { RATE_LIMITS, checkRateLimits } from "@/lib/rate-limit";
+import { clientIpFrom, randomToken, safeNextPath } from "@/lib/security";
 
 export type LoginState = { sent?: boolean; error?: string } | null;
-
-const ipLimiter = createRateLimiter({ limit: 10, windowMs: 15 * 60_000 });
-const emailLimiter = createRateLimiter({ limit: 4, windowMs: 15 * 60_000 });
 
 /** Always gives the same answer, so the form can't be used to find out who is a customer. */
 export async function requestLoginLink(_previous: LoginState, formData: FormData): Promise<LoginState> {
@@ -23,21 +19,26 @@ export async function requestLoginLink(_previous: LoginState, formData: FormData
   if (!isDatabaseConfigured()) return { error: "The client portal isn't open yet. Please email us and we'll help directly." };
   const email = parsed.data.toLowerCase();
   const ip = clientIpFrom(await headers());
-  if (!ipLimiter(ip).allowed || !emailLimiter(email).allowed) return { error: "Too many requests. Please wait a few minutes and try again." };
-
   const db = await getDb();
+  const rate = await checkRateLimits(db, [
+    ["login:ip", ip, RATE_LIMITS.loginPerIp],
+    ["login:email", email, RATE_LIMITS.loginPerEmail],
+  ]);
+  if (!rate.allowed) return { error: `Too many requests. Please try again in ${Math.ceil(rate.retryAfterSeconds / 60)} minute(s).` };
+
   const user = await findUserForLogin(db, email);
   if (user) {
     const fallback = user.role === "admin" ? "/admin" : "/client/dashboard";
     const next = safeNextPath(formData.get("next"), fallback);
     // A client can't be sent into /admin, and an admin's default is the admin dashboard.
     const destination = user.role === "client" && next.startsWith("/admin") ? "/client/dashboard" : next;
-    const token = await createLoginToken(db, email, { next: destination });
+    // The link itself is minted when the email is sent, so the outbox never stores a usable token.
     await sendNotification(db, {
       template: "signInLink",
       to: email,
-      dedupeKey: `login:${sha256(token).slice(0, 32)}`,
-      rendered: templates.signInLink({ link: `${appUrl()}/auth/verify?token=${token}`, minutes: LOGIN_LINK_MINUTES }),
+      dedupeKey: `login:${randomToken().slice(0, 24)}`,
+      data: { minutes: LOGIN_LINK_MINUTES },
+      signIn: { next: destination, ttlMinutes: LOGIN_LINK_MINUTES },
     });
   }
   return { sent: true };

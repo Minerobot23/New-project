@@ -1,10 +1,11 @@
 import "server-only";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import type Stripe from "stripe";
-import { INVITE_LINK_HOURS, createLoginToken } from "@/lib/auth/core";
+import { INVITE_LINK_HOURS } from "@/lib/auth/core";
 import type { Db } from "@/lib/db";
 import {
   agreementAcceptances,
+  billingQuarantine,
   careActivations,
   checkoutIntents,
   customers,
@@ -17,10 +18,10 @@ import {
   users,
   webhookEvents,
 } from "@/lib/db/schema";
-import { adminRecipient, sendAll, type Outgoing } from "@/lib/notify/send";
-import { templates } from "@/lib/notify/templates";
+import { adminRecipient, deliverNotification, enqueueNotifications, type Outgoing } from "@/lib/notify/send";
 import { appUrl } from "@/lib/security";
-import { CARE_MINIMUM_MONTHS, PLANS, priceSummary } from "./plans";
+import { stripeMode } from "./config";
+import { CARE_MINIMUM_MONTHS, CURRENCY, PLANS, priceSummary } from "./plans";
 
 /*
  * Stripe webhook processing: the only code that turns payments into records.
@@ -30,11 +31,17 @@ import { CARE_MINIMUM_MONTHS, PLANS, priceSummary } from "./plans";
  *    event finds its id and is skipped; a failed one rolls back entirely and Stripe retries it.
  * 2. Unique constraints on Stripe ids (payment intent, invoice, subscription, checkout intent per project) mean two
  *    different events about the same payment still produce one record.
- * 3. Notifications are sent after commit through email_log dedupe keys, so each email goes out once.
+ * 3. Notifications are written to the email outbox inside the same transaction, then delivered after commit.
+ *    A crash or a provider failure leaves them queued for retry; dedupe keys mean each goes out once.
+ *
+ * Authenticity is not the same as correctness: a signed event proves Stripe sent it, not that it matches the
+ * order. Deposits are checked against the stored checkout (session, amount, currency, mode) before anything is
+ * created, and events from the wrong environment (test vs live) are refused. Mismatches are quarantined for an
+ * administrator, with nothing fulfilled.
  */
 
 type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0];
-type Effects = { emails: Outgoing[] };
+type Effects = { emails: Outgoing[]; rejected?: boolean };
 
 export const HANDLED_EVENTS = [
   "checkout.session.completed",
@@ -61,7 +68,12 @@ const addMonths = (date: Date, months: number) => {
 };
 const formatDate = (date: Date) => date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "America/New_York" });
 
-export async function processStripeEvent(db: Db, stripe: Stripe, event: Stripe.Event): Promise<"processed" | "duplicate" | "ignored"> {
+export type EventOutcome = "processed" | "duplicate" | "ignored" | "rejected";
+
+/** The mode this deployment bills in: live only with a live key; everything else is test. */
+const deploymentIsLive = () => stripeMode() === "live";
+
+export async function processStripeEvent(db: Db, stripe: Stripe, event: Stripe.Event): Promise<EventOutcome> {
   if (!(HANDLED_EVENTS as readonly string[]).includes(event.type)) return "ignored";
   const effects: Effects = { emails: [] };
 
@@ -72,12 +84,62 @@ export async function processStripeEvent(db: Db, stripe: Stripe, event: Stripe.E
       .onConflictDoNothing()
       .returning({ id: webhookEvents.id });
     if (inserted.length === 0) return "duplicate" as const;
+
+    // Environment isolation: a test event must never change live records, and vice versa.
+    if (event.livemode !== deploymentIsLive()) {
+      const object = event.data.object as { id?: string };
+      await quarantine(tx, effects, event, {
+        reason: "wrong_mode",
+        objectId: object.id ?? null,
+        detail: { eventLivemode: event.livemode, deploymentLivemode: deploymentIsLive() },
+      });
+      await enqueueNotifications(tx, effects.emails);
+      return "rejected" as const;
+    }
+
     await dispatch(tx, stripe, event, effects);
-    return "processed" as const;
+    await enqueueNotifications(tx, effects.emails);
+    return effects.rejected ? ("rejected" as const) : ("processed" as const);
   });
 
-  if (outcome === "processed") await sendAll(db, effects.emails);
+  // Committed: now try to deliver. Anything that fails stays queued and is retried later.
+  if (outcome !== "duplicate") for (const email of effects.emails) await deliverNotification(db, email.dedupeKey);
   return outcome;
+}
+
+/** Records an authentic event we won't act on, and alerts the administrator. */
+async function quarantine(
+  tx: Tx,
+  effects: Effects,
+  event: Stripe.Event,
+  { reason, objectId, intentId = null, detail }: { reason: string; objectId: string | null; intentId?: string | null; detail: Record<string, unknown> },
+) {
+  effects.rejected = true;
+  await tx.insert(billingQuarantine).values({
+    eventId: event.id,
+    eventType: event.type,
+    stripeObjectId: objectId,
+    checkoutIntentId: intentId,
+    reason,
+    detail,
+    livemode: event.livemode,
+  });
+  console.error(`[webhook] quarantined ${event.type} ${event.id}: ${reason}`);
+  effects.emails.push({
+    template: "adminAlert",
+    to: adminRecipient(),
+    dedupeKey: `admin-quarantine:${event.id}`,
+    data: {
+      title: `Payment needs review: ${reason.replace(/_/g, " ")}`,
+      lines: [
+        ["Stripe event", `${event.type} (${event.id})`],
+        ["Object", objectId ?? "unknown"],
+        ["Mode", event.livemode ? "Live" : "Test"],
+        ["Action", "Nothing was fulfilled. Review in Stripe and the admin dashboard."],
+      ],
+      link: `${appUrl()}/admin`,
+    },
+  });
 }
 
 async function dispatch(tx: Tx, stripe: Stripe, event: Stripe.Event, effects: Effects) {
@@ -85,8 +147,8 @@ async function dispatch(tx: Tx, stripe: Stripe, event: Stripe.Event, effects: Ef
     case "checkout.session.completed":
     case "checkout.session.async_payment_succeeded": {
       const session = event.data.object;
-      if (session.metadata?.kind === "deposit" && session.payment_status === "paid") await fulfillDeposit(tx, session, effects);
-      if (session.metadata?.kind === "care" && session.status === "complete") await recordCareCheckout(tx, stripe, session, effects);
+      if (session.metadata?.kind === "deposit" && session.payment_status === "paid") await fulfillDeposit(tx, event, session, effects);
+      if (session.metadata?.kind === "care" && session.status === "complete") await recordCareCheckout(tx, stripe, event, session, effects);
       return;
     }
     case "checkout.session.async_payment_failed":
@@ -98,6 +160,7 @@ async function dispatch(tx: Tx, stripe: Stripe, event: Stripe.Event, effects: Ef
           .set({ status: "expired" })
           .where(and(eq(checkoutIntents.id, session.metadata.intentId), eq(checkoutIntents.status, "open")));
       }
+      if (session.metadata?.kind === "care") await releaseCareAttempt(tx, session.id);
       return;
     }
     case "invoice.finalized":
@@ -114,7 +177,7 @@ async function dispatch(tx: Tx, stripe: Stripe, event: Stripe.Event, effects: Ef
     case "customer.subscription.created":
     case "customer.subscription.updated":
     case "customer.subscription.deleted":
-      await upsertSubscription(tx, event.data.object);
+      await upsertSubscription(tx, stripe, event, event.data.object, effects);
       return;
     case "charge.refunded":
       await recordRefund(tx, event.data.object);
@@ -124,13 +187,60 @@ async function dispatch(tx: Tx, stripe: Stripe, event: Stripe.Event, effects: Ef
 
 /* ---------------- Deposits ---------------- */
 
-async function fulfillDeposit(tx: Tx, session: Stripe.Checkout.Session, effects: Effects) {
+/** Why a paid deposit session doesn't match its stored checkout, or null if it matches exactly. */
+function depositMismatch(intent: typeof checkoutIntents.$inferSelect, session: Stripe.Checkout.Session) {
+  if (session.client_reference_id && session.client_reference_id !== intent.id) return "intent_reference_mismatch";
+  if (intent.stripeSessionId && intent.stripeSessionId !== session.id) return "session_mismatch";
+  if (session.amount_total !== intent.depositCents) return "amount_mismatch";
+  if ((session.currency ?? "").toLowerCase() !== CURRENCY) return "currency_mismatch";
+  if (session.mode !== "payment") return "checkout_mode_mismatch";
+  if (intent.stripeSessionId && intent.livemode !== session.livemode) return "mode_mismatch";
+  return null;
+}
+
+async function fulfillDeposit(tx: Tx, event: Stripe.Event, session: Stripe.Checkout.Session, effects: Effects) {
   const intentId = session.metadata?.intentId;
-  if (!intentId) return;
-  const [intent] = await tx.select().from(checkoutIntents).where(eq(checkoutIntents.id, intentId)).limit(1);
+  const intent = intentId && /^[0-9a-f-]{36}$/i.test(intentId) ? (await tx.select().from(checkoutIntents).where(eq(checkoutIntents.id, intentId)).limit(1))[0] : undefined;
   if (!intent) {
-    console.error(`[webhook] deposit for unknown intent ${intentId} (session ${session.id})`);
+    await quarantine(tx, effects, event, { reason: "unknown_intent", objectId: session.id, detail: { intentId: intentId ?? null } });
     return;
+  }
+
+  // Already fulfilled by an earlier event for this same session (e.g. completed, then async_payment_succeeded).
+  if (intent.status === "completed" && intent.stripeSessionId === session.id) return;
+  if (intent.status !== "open") {
+    await quarantine(tx, effects, event, { reason: `intent_${intent.status}`, objectId: session.id, intentId: intent.id, detail: { intentStatus: intent.status } });
+    return;
+  }
+
+  const mismatch = depositMismatch(intent, session);
+  if (mismatch) {
+    await tx.update(checkoutIntents).set({ status: "quarantined" }).where(eq(checkoutIntents.id, intent.id));
+    await quarantine(tx, effects, event, {
+      reason: mismatch,
+      objectId: session.id,
+      intentId: intent.id,
+      detail: {
+        expected: { sessionId: intent.stripeSessionId, amount: intent.depositCents, currency: CURRENCY, livemode: intent.livemode },
+        received: { sessionId: session.id, amount: session.amount_total, currency: session.currency, livemode: session.livemode },
+      },
+    });
+    return;
+  }
+
+  // The event can arrive before the checkout request stored the session id. Claim it now, atomically:
+  // if another session has been recorded in the meantime, this one doesn't match and is quarantined.
+  if (!intent.stripeSessionId) {
+    const claimed = await tx
+      .update(checkoutIntents)
+      .set({ stripeSessionId: session.id, livemode: session.livemode })
+      .where(and(eq(checkoutIntents.id, intent.id), sql`${checkoutIntents.stripeSessionId} is null`))
+      .returning({ id: checkoutIntents.id });
+    if (claimed.length === 0) {
+      await tx.update(checkoutIntents).set({ status: "quarantined" }).where(eq(checkoutIntents.id, intent.id));
+      await quarantine(tx, effects, event, { reason: "session_mismatch", objectId: session.id, intentId: intent.id, detail: { note: "another session was recorded first" } });
+      return;
+    }
   }
 
   // User and customer: one per email; reused if this person buys again.
@@ -185,31 +295,29 @@ async function fulfillDeposit(tx: Tx, session: Stripe.Checkout.Session, effects:
     .where(eq(agreementAcceptances.checkoutIntentId, intent.id));
   if (intent.quoteId) await tx.update(quotes).set({ status: "paid" }).where(eq(quotes.id, intent.quoteId));
   await tx.insert(projectEvents).values({ projectId: project.id, kind: "deposit_paid", detail: `Deposit of ${paid / 100} ${session.currency ?? "usd"} confirmed by Stripe (${session.id}).` });
-  if (paid !== intent.depositCents) {
-    await tx.insert(projectEvents).values({ projectId: project.id, kind: "amount_mismatch", detail: `Expected ${intent.depositCents}, Stripe reported ${paid}.` });
-  }
 
   const summary = priceSummary(intent);
-  const token = await createLoginToken(tx as unknown as Db, intent.email, { next: `/client/onboarding?project=${project.id}`, ttlMinutes: INVITE_LINK_HOURS * 60 });
   const name = intent.contactName.split(" ")[0];
   effects.emails.push(
     {
       template: "depositConfirmation",
       to: intent.email,
       dedupeKey: `deposit-confirmation:${project.id}`,
-      rendered: templates.depositConfirmation({ name, planName: PLANS[intent.plan].name, depositCents: paid, balanceCents: summary.balanceCents, monthlyCents: summary.monthlyCents }),
+      data: { name, planName: PLANS[intent.plan].name, depositCents: paid, balanceCents: summary.balanceCents, monthlyCents: summary.monthlyCents },
     },
     {
       template: "onboardingInvitation",
       to: intent.email,
       dedupeKey: `onboarding-invitation:${project.id}`,
-      rendered: templates.onboardingInvitation({ name, link: `${appUrl()}/auth/verify?token=${token}`, hours: INVITE_LINK_HOURS }),
+      data: { name, hours: INVITE_LINK_HOURS },
+      // The sign-in link is minted when the email is sent, so a retried email carries a fresh, unexpired link.
+      signIn: { next: `/client/onboarding?project=${project.id}`, ttlMinutes: INVITE_LINK_HOURS * 60 },
     },
     {
       template: "adminAlert",
       to: adminRecipient(),
       dedupeKey: `admin-deposit:${project.id}`,
-      rendered: templates.adminAlert({
+      data: {
         title: `New ${PLANS[intent.plan].name} deposit: ${intent.businessName}`,
         lines: [
           ["Customer", `${intent.contactName} <${intent.email}>`],
@@ -217,7 +325,7 @@ async function fulfillDeposit(tx: Tx, session: Stripe.Checkout.Session, effects:
           ["Mode", session.livemode ? "Live" : "Test"],
         ],
         link: `${appUrl()}/admin/projects/${project.id}`,
-      }),
+      },
     },
   );
 }
@@ -310,7 +418,7 @@ async function recordInvoicePaid(tx: Tx, stripe: Stripe, invoice: Stripe.Invoice
       template: "finalPaymentConfirmation",
       to: row.user.email,
       dedupeKey: `final-paid:${invoice.id}`,
-      rendered: templates.finalPaymentConfirmation({ name: row.customer.contactName.split(" ")[0], amountCents: invoice.amount_paid }),
+      data: { name: row.customer.contactName.split(" ")[0], amountCents: invoice.amount_paid },
     });
   }
 }
@@ -334,17 +442,17 @@ async function recordInvoiceFailed(tx: Tx, invoice: Stripe.Invoice, effects: Eff
       to: row.user.email,
       // One email per attempt: retries of this same event don't resend, a new failed attempt does.
       dedupeKey: `payment-failed:${invoice.id}:${invoice.attempt_count}`,
-      rendered: templates.failedPayment({
+      data: {
         name: row.customer.contactName.split(" ")[0],
         amountCents: invoice.amount_due,
         link: invoice.hosted_invoice_url ?? `${appUrl()}/client/dashboard`,
-      }),
+      },
     },
     {
       template: "adminAlert",
       to: adminRecipient(),
       dedupeKey: `admin-payment-failed:${invoice.id}:${invoice.attempt_count}`,
-      rendered: templates.adminAlert({
+      data: {
         title: `Payment failed: ${row.customer.businessName}`,
         lines: [
           ["Invoice", invoice.id],
@@ -352,7 +460,7 @@ async function recordInvoiceFailed(tx: Tx, invoice: Stripe.Invoice, effects: Eff
           ["Attempt", String(invoice.attempt_count)],
         ],
         link: `${appUrl()}/admin/projects/${result.projectId}`,
-      }),
+      },
     },
   );
 }
@@ -361,7 +469,14 @@ async function recordInvoiceFailed(tx: Tx, invoice: Stripe.Invoice, effects: Eff
 
 const periodEnd = (subscription: Stripe.Subscription) => toDate(subscription.items.data[0]?.current_period_end ?? null);
 
-async function upsertSubscription(tx: Tx, subscription: Stripe.Subscription) {
+const LIVE_SUBSCRIPTION = ["active", "trialing", "past_due", "unpaid", "incomplete"];
+
+/**
+ * Mirrors a Website Care subscription. A project has at most one subscription row: a new subscription may replace
+ * one that has ended (re-activation after cancellation), but a second live subscription for the same project is a
+ * duplicate. It's cancelled immediately so it can't renew, and the administrator is alerted to refund any charge.
+ */
+async function upsertSubscription(tx: Tx, stripe: Stripe, event: Stripe.Event, subscription: Stripe.Subscription, effects: Effects) {
   const projectId = subscription.metadata?.projectId;
   if (!projectId || subscription.metadata?.kind !== "care") return;
   const start = toDate(subscription.start_date) ?? new Date();
@@ -374,17 +489,37 @@ async function upsertSubscription(tx: Tx, subscription: Stripe.Subscription) {
     minimumTermEnd: subscription.metadata.minimumTermEnd ? new Date(subscription.metadata.minimumTermEnd) : addMonths(start, CARE_MINIMUM_MONTHS),
     cancelAt: toDate(subscription.cancel_at),
     canceledAt: toDate(subscription.canceled_at),
+    updatedAt: new Date(),
   };
-  await tx
-    .insert(subscriptions)
-    .values(values)
-    .onConflictDoUpdate({ target: subscriptions.stripeSubscriptionId, set: { ...values, updatedAt: new Date() } });
+
+  const [existing] = await tx.select().from(subscriptions).where(eq(subscriptions.projectId, projectId)).limit(1);
+  if (existing && existing.stripeSubscriptionId !== subscription.id) {
+    const existingLive = LIVE_SUBSCRIPTION.includes(existing.status);
+    if (existingLive) {
+      // A different subscription for a project that already has a live one.
+      if (LIVE_SUBSCRIPTION.includes(subscription.status)) {
+        await stripe.subscriptions.cancel(subscription.id, {}, { idempotencyKey: `cancel-duplicate:${subscription.id}` });
+        await tx.insert(projectEvents).values({ projectId, kind: "duplicate_subscription", detail: `Duplicate subscription ${subscription.id} cancelled; ${existing.stripeSubscriptionId} kept.` });
+        await quarantine(tx, effects, event, {
+          reason: "duplicate_subscription",
+          objectId: subscription.id,
+          detail: { projectId, kept: existing.stripeSubscriptionId, cancelled: subscription.id, note: "Refund any charge on the cancelled subscription in Stripe." },
+        });
+      }
+      return;
+    }
+    // The previous subscription has ended: this one replaces it (re-activation).
+    await tx.update(subscriptions).set(values).where(eq(subscriptions.projectId, projectId));
+  } else {
+    await tx
+      .insert(subscriptions)
+      .values(values)
+      .onConflictDoUpdate({ target: subscriptions.stripeSubscriptionId, set: values });
+  }
+
   if (subscription.status === "active") {
     await tx.update(careActivations).set({ status: "active", updatedAt: new Date() }).where(eq(careActivations.projectId, projectId));
-    await tx
-      .update(projects)
-      .set({ status: "maintenance_active", updatedAt: new Date() })
-      .where(and(eq(projects.id, projectId), eq(projects.status, "live")));
+    await tx.update(projects).set({ status: "maintenance_active", updatedAt: new Date() }).where(and(eq(projects.id, projectId), eq(projects.status, "live")));
   }
   if (subscription.status === "canceled") {
     // Care has ended: the site stays live, but it's no longer on an active maintenance plan.
@@ -392,12 +527,28 @@ async function upsertSubscription(tx: Tx, subscription: Stripe.Subscription) {
   }
 }
 
-async function recordCareCheckout(tx: Tx, stripe: Stripe, session: Stripe.Checkout.Session, effects: Effects) {
+/** An unfinished Website Care checkout expired: clear the attempt so the customer can start a fresh one. */
+async function releaseCareAttempt(tx: Tx, sessionId: string) {
+  await tx
+    .update(careActivations)
+    .set({ status: "invited", attemptId: null, stripeSessionId: null, stripeSessionUrl: null, sessionExpiresAt: null, updatedAt: new Date() })
+    .where(and(eq(careActivations.stripeSessionId, sessionId), eq(careActivations.status, "consented")));
+}
+
+async function recordCareCheckout(tx: Tx, stripe: Stripe, event: Stripe.Event, session: Stripe.Checkout.Session, effects: Effects) {
   const projectId = session.metadata?.projectId;
   const subscriptionId = idOf(session.subscription);
   if (!projectId || !subscriptionId) return;
+
+  const [activation] = await tx.select().from(careActivations).where(eq(careActivations.projectId, projectId)).limit(1);
+  const matchesAttempt = activation && (activation.stripeSessionId === session.id || (activation.attemptId && session.metadata?.attemptId === activation.attemptId));
+  if (!matchesAttempt) {
+    await tx.insert(projectEvents).values({ projectId, kind: "care_session_unexpected", detail: `Care checkout ${session.id} didn't match the current attempt.` });
+  }
+
   const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-  await upsertSubscription(tx, subscription);
+  await upsertSubscription(tx, stripe, event, subscription, effects);
+  if (effects.rejected) return;
   await tx.insert(projectEvents).values({ projectId, kind: "care_activated", detail: `Website Care subscription ${subscriptionId} started by the customer.` });
 
   const [row] = await tx
@@ -412,13 +563,13 @@ async function recordCareCheckout(tx: Tx, stripe: Stripe, session: Stripe.Checko
   effects.emails.push({
     template: "subscriptionActivation",
     to: row.user.email,
-    dedupeKey: `care-active:${projectId}`,
-    rendered: templates.subscriptionActivation({
+    dedupeKey: `care-active:${subscriptionId}`,
+    data: {
       name: row.customer.contactName.split(" ")[0],
       monthlyCents: row.sub.monthlyCents,
       minimumEnd: formatDate(row.sub.minimumTermEnd),
       link: `${appUrl()}/client/dashboard`,
-    }),
+    },
   });
 }
 
@@ -446,36 +597,49 @@ async function recordRefund(tx: Tx, charge: Stripe.Charge) {
  * Everything stays idempotent through the same unique constraints and email dedupe keys.
  */
 
-async function applyWithEffects(db: Db, work: (tx: Tx, effects: Effects) => Promise<void>) {
+async function applyWithEffects(db: Db, livemode: boolean, work: (tx: Tx, effects: Effects) => Promise<void>) {
   const effects: Effects = { emails: [] };
-  await db.transaction((tx) => work(tx, effects));
-  await sendAll(db, effects.emails);
+  // Reconciliation follows the same environment rule as webhooks.
+  if (livemode !== deploymentIsLive()) return "rejected" as const;
+  await db.transaction(async (tx) => {
+    await work(tx, effects);
+    await enqueueNotifications(tx, effects.emails);
+  });
+  for (const email of effects.emails) await deliverNotification(db, email.dedupeKey);
+  return effects.rejected ? ("rejected" as const) : ("processed" as const);
 }
 
+/** A stand-in event for objects fetched from Stripe (not delivered by webhook), used in quarantine records. */
+const syntheticEvent = (type: string, object: { id: string; livemode: boolean }) =>
+  ({ id: `reconcile:${object.id}:${Date.now()}`, type, livemode: object.livemode, data: { object } }) as unknown as Stripe.Event;
+
 export function reconcileCheckoutSession(db: Db, stripe: Stripe, session: Stripe.Checkout.Session) {
-  return applyWithEffects(db, async (tx, effects) => {
-    if (session.metadata?.kind === "deposit" && session.payment_status === "paid") await fulfillDeposit(tx, session, effects);
+  const event = syntheticEvent("reconcile.checkout_session", session);
+  return applyWithEffects(db, session.livemode, async (tx, effects) => {
+    if (session.metadata?.kind === "deposit" && session.payment_status === "paid") await fulfillDeposit(tx, event, session, effects);
     if (session.metadata?.kind === "deposit" && session.status === "expired" && session.metadata.intentId) {
       await tx
         .update(checkoutIntents)
         .set({ status: "expired" })
         .where(and(eq(checkoutIntents.id, session.metadata.intentId), eq(checkoutIntents.status, "open")));
     }
-    if (session.metadata?.kind === "care" && session.status === "complete") await recordCareCheckout(tx, stripe, session, effects);
+    if (session.metadata?.kind === "care" && session.status === "complete") await recordCareCheckout(tx, stripe, event, session, effects);
+    if (session.metadata?.kind === "care" && session.status === "expired") await releaseCareAttempt(tx, session.id);
   });
 }
 
 export function reconcileInvoice(db: Db, stripe: Stripe, invoice: Stripe.Invoice) {
-  return applyWithEffects(db, async (tx, effects) => {
+  return applyWithEffects(db, invoice.livemode, async (tx, effects) => {
     if (invoice.status === "paid") await recordInvoicePaid(tx, stripe, invoice, effects);
     else await upsertInvoice(tx, invoice);
   });
 }
 
-export function reconcileSubscription(db: Db, subscription: Stripe.Subscription) {
-  return applyWithEffects(db, (tx) => upsertSubscription(tx, subscription));
+export function reconcileSubscription(db: Db, stripe: Stripe, subscription: Stripe.Subscription) {
+  const event = syntheticEvent("reconcile.subscription", subscription);
+  return applyWithEffects(db, subscription.livemode, (tx, effects) => upsertSubscription(tx, stripe, event, subscription, effects));
 }
 
 export function reconcileCharge(db: Db, charge: Stripe.Charge) {
-  return applyWithEffects(db, (tx) => recordRefund(tx, charge));
+  return applyWithEffects(db, charge.livemode, (tx) => recordRefund(tx, charge));
 }

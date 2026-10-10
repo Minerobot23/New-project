@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { ActionForm } from "@/components/billing/action-form";
 import { EmptyState, Notice, Panel, Pill, Shell, Stat, StatusBadge, darkInput, formatDay } from "@/components/billing/ui";
-import { adminOverview, adminProjects, openSupportRequests } from "@/lib/admin/data";
+import { adminOverview, adminProjects, emailHealth, openQuarantine, openSupportRequests } from "@/lib/admin/data";
 import { requireAdmin } from "@/lib/auth/session";
 import { billingStatus, stripeDashboardUrl } from "@/lib/billing/config";
 import { PLANS, formatCents } from "@/lib/billing/plans";
 import { getDb } from "@/lib/db";
 import { PROJECT_STATUSES, type ProjectStatus } from "@/lib/db/schema";
 import { statusLabel } from "@/lib/notify/templates";
-import { closeRequestAction, reconcileCheckoutsAction } from "./actions";
+import { closeRequestAction, reconcileCheckoutsAction, resolveQuarantineAction, retryEmailsAction } from "./actions";
 
 export default async function AdminOverviewPage({ searchParams }: PageProps<"/admin">) {
   await requireAdmin();
@@ -19,7 +19,14 @@ export default async function AdminOverviewPage({ searchParams }: PageProps<"/ad
   const q = typeof params.q === "string" ? params.q.slice(0, 100) : undefined;
 
   const db = await getDb();
-  const [overview, rows, requests] = await Promise.all([adminOverview(db, { livemode }), adminProjects(db, { livemode, status: filter, q }), openSupportRequests(db)]);
+  const [overview, rows, requests, emails, quarantined] = await Promise.all([
+    adminOverview(db, { livemode }),
+    adminProjects(db, { livemode, status: filter, q }),
+    openSupportRequests(db),
+    emailHealth(db),
+    openQuarantine(db),
+  ]);
+  const undelivered = (emails.counts.queued ?? 0) + (emails.counts.sending ?? 0) + (emails.counts.failed ?? 0) + (emails.counts.dead ?? 0);
 
   return (
     <Shell className="py-10 sm:py-12">
@@ -56,6 +63,52 @@ export default async function AdminOverviewPage({ searchParams }: PageProps<"/ad
         <Stat label="Failed payments" value={overview.failedPayments.length} hint={overview.pastDueSubscriptions ? `${overview.pastDueSubscriptions} subscription(s) past due` : undefined} />
         <Stat label="Unconfirmed checkouts" value={overview.openCheckouts} hint="Started but not confirmed by Stripe" />
       </div>
+
+      {quarantined.length > 0 && (
+        <div className="mt-8">
+          <Panel title={`Payments needing review (${quarantined.length})`}>
+            <p className="mb-4 text-sm text-white/65">
+              Stripe reported these, but they didn&apos;t match what we expected, so nothing was fulfilled. Check each in Stripe, refund or fulfil manually, then mark it reviewed.
+            </p>
+            <ul className="divide-y divide-night-line text-sm">
+              {quarantined.map((item) => (
+                <li key={item.id} className="flex flex-wrap items-start justify-between gap-3 py-3">
+                  <div>
+                    <p className="font-medium">{item.reason.replace(/_/g, " ")}</p>
+                    <p className="text-xs text-white/55">
+                      {item.eventType} · {item.stripeObjectId ?? "no object"} · {item.livemode ? "live" : "test"} · {formatDay(item.createdAt)}
+                    </p>
+                  </div>
+                  <ActionForm action={resolveQuarantineAction} hidden={{ id: item.id }} submitLabel="Mark reviewed" variant="small" />
+                </li>
+              ))}
+            </ul>
+          </Panel>
+        </div>
+      )}
+
+      {undelivered > 0 && (
+        <div className="mt-8">
+          <Panel
+            title="Emails waiting to send"
+            action={<ActionForm action={retryEmailsAction} submitLabel="Retry now" pendingLabel="Sending…" variant="small" inline />}
+          >
+            <p className="text-sm text-white/70">
+              {emails.counts.queued ?? 0} queued · {emails.counts.failed ?? 0} retrying · {emails.counts.dead ?? 0} gave up. Failed emails retry automatically with
+              increasing delays; &ldquo;Retry now&rdquo; also re-queues ones that gave up (sign-in links are re-issued fresh).
+            </p>
+            {emails.recentProblems.length > 0 && (
+              <ul className="mt-3 space-y-1 text-xs text-white/55">
+                {emails.recentProblems.map((row) => (
+                  <li key={row.key}>
+                    {row.template} · {row.status} after {row.attempts} attempt(s) · {row.error ?? ""}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Panel>
+        </div>
+      )}
 
       {overview.failedPayments.length > 0 && (
         <div className="mt-8">

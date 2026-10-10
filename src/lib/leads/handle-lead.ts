@@ -2,29 +2,20 @@ import "server-only";
 import { NextResponse, type NextRequest } from "next/server";
 import type { z } from "zod";
 import { EmailConfigError, getEmailProvider, getLeadRecipients, type OutgoingEmail } from "@/lib/email";
-import { createRateLimiter } from "@/lib/rate-limit";
+import { getDb } from "@/lib/db";
+import { RATE_LIMITS, checkRateLimits } from "@/lib/rate-limit";
+import { clientIpFrom } from "@/lib/security";
 import { site } from "@/lib/site";
 import { HONEYPOT_FIELD, STARTED_AT_FIELD, firstFieldErrors, type LeadResponse } from "./schemas";
 
 const MAX_BODY_BYTES = 12 * 1024;
 const MIN_FILL_TIME_MS = 2_500;
 
-// Shared across both lead endpoints so one client can't double its allowance by switching forms.
-const limiter = createRateLimiter({ limit: 8, windowMs: 10 * 60 * 1000 });
 
 const FALLBACK_ERROR = `Something went wrong sending your request. Please try again, or email ${site.contact.email}.`;
 
 const json = (body: LeadResponse, status = 200, headers?: HeadersInit) =>
   NextResponse.json(body, { status, headers: { "Cache-Control": "no-store", ...headers } });
-
-function clientIp(request: NextRequest) {
-  return (
-    request.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() ||
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    request.headers.get("x-real-ip") ||
-    "unknown"
-  );
-}
 
 /** Rejects cross-site posts: browsers always send Origin on fetch POSTs. */
 function isSameOrigin(request: NextRequest) {
@@ -58,7 +49,10 @@ export async function handleLead<S extends z.ZodType>(request: NextRequest, opti
     return json({ ok: false, error: "Invalid request." }, 415);
   }
 
-  const rate = limiter(clientIp(request));
+  if (Number(request.headers.get("content-length") ?? 0) > MAX_BODY_BYTES) return json({ ok: false, error: "Request is too large." }, 413);
+
+  // Shared across both lead endpoints so one client can't double its allowance by switching forms.
+  const rate = await checkRateLimits(await getDb(), [["leads:ip", clientIpFrom(request.headers), RATE_LIMITS.leadsPerIp]], { onFailure: "allow" });
   if (!rate.allowed) {
     return json(
       { ok: false, error: "Too many requests. Please wait a few minutes and try again." },

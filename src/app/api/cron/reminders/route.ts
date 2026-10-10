@@ -1,12 +1,11 @@
 import { and, eq, inArray, isNull, lt, or } from "drizzle-orm";
-import { createLoginToken, INVITE_LINK_HOURS } from "@/lib/auth/core";
+import { INVITE_LINK_HOURS } from "@/lib/auth/core";
 import { BillingDisabledError, billingStatus, getStripe } from "@/lib/billing/config";
 import { reconcileOpenCheckouts } from "@/lib/billing/service";
 import { getDb } from "@/lib/db";
-import { customers, emailLog, onboarding, projects, users } from "@/lib/db/schema";
-import { sendNotification } from "@/lib/notify/send";
-import { templates } from "@/lib/notify/templates";
-import { appUrl, safeEqual } from "@/lib/security";
+import { customers, onboarding, projects, users } from "@/lib/db/schema";
+import { deliverDue, sendNotification } from "@/lib/notify/send";
+import { safeEqual } from "@/lib/security";
 
 /*
  * Daily job (vercel.json): onboarding reminders and reconciliation of checkouts Stripe never confirmed to us.
@@ -41,19 +40,20 @@ export async function GET(request: Request) {
     const ageDays = (now - row.createdAt.getTime()) / 86_400_000;
     const stage = REMINDER_DAYS.filter((day) => ageDays >= day).length;
     if (stage === 0) continue;
-    // One reminder per stage, ever: the dedupe key makes reruns harmless.
-    const dedupeKey = `onboarding-reminder:${row.projectId}:${stage}`;
-    const [already] = await db.select({ key: emailLog.dedupeKey }).from(emailLog).where(and(eq(emailLog.dedupeKey, dedupeKey), eq(emailLog.status, "sent"))).limit(1);
-    if (already) continue;
-    const token = await createLoginToken(db, row.email, { next: `/client/onboarding?project=${row.projectId}`, ttlMinutes: INVITE_LINK_HOURS * 60 });
-    const result = await sendNotification(db, {
+    // One reminder per stage, ever: the outbox dedupe key makes reruns harmless, and the sign-in link is
+    // minted only when the email is actually sent.
+    const outcome = await sendNotification(db, {
       template: "onboardingReminder",
       to: row.email,
-      dedupeKey,
-      rendered: templates.onboardingReminder({ name: row.name.split(" ")[0], link: `${appUrl()}/auth/verify?token=${token}` }),
+      dedupeKey: `onboarding-reminder:${row.projectId}:${stage}`,
+      data: { name: row.name.split(" ")[0] },
+      signIn: { next: `/client/onboarding?project=${row.projectId}`, ttlMinutes: INVITE_LINK_HOURS * 60 },
     });
-    if (result === "sent") reminders++;
+    if (outcome === "sent" || outcome === "suppressed") reminders++;
   }
+
+  // Retry any notifications that are due (backstop for the after-webhook and admin-triggered drains).
+  const retried = (await deliverDue(db, { limit: 100 })).length;
 
   let reconciled = 0;
   if (billingStatus().enabled) {
@@ -63,5 +63,5 @@ export async function GET(request: Request) {
       if (!(error instanceof BillingDisabledError)) console.error(`[cron] reconcile failed: ${error instanceof Error ? error.message : "unknown"}`);
     }
   }
-  return Response.json({ reminders, reconciled });
+  return Response.json({ reminders, retried, reconciled });
 }

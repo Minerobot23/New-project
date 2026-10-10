@@ -1,8 +1,8 @@
 import "server-only";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, lt, sql } from "drizzle-orm";
 import { canAccessProject, type SessionUser } from "@/lib/auth/core";
 import type { Db } from "@/lib/db";
-import { projectEvents, uploads } from "@/lib/db/schema";
+import { projectEvents, projects, uploads } from "@/lib/db/schema";
 
 /*
  * Client file uploads (logos, photos, documents).
@@ -10,6 +10,10 @@ import { projectEvents, uploads } from "@/lib/db/schema";
  * - SVG and HTML are refused (they can carry scripts).
  * - Files are capped at 4 MB (under Vercel's request limit) and 25 per project.
  * - Only the project's owner and admins can list or download them; downloads are served as attachments.
+ * - The per-project quota is a counter on the project row, incremented only while below the limit, in the same
+ *   transaction as the insert, so concurrent uploads can't exceed it.
+ * This is type and size validation, not malware scanning: an allowed file type can still carry harmful content,
+ * which is why files are only ever served as downloads, never rendered on the site.
  */
 
 export const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
@@ -57,13 +61,22 @@ export async function storeUpload(db: Db, user: SessionUser, projectId: string, 
   if (!(await canAccessProject(db, user, projectId))) return { ok: false as const, error: "Project not found." };
   const check = validateUpload(name, bytes);
   if (!check.ok) return check;
-  const [{ count }] = await db.select({ count: sql<number>`count(*)::int` }).from(uploads).where(eq(uploads.projectId, projectId));
-  if (count >= MAX_UPLOADS_PER_PROJECT) return { ok: false as const, error: `Each project can hold up to ${MAX_UPLOADS_PER_PROJECT} files. Remove one to add another.` };
-  const [row] = await db
-    .insert(uploads)
-    .values({ projectId, uploadedBy: user.id, filename: check.filename, mime: check.mime, sizeBytes: bytes.length, data: Buffer.from(bytes) })
-    .returning({ id: uploads.id, filename: uploads.filename });
-  await db.insert(projectEvents).values({ projectId, actorUserId: user.id, kind: "upload", detail: `Uploaded ${row.filename}.` });
+  const quotaError = `Each project can hold up to ${MAX_UPLOADS_PER_PROJECT} files. Remove one to add another.`;
+  const row = await db.transaction(async (tx) => {
+    const reserved = await tx
+      .update(projects)
+      .set({ uploadCount: sql`${projects.uploadCount} + 1` })
+      .where(and(eq(projects.id, projectId), lt(projects.uploadCount, MAX_UPLOADS_PER_PROJECT)))
+      .returning({ id: projects.id });
+    if (reserved.length === 0) return null;
+    const [inserted] = await tx
+      .insert(uploads)
+      .values({ projectId, uploadedBy: user.id, filename: check.filename, mime: check.mime, sizeBytes: bytes.length, data: Buffer.from(bytes) })
+      .returning({ id: uploads.id, filename: uploads.filename });
+    await tx.insert(projectEvents).values({ projectId, actorUserId: user.id, kind: "upload", detail: `Uploaded ${inserted.filename}.` });
+    return inserted;
+  });
+  if (!row) return { ok: false as const, error: quotaError };
   return { ok: true as const, id: row.id, filename: row.filename };
 }
 
@@ -86,7 +99,17 @@ export async function getUploadForUser(db: Db, user: SessionUser, uploadId: stri
 export async function deleteUpload(db: Db, user: SessionUser, uploadId: string) {
   const row = await getUploadForUser(db, user, uploadId);
   if (!row) return false;
-  await db.delete(uploads).where(and(eq(uploads.id, uploadId), eq(uploads.projectId, row.projectId)));
-  await db.insert(projectEvents).values({ projectId: row.projectId, actorUserId: user.id, kind: "upload_removed", detail: `Removed ${row.filename}.` });
+  await db.transaction(async (tx) => {
+    const removed = await tx
+      .delete(uploads)
+      .where(and(eq(uploads.id, uploadId), eq(uploads.projectId, row.projectId)))
+      .returning({ id: uploads.id });
+    if (removed.length === 0) return;
+    await tx
+      .update(projects)
+      .set({ uploadCount: sql`greatest(${projects.uploadCount} - 1, 0)` })
+      .where(eq(projects.id, row.projectId));
+    await tx.insert(projectEvents).values({ projectId: row.projectId, actorUserId: user.id, kind: "upload_removed", detail: `Removed ${row.filename}.` });
+  });
   return true;
 }

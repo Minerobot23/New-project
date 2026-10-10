@@ -8,6 +8,11 @@ const securityHeaders = [
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
 ];
 
+// Pages whose URL carries a secret (sign-in tokens, private quote links) never send a Referer anywhere.
+const tokenPages = ["/auth/:path*", "/checkout/quote/:path*", "/checkout/success"];
+// Signed-in and payment pages must not be stored by browsers or shared caches.
+const privatePages = ["/admin/:path*", "/admin", "/client/:path*", "/client", "/auth/:path*", "/login", "/checkout/:path*", "/api/:path*"];
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   // The embedded development database loads its WebAssembly from disk; bundling it breaks that.
@@ -15,7 +20,12 @@ const nextConfig: NextConfig = {
   // AVIF first (smaller for photography-heavy scenes), WebP as the fallback.
   images: { formats: ["image/avif", "image/webp"] },
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    // When several entries set the same header, the later one wins.
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      ...privatePages.map((source) => ({ source, headers: [{ key: "Cache-Control", value: "private, no-store, max-age=0" }] })),
+      ...tokenPages.map((source) => ({ source, headers: [{ key: "Referrer-Policy", value: "no-referrer" }] })),
+    ];
   },
   async redirects() {
     // The apex domain is canonical. Vercel's domain settings should also redirect www; this is a safe backstop.

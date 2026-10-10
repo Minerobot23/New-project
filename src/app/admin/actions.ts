@@ -3,8 +3,12 @@
 import { eq } from "drizzle-orm";
 import { refresh } from "next/cache";
 import { z } from "zod";
-import { getCurrentUser } from "@/lib/auth/session";
+import { adminElevatedUntil, currentSessionId, getCurrentUser } from "@/lib/auth/session";
 import type { SessionUser } from "@/lib/auth/core";
+import { ELEVATION_MINUTES, STEP_UP_CODE_MINUTES, verifyStepUpCode } from "@/lib/auth/step-up-core";
+import { deliverDue, requeueDead, sendNotification } from "@/lib/notify/send";
+import { RATE_LIMITS, checkRateLimits } from "@/lib/rate-limit";
+import { randomToken } from "@/lib/security";
 import { BillingDisabledError, getStripe } from "@/lib/billing/config";
 import {
   cancelCare,
@@ -19,7 +23,7 @@ import {
   type ActionResult,
 } from "@/lib/billing/service";
 import { getDb } from "@/lib/db";
-import { PROJECT_STATUSES, supportRequests } from "@/lib/db/schema";
+import { PROJECT_STATUSES, billingQuarantine, supportRequests } from "@/lib/db/schema";
 
 /*
  * Admin mutations. Each one re-verifies that the caller is a signed-in admin on the allowlist
@@ -32,6 +36,52 @@ async function requireAdminAction(): Promise<SessionUser> {
   const user = await getCurrentUser();
   if (!user || user.role !== "admin") throw new Error("Not authorized.");
   return user;
+}
+
+/** Financial actions also need a recent step-up verification on this session. */
+const STEP_UP_REQUIRED = "Confirm it's you first: request a verification code at the top of this page.";
+async function requireElevatedAdmin(): Promise<SessionUser | null> {
+  const admin = await requireAdminAction();
+  return (await adminElevatedUntil()) ? admin : null;
+}
+
+export async function requestStepUpAction(): Promise<AdminFormState> {
+  const admin = await requireAdminAction();
+  const db = await getDb();
+  const rate = await checkRateLimits(db, [["stepup:user", admin.id, RATE_LIMITS.stepUpPerUser]]);
+  if (!rate.allowed) return { error: "Too many codes requested. Please wait a few minutes." };
+  // The code is generated when the email is sent; only its hash is stored.
+  const outcome = await sendNotification(db, {
+    template: "stepUpCode",
+    to: admin.email,
+    dedupeKey: `stepup:${randomToken().slice(0, 24)}`,
+    data: { minutes: STEP_UP_CODE_MINUTES },
+    stepUp: { userId: admin.id, ttlMinutes: STEP_UP_CODE_MINUTES },
+  });
+  if (outcome === "failed" || outcome === "dead") return { error: "We couldn't send the code. Try again in a minute." };
+  return { ok: true, message: `Code sent to ${admin.email}. It expires in ${STEP_UP_CODE_MINUTES} minutes.` };
+}
+
+export async function verifyStepUpAction(_previous: AdminFormState, formData: FormData): Promise<AdminFormState> {
+  const admin = await requireAdminAction();
+  const sessionId = await currentSessionId();
+  if (!sessionId) return { error: "Please sign in again." };
+  const result = await verifyStepUpCode(await getDb(), admin.id, sessionId, String(formData.get("code") ?? ""));
+  if (!result.ok) return { error: result.error };
+  refresh();
+  return { ok: true, message: `Verified. Billing actions are unlocked for ${ELEVATION_MINUTES} minutes.` };
+}
+
+export async function retryEmailsAction(): Promise<AdminFormState> {
+  await requireAdminAction();
+  const db = await getDb();
+  const requeued = await requeueDead(db);
+  const outcomes = await deliverDue(db, { limit: 50 });
+  refresh();
+  const failed = outcomes.filter((outcome) => outcome === "failed" || outcome === "dead").length;
+  return failed
+    ? { error: `${outcomes.length - failed} sent, ${failed} still failing. Check the email settings (RESEND_API_KEY, LEAD_FROM_EMAIL).` }
+    : { ok: true, message: `Retried ${outcomes.length} email(s)${requeued.length ? `, including ${requeued.length} that had given up` : ""}.` };
 }
 
 async function run(work: () => Promise<ActionResult<unknown>>, success: string): Promise<AdminFormState> {
@@ -59,13 +109,15 @@ export async function setStatusAction(_previous: AdminFormState, formData: FormD
 }
 
 export async function finalInvoiceAction(_previous: AdminFormState, formData: FormData): Promise<AdminFormState> {
-  const admin = await requireAdminAction();
+  const admin = await requireElevatedAdmin();
+  if (!admin) return { error: STEP_UP_REQUIRED };
   const days = z.coerce.number().int().min(1).max(60).catch(7).parse(formData.get("days"));
   return run(async () => createFinalInvoice(await getDb(), getStripe(), admin, projectId(formData), { daysUntilDue: days }), "Final invoice created and sent.");
 }
 
 export async function refundAction(_previous: AdminFormState, formData: FormData): Promise<AdminFormState> {
-  const admin = await requireAdminAction();
+  const admin = await requireElevatedAdmin();
+  if (!admin) return { error: STEP_UP_REQUIRED };
   if (formData.get("approved") !== "on") return { error: "Confirm that this refund is approved." };
   const amount = Math.round(Number(formData.get("amount")) * 100);
   const reason = String(formData.get("reason") ?? "").trim();
@@ -82,7 +134,8 @@ export async function inviteCareAction(_previous: AdminFormState, formData: Form
 }
 
 export async function cancelCareAdminAction(_previous: AdminFormState, formData: FormData): Promise<AdminFormState> {
-  const admin = await requireAdminAction();
+  const admin = await requireElevatedAdmin();
+  if (!admin) return { error: STEP_UP_REQUIRED };
   return run(async () => {
     const result = await cancelCare(await getDb(), getStripe(), admin, projectId(formData));
     return result.ok ? { ok: true, value: `Website Care set to end ${result.value?.toDateString()}.` } : result;
@@ -112,7 +165,8 @@ const quoteSchema = z.object({
 });
 
 export async function createQuoteAction(_previous: AdminFormState, formData: FormData): Promise<AdminFormState> {
-  const admin = await requireAdminAction();
+  const admin = await requireElevatedAdmin();
+  if (!admin) return { error: STEP_UP_REQUIRED };
   const parsed = quoteSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Check the quote details." };
   const { devPrice, monthly, ...rest } = parsed.data;
@@ -133,4 +187,12 @@ export async function closeRequestAction(_previous: AdminFormState, formData: Fo
     await (await getDb()).update(supportRequests).set({ status: "closed" }).where(eq(supportRequests.id, z.uuid().parse(formData.get("requestId"))));
     return { ok: true };
   }, "Closed.");
+}
+
+export async function resolveQuarantineAction(_previous: AdminFormState, formData: FormData): Promise<AdminFormState> {
+  await requireAdminAction();
+  return run(async () => {
+    await (await getDb()).update(billingQuarantine).set({ resolvedAt: new Date() }).where(eq(billingQuarantine.id, z.uuid().parse(formData.get("id"))));
+    return { ok: true };
+  }, "Marked reviewed.");
 }

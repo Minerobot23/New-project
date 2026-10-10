@@ -1,5 +1,5 @@
 import "server-only";
-import type { EmailProvider, OutgoingEmail } from "./types";
+import type { EmailProvider, OutgoingEmail, SendOptions } from "./types";
 
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
 
@@ -7,12 +7,13 @@ const RESEND_ENDPOINT = "https://api.resend.com/emails";
 export function createResendProvider(apiKey: string, from: string): EmailProvider {
   return {
     name: "resend",
-    async send(email: OutgoingEmail) {
+    async send(email: OutgoingEmail, options?: SendOptions) {
       const response = await fetch(RESEND_ENDPOINT, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
+          ...(options?.idempotencyKey ? { "Idempotency-Key": options.idempotencyKey.slice(0, 256) } : {}),
         },
         body: JSON.stringify({
           from,
@@ -31,6 +32,8 @@ export function createResendProvider(apiKey: string, from: string): EmailProvide
         const detail = await response.text().catch(() => "");
         throw new Error(`Resend responded ${response.status}: ${detail.slice(0, 300)}`);
       }
+      const body = (await response.json().catch(() => ({}))) as { id?: string };
+      return { id: body.id };
     },
   };
 }

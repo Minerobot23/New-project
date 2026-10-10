@@ -3,6 +3,8 @@ import { and, desc, eq, inArray, isNotNull, isNull, ne, sql } from "drizzle-orm"
 import type { Db } from "@/lib/db";
 import {
   agreementAcceptances,
+  billingQuarantine,
+  emailLog,
   careActivations,
   checkoutIntents,
   customers,
@@ -149,4 +151,24 @@ export function openSupportRequests(db: Db) {
     .where(and(eq(supportRequests.status, "open"), ne(supportRequests.kind, "cancellation")))
     .orderBy(desc(supportRequests.createdAt))
     .limit(20);
+}
+
+/** Outbox health for the overview: anything not delivered yet, and anything that gave up. */
+export async function emailHealth(db: Db) {
+  const counts = await db
+    .select({ status: emailLog.status, n: sql<number>`count(*)::int` })
+    .from(emailLog)
+    .where(inArray(emailLog.status, ["queued", "sending", "failed", "dead"]))
+    .groupBy(emailLog.status);
+  const recentProblems = await db
+    .select({ key: emailLog.dedupeKey, template: emailLog.template, status: emailLog.status, attempts: emailLog.attempts, error: emailLog.error, updatedAt: emailLog.updatedAt })
+    .from(emailLog)
+    .where(inArray(emailLog.status, ["failed", "dead"]))
+    .orderBy(desc(emailLog.updatedAt))
+    .limit(10);
+  return { counts: Object.fromEntries(counts.map((row) => [row.status, row.n])) as Record<string, number>, recentProblems };
+}
+
+export function openQuarantine(db: Db) {
+  return db.select().from(billingQuarantine).where(isNull(billingQuarantine.resolvedAt)).orderBy(desc(billingQuarantine.createdAt)).limit(20);
 }

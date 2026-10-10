@@ -190,6 +190,13 @@ export const templates = {
       { kind: "note", text: `This quote is valid until ${d.expires}.` },
     ]),
 
+  stepUpCode: (d: { code: string; minutes: number }) =>
+    layout("Your Fluxline verification code", "Confirm it's you", [
+      { kind: "p", text: "Enter this code in the admin dashboard to approve billing changes such as refunds and invoices." },
+      { kind: "rows", rows: [["Verification code", d.code]] },
+      { kind: "note", text: `It expires in ${d.minutes} minutes and works once. If you didn't request it, someone may be trying to use your account: change your email password.` },
+    ]),
+
   adminAlert: (d: { title: string; lines: [string, string][]; link: string }) =>
     layout(`[Fluxline] ${d.title}`, d.title, [{ kind: "rows", rows: d.lines }, { kind: "button", label: "Open in admin", href: d.link }]),
 } satisfies Record<string, (data: never) => Rendered>;

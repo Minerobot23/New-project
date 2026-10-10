@@ -60,6 +60,8 @@ export const sessions = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    /** Set by a fresh step-up verification; financial admin actions require it to be in the future. */
+    elevatedUntil: timestamp("elevated_until", { withTimezone: true }),
     createdAt: created(),
   },
   (table) => [index("sessions_user_idx").on(table.userId)],
@@ -122,7 +124,8 @@ export const checkoutIntents = pgTable("checkout_intents", {
   monthlyCents: integer("monthly_cents").notNull(),
   stripeSessionId: text("stripe_session_id").unique(),
   stripeSessionUrl: text("stripe_session_url"),
-  status: text("status", { enum: ["open", "completed", "expired"] }).notNull().default("open"),
+  /** quarantined: Stripe reported a payment that didn't match this intent; nothing was fulfilled. */
+  status: text("status", { enum: ["open", "completed", "expired", "quarantined"] }).notNull().default("open"),
   livemode: boolean("livemode").notNull().default(false),
   createdAt: created(),
 });
@@ -145,6 +148,8 @@ export const projects = pgTable(
       .references(() => checkoutIntents.id),
     quoteId: uuid("quote_id").references(() => quotes.id),
     livemode: boolean("livemode").notNull().default(false),
+    /** Maintained with a conditional update so concurrent uploads can't exceed the quota. */
+    uploadCount: integer("upload_count").notNull().default(0),
     createdAt: created(),
     updatedAt: updated(),
   },
@@ -224,7 +229,11 @@ export const careActivations = pgTable("care_activations", {
   status: text("status", { enum: ["invited", "consented", "active", "void"] }).notNull().default("invited"),
   invitedBy: uuid("invited_by").references(() => users.id),
   agreementId: uuid("agreement_id").references(() => agreementAcceptances.id),
+  /** One checkout attempt at a time: its id is the Stripe idempotency key, so retries reuse one session. */
+  attemptId: uuid("attempt_id"),
   stripeSessionId: text("stripe_session_id").unique(),
+  stripeSessionUrl: text("stripe_session_url"),
+  sessionExpiresAt: timestamp("session_expires_at", { withTimezone: true }),
   createdAt: created(),
   updatedAt: updated(),
 });
@@ -313,14 +322,64 @@ export const webhookEvents = pgTable("webhook_events", {
   processedAt: timestamp("processed_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
-/** One row per notification ever sent: the dedupe key stops webhook retries from emailing twice. */
-export const emailLog = pgTable("email_log", {
-  dedupeKey: text("dedupe_key").primaryKey(),
-  template: text("template").notNull(),
-  recipient: text("recipient").notNull(),
-  delivery: text("delivery").notNull(),
-  status: text("status", { enum: ["sent", "failed"] }).notNull(),
-  error: text("error"),
+/**
+ * Transactional email outbox. Rows are written in the same transaction as the business change that causes them,
+ * then delivered (and retried) separately. The dedupe key stops webhook retries from emailing twice.
+ * `data` holds template input only; sign-in links are minted at send time, so no usable token is stored here.
+ */
+export const EMAIL_STATUSES = ["queued", "sending", "sent", "failed", "dead", "suppressed"] as const;
+export const emailLog = pgTable(
+  "email_log",
+  {
+    dedupeKey: text("dedupe_key").primaryKey(),
+    template: text("template").notNull(),
+    recipient: text("recipient").notNull(),
+    delivery: text("delivery").notNull(),
+    status: text("status", { enum: EMAIL_STATUSES }).notNull(),
+    data: jsonb("data").$type<Record<string, unknown>>(),
+    attempts: integer("attempts").notNull().default(0),
+    nextAttemptAt: timestamp("next_attempt_at", { withTimezone: true }),
+    lockedUntil: timestamp("locked_until", { withTimezone: true }),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+    providerMessageId: text("provider_message_id"),
+    error: text("error"),
+    createdAt: created(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }),
+  },
+  (table) => [index("email_log_due_idx").on(table.status, table.nextAttemptAt)],
+);
+
+/** Shared, expiring counters for rate limiting across all server instances. */
+export const rateLimits = pgTable("rate_limits", {
+  key: text("key").primaryKey(),
+  count: integer("count").notNull(),
+  resetAt: timestamp("reset_at", { withTimezone: true }).notNull(),
+});
+
+/** Stripe events that were authentic but didn't match what we expected. Nothing is fulfilled for these. */
+export const billingQuarantine = pgTable("billing_quarantine", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  eventId: text("event_id").notNull(),
+  eventType: text("event_type").notNull(),
+  stripeObjectId: text("stripe_object_id"),
+  checkoutIntentId: uuid("checkout_intent_id"),
+  reason: text("reason").notNull(),
+  detail: jsonb("detail").$type<Record<string, unknown>>(),
+  livemode: boolean("livemode").notNull(),
+  resolvedAt: timestamp("resolved_at", { withTimezone: true }),
+  createdAt: created(),
+});
+
+/** Short-lived step-up codes emailed to an admin before financial actions. Only the hash is stored. */
+export const stepUpCodes = pgTable("step_up_codes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  codeHash: text("code_hash").notNull(),
+  attempts: integer("attempts").notNull().default(0),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  usedAt: timestamp("used_at", { withTimezone: true }),
   createdAt: created(),
 });
 

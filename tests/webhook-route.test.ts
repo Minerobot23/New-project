@@ -45,7 +45,8 @@ describe("POST /api/stripe/webhook", () => {
       { intentId, plan: "essential", contactName: "Sam Ortiz", businessName: "Ortiz HVAC", email: "sam@example.com", phone: "631-555-0100", acceptAgreement: true, acknowledgeCare: true, agreementVersion: SERVICE_AGREEMENT.version },
       { ip: "203.0.113.9", userAgent: null },
     );
-    const payload = JSON.stringify({ id: "evt_route_1", type: "checkout.session.completed", livemode: false, data: { object: depositSession(intentId, { amount_total: 35_000 }) } });
+    const [intent] = await db.select().from(t.checkoutIntents);
+    const payload = JSON.stringify({ id: "evt_route_1", type: "checkout.session.completed", livemode: false, data: { object: depositSession(intentId, { id: intent.stripeSessionId, amount_total: 35_000 }) } });
 
     const first = await POST(request(payload, sign(payload)));
     assert.equal(first.status, 200);
@@ -53,6 +54,17 @@ describe("POST /api/stripe/webhook", () => {
     const second = await POST(request(payload, sign(payload)));
     assert.deepEqual(await second.json(), { received: true, outcome: "duplicate" });
     assert.equal((await db.select().from(t.projects)).length, 1);
+  });
+
+  test("a signed event that doesn't match the order is quarantined and acknowledged (200), so Stripe stops retrying", async () => {
+    const stub = makeStripe();
+    setStripeForTests(stub.stripe);
+    const payload = JSON.stringify({ id: "evt_route_unknown", type: "checkout.session.completed", livemode: false, data: { object: depositSession(randomUUID()) } });
+    const response = await POST(request(payload, sign(payload)));
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), { received: true, outcome: "rejected" });
+    assert.equal((await db.select().from(t.projects)).length, 0);
+    assert.equal((await db.select().from(t.billingQuarantine)).length, 1);
   });
 
   test("rejects missing, forged, and tampered signatures without changing anything", async () => {

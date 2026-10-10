@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { connection } from "next/server";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -46,7 +47,9 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  // Every page renders per request so Next.js can apply the CSP nonce from src/proxy.ts to its scripts.
+  await connection();
   return (
     <html
       lang="en"

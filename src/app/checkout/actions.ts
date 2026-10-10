@@ -5,12 +5,12 @@ import { redirect } from "next/navigation";
 import { BillingDisabledError, billingStatus, getStripe } from "@/lib/billing/config";
 import { checkoutSchema, startDepositCheckout } from "@/lib/billing/checkout";
 import { getDb } from "@/lib/db";
-import { createRateLimiter } from "@/lib/rate-limit";
+import { RATE_LIMITS, checkRateLimits } from "@/lib/rate-limit";
 import { clientIpFrom } from "@/lib/security";
 
 export type CheckoutFormState = { error?: string; fieldErrors?: Record<string, string> } | null;
 
-const limiter = createRateLimiter({ limit: 8, windowMs: 10 * 60_000 });
+const tooMany = (seconds: number) => ({ error: `Too many attempts. Please try again in ${Math.ceil(seconds / 60)} minute(s).` });
 
 export async function startCheckoutAction(_previous: CheckoutFormState, formData: FormData): Promise<CheckoutFormState> {
   const status = billingStatus();
@@ -18,7 +18,9 @@ export async function startCheckoutAction(_previous: CheckoutFormState, formData
 
   const requestHeaders = await headers();
   const ip = clientIpFrom(requestHeaders);
-  if (!limiter(ip).allowed) return { error: "Too many attempts. Please wait a few minutes and try again." };
+  const db = await getDb();
+  const ipRate = await checkRateLimits(db, [["checkout:ip", ip, RATE_LIMITS.checkoutPerIp]]);
+  if (!ipRate.allowed) return tooMany(ipRate.retryAfterSeconds);
 
   const parsed = checkoutSchema.safeParse({
     intentId: formData.get("intentId"),
@@ -41,9 +43,16 @@ export async function startCheckoutAction(_previous: CheckoutFormState, formData
     return { error: "Please check the highlighted fields.", fieldErrors };
   }
 
+  // Per buyer and per checkout page (the intent id is unique to one page load).
+  const buyerRate = await checkRateLimits(db, [
+    ["checkout:email", parsed.data.email, RATE_LIMITS.checkoutPerEmail],
+    ["checkout:intent", parsed.data.intentId, RATE_LIMITS.checkoutPerEmail],
+  ]);
+  if (!buyerRate.allowed) return tooMany(buyerRate.retryAfterSeconds);
+
   let url: string;
   try {
-    const result = await startDepositCheckout(await getDb(), getStripe(), parsed.data, { ip, userAgent: requestHeaders.get("user-agent") });
+    const result = await startDepositCheckout(db, getStripe(), parsed.data, { ip, userAgent: requestHeaders.get("user-agent") });
     if (!result.ok) return { error: result.error };
     url = result.url;
   } catch (error) {

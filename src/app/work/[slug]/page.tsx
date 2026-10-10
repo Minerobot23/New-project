@@ -5,11 +5,7 @@ import { ClosingCta } from "@/components/shared/closing-cta";
 import { CASE_STUDIES } from "@/content/work";
 import { pageMetadata } from "@/lib/seo";
 
-export const dynamicParams = false;
-
-export function generateStaticParams() {
-  return CASE_STUDIES.map((study) => ({ slug: study.slug }));
-}
+// Rendered per request (not prerendered) so the CSP nonce applies; unknown slugs still 404 below.
 
 export async function generateMetadata({ params }: PageProps<"/work/[slug]">) {
   const { slug } = await params;

@@ -1,14 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
-import { z } from "zod";
+import type { z } from "zod";
 import { track, type AnalyticsEvent } from "@/lib/analytics";
 import { getAttribution } from "@/lib/attribution";
 import { HONEYPOT_FIELD, STARTED_AT_FIELD, firstFieldErrors, type LeadResponse } from "@/lib/leads/schemas";
-
-// Zod otherwise probes `new Function` once (caught, then falls back); under the CSP that probe is reported as a
-// violation. Jitless mode skips it. Validation behaves the same.
-z.config({ jitless: true });
 
 type Status = "idle" | "submitting" | "success" | "error";
 

@@ -12,7 +12,11 @@ import { SERVICE_AGREEMENT } from "@/content/agreements";
 
 export type StripeMode = "none" | "test" | "live";
 
-export function stripeMode(key = process.env.STRIPE_SECRET_KEY): StripeMode {
+/** The configured secret key, ignoring stray whitespace or line breaks from copy and paste. */
+const secretKey = () => process.env.STRIPE_SECRET_KEY?.trim() || undefined;
+
+export function stripeMode(key = secretKey()): StripeMode {
+  key = key?.trim();
   if (!key) return "none";
   if (/^(sk|rk)_live_/.test(key)) return "live";
   if (/^(sk|rk)_test_/.test(key)) return "test";
@@ -24,11 +28,16 @@ export type BillingStatus = { enabled: true; mode: "test" | "live" } | { enabled
 /** Whether this deployment may take payments right now, and why not if it can't. */
 export function billingStatus(): BillingStatus {
   const mode = stripeMode();
-  if (mode === "none") return { enabled: false, mode, reason: "Stripe is not connected yet (STRIPE_SECRET_KEY is not set)." };
+  if (mode === "none") {
+    const key = secretKey();
+    if (!key) return { enabled: false, mode, reason: "Stripe is not connected yet (STRIPE_SECRET_KEY is not set)." };
+    if (/^pk_/.test(key)) return { enabled: false, mode, reason: "STRIPE_SECRET_KEY holds a publishable key (pk_...). Use the secret key (sk_live_... or sk_test_...) from Stripe → Developers → API keys." };
+    return { enabled: false, mode, reason: "STRIPE_SECRET_KEY doesn't look like a Stripe secret key. It should start with sk_live_ (or sk_test_ for testing)." };
+  }
   if (!process.env.STRIPE_WEBHOOK_SECRET) return { enabled: false, mode, reason: "STRIPE_WEBHOOK_SECRET is not set, so payments could not be confirmed." };
   if (!process.env.DATABASE_URL && process.env.NODE_ENV === "production") return { enabled: false, mode, reason: "DATABASE_URL is not set." };
   if (mode === "live") {
-    if (process.env.BILLING_LIVE_ENABLED !== "true") return { enabled: false, mode, reason: "Live payments are switched off (BILLING_LIVE_ENABLED is not \"true\")." };
+    if (process.env.BILLING_LIVE_ENABLED?.trim() !== "true") return { enabled: false, mode, reason: "Live payments are switched off (BILLING_LIVE_ENABLED is not \"true\")." };
     if (SERVICE_AGREEMENT.status !== "approved") return { enabled: false, mode, reason: "The service agreement has not been marked approved after legal review." };
   }
   return { enabled: true, mode };
@@ -41,7 +50,7 @@ export function getStripe(): Stripe {
   if (testClient) return testClient;
   const status = billingStatus();
   if (!status.enabled) throw new BillingDisabledError(status.reason);
-  client ??= new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  client ??= new Stripe(secretKey() as string, {
     appInfo: { name: "Fluxline Solutions", url: "https://fluxlinesolutions.com" },
     maxNetworkRetries: 2,
     timeout: 20_000,

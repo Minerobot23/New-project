@@ -10,7 +10,7 @@ import { getDb } from "@/lib/db";
  */
 
 export async function POST(request: Request) {
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+  const secret = process.env.STRIPE_WEBHOOK_SECRET?.trim();
   const signature = request.headers.get("stripe-signature");
   if (!secret || !signature) return new Response("Webhook not configured or signature missing.", { status: 400 });
 

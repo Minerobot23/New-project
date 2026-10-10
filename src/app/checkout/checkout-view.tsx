@@ -20,6 +20,8 @@ type Props = {
 export function CheckoutView({ plan, amounts, cancelled, quote }: Props) {
   const summary = priceSummary(amounts);
   const status = billingStatus();
+  // The reason names a missing setting or, at most, the first 7 characters of a malformed key; never a secret.
+  if (!status.enabled) console.warn(`[billing] checkout closed: ${status.reason}`);
   const details = PLANS[plan];
   const rows: [string, string, string?][] = [
     ["Development fee (one time)", formatCents(summary.devPriceCents)],

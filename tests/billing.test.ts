@@ -57,9 +57,13 @@ describe("live-mode guard", () => {
     assert.equal(stripeMode(), "live");
     assert.equal(billingStatus().enabled, false);
     process.env.BILLING_LIVE_ENABLED = "true";
-    // Still off: the agreement template hasn't been marked approved.
-    assert.equal(SERVICE_AGREEMENT.status, "draft");
+    // Live also needs the agreement marked approved.
+    const status = SERVICE_AGREEMENT.status;
+    SERVICE_AGREEMENT.status = "draft";
     assert.equal(billingStatus().enabled, false);
+    SERVICE_AGREEMENT.status = "approved";
+    assert.deepEqual(billingStatus(), { enabled: true, mode: "live" });
+    SERVICE_AGREEMENT.status = status;
     process.env.STRIPE_SECRET_KEY = "sk_test_example";
     assert.deepEqual(billingStatus(), { enabled: true, mode: "test" });
     delete process.env.STRIPE_WEBHOOK_SECRET;

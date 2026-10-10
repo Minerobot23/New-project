@@ -1,12 +1,12 @@
 /**
- * SERVICE AGREEMENT AND WEBSITE CARE TERMS: EDITABLE TEMPLATE.
+ * SERVICE AGREEMENT AND WEBSITE CARE TERMS.
  *
- * This is starting language for Fluxline Solutions to review with a lawyer, not finalized legal terms.
- * Edit the sections freely. Whenever the text changes, bump `version`: every acceptance records the version,
- * a hash of the exact text, and a timestamp, so you can always show what a customer agreed to.
+ * Approved for live use by the owner on 2026-10-10, as written; not reviewed by a lawyer. A legal review is still
+ * recommended. Edit the sections freely, and whenever the text changes, bump `version`: every acceptance records
+ * the version, a hash of the exact text, and a timestamp, so you can always show what a customer agreed to.
  *
- * `status: "draft"` keeps live payments switched off (see src/lib/billing/config.ts). Change it to "approved"
- * only after review. Test-mode checkout works while it is a draft.
+ * Setting `status` back to "draft" switches live payments off again (see src/lib/billing/config.ts).
+ * Test-mode checkout works either way.
  */
 
 export type AgreementSection = { title: string; body: string[] };
@@ -23,7 +23,7 @@ export const SERVICE_AGREEMENT: AgreementDocument = {
   kind: "service",
   title: "Website Development Service Agreement",
   version: "2026-10-09-template-1",
-  status: "draft",
+  status: "approved",
   sections: [
     {
       title: "1. Scope of work",
@@ -134,7 +134,7 @@ export const WEBSITE_CARE_TERMS: AgreementDocument = {
   kind: "website_care",
   title: "Website Care Plan: Recurring Billing Terms",
   version: "2026-10-09-template-1",
-  status: "draft",
+  status: "approved",
   sections: [
     {
       title: "What you're authorizing",

@@ -12,11 +12,11 @@ import { SERVICE_AGREEMENT } from "@/content/agreements";
 
 export type StripeMode = "none" | "test" | "live";
 
-/** The configured secret key, ignoring stray whitespace or line breaks from copy and paste. */
-const secretKey = () => process.env.STRIPE_SECRET_KEY?.trim() || undefined;
+/** The configured secret key, ignoring stray whitespace, line breaks, or quotes from copy and paste. */
+const secretKey = () => process.env.STRIPE_SECRET_KEY?.trim().replace(/^["']+|["']+$/g, "").trim() || undefined;
 
 export function stripeMode(key = secretKey()): StripeMode {
-  key = key?.trim();
+  key = key?.trim().replace(/^["']+|["']+$/g, "").trim();
   if (!key) return "none";
   if (/^(sk|rk)_live_/.test(key)) return "live";
   if (/^(sk|rk)_test_/.test(key)) return "test";
@@ -32,7 +32,9 @@ export function billingStatus(): BillingStatus {
     const key = secretKey();
     if (!key) return { enabled: false, mode, reason: "Stripe is not connected yet (STRIPE_SECRET_KEY is not set)." };
     if (/^pk_/.test(key)) return { enabled: false, mode, reason: "STRIPE_SECRET_KEY holds a publishable key (pk_...). Use the secret key (sk_live_... or sk_test_...) from Stripe → Developers → API keys." };
-    return { enabled: false, mode, reason: "STRIPE_SECRET_KEY doesn't look like a Stripe secret key. It should start with sk_live_ (or sk_test_ for testing)." };
+    // Only the non-secret prefix is shown, so the admin can see what was pasted.
+    const prefix = key.slice(0, 7).replace(/[^\w-]/g, "?");
+    return { enabled: false, mode, reason: `STRIPE_SECRET_KEY starts with "${prefix}…", which isn't a Stripe secret key. It should start with sk_live_ (or sk_test_ for testing).` };
   }
   if (!process.env.STRIPE_WEBHOOK_SECRET) return { enabled: false, mode, reason: "STRIPE_WEBHOOK_SECRET is not set, so payments could not be confirmed." };
   if (!process.env.DATABASE_URL && process.env.NODE_ENV === "production") return { enabled: false, mode, reason: "DATABASE_URL is not set." };

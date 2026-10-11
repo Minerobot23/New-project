@@ -11,7 +11,7 @@ const CHANGE = "fluxline-ad-consent";
 const READY = "fluxline-ad-ready";
 type Tracker = (...args: unknown[]) => void;
 declare global {
-  interface Window { dataLayer?: unknown[]; gtag?: Tracker; fbq?: Tracker & { queue?: unknown[][]; push?: Tracker; loaded?: boolean; version?: string; callMethod?: Tracker }; }
+  interface Window { dataLayer?: unknown[]; gtag?: Tracker; _fbq?: Tracker; fbq?: Tracker & { queue?: unknown[][]; push?: Tracker; loaded?: boolean; version?: string; callMethod?: Tracker }; }
 }
 function subscribe(callback: () => void) {
   window.addEventListener(CHANGE, callback);
@@ -52,6 +52,7 @@ export function Advertising({ nonce, googleId, pixelId }: { nonce: string; googl
       };
       queue.queue = []; queue.push = queue; queue.loaded = true; queue.version = "2.0";
       window.fbq = queue;
+      window._fbq ??= queue;
       queue("set", "autoConfig", false, pixel);
       queue("init", pixel);
     }

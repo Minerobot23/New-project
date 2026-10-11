@@ -14,18 +14,18 @@ export default async function StartPage({ params }: PageProps<"/start/[industry]
   if (industry !== "contractors" && industry !== "restaurants") notFound();
   const offer = offers[industry];
   const plan = PLANS.essential;
-  return <section className="bg-night py-16 text-white sm:py-24"><Container>
+  return <section data-tone="dark" className="bg-stage py-16 text-bone sm:py-24"><Container>
     <TrackPageView event="sales_page_view" page={`/start/${industry}`} />
-    <p className="text-sm uppercase tracking-widest text-white/65">Fluxline websites for {industry}</p>
-    <h1 className="display-tight mt-6 max-w-3xl text-4xl sm:text-6xl">{offer.title}</h1>
-    <p className="mt-6 max-w-2xl text-lg text-white/75">{offer.intro}</p>
-    <ul className="mt-8 space-y-3">{offer.features.map(feature => <li key={feature}>✓ {feature}</li>)}</ul>
-    <div className="mt-10 max-w-2xl border border-night-line p-6">
-      <h2 className="display-tight text-2xl">Start with an Essential website</h2>
+    <p className="label text-bone/60">Fluxline websites for {industry}</p>
+    <h1 className="display mt-6 max-w-[18ch] text-balance text-[2.4rem] uppercase sm:text-[clamp(3rem,5.4vw,4.8rem)]">{offer.title}</h1>
+    <p className="mt-6 max-w-2xl text-lg text-bone/75">{offer.intro}</p>
+    <ul className="mt-10 max-w-2xl border-b border-bone/25">{offer.features.map(feature => <li key={feature} className="flex gap-4 border-t border-bone/25 py-3"><span aria-hidden="true">→</span>{feature}</li>)}</ul>
+    <div className="mt-12 max-w-2xl border border-bone/25 p-6 sm:p-8">
+      <h2 className="display text-[1.7rem] uppercase sm:text-[2.1rem]">Start with an Essential website</h2>
       <p className="mt-4">{formatCents(plan.devPriceCents, { whole: true })} development fee: {formatCents(plan.depositCents, { whole: true })} deposit today, remaining balance before launch.</p>
-      <p className="mt-3 text-white/75">Required Website Care is {formatCents(plan.monthlyCents, { whole: true })}/month after launch, with a {CARE_MINIMUM_MONTHS}-month minimum. Up to 3 pages, responsive mobile design, contact form, and click-to-call. Online ordering and booking integrations require a separate scope.</p>
-      <div className="mt-6 flex flex-wrap gap-4"><ButtonLink href="/checkout/essential" variant="inverse">Start my website — $350 deposit</ButtonLink><ButtonLink href="/pricing" variant="ghost-inverse">Compare packages</ButtonLink></div>
-      <p className="mt-4 text-sm text-white/60">Review the full scope and service agreement before paying. No promised sales results.</p>
+      <p className="mt-3 text-bone/75">Required Website Care is {formatCents(plan.monthlyCents, { whole: true })}/month after launch, with a {CARE_MINIMUM_MONTHS}-month minimum. Up to 3 pages, responsive mobile design, contact form, and click-to-call. Online ordering and booking integrations require a separate scope.</p>
+      <div className="mt-6 flex flex-wrap gap-4"><ButtonLink href="/checkout/essential" variant="inverse">{`Start my website: ${formatCents(plan.depositCents, { whole: true })} deposit`}</ButtonLink><ButtonLink href="/pricing" variant="ghost-inverse">Compare packages</ButtonLink></div>
+      <p className="mt-4 text-sm text-bone/60">Review the full scope and service agreement before paying. No promised sales results.</p>
     </div>
   </Container></section>;
 }

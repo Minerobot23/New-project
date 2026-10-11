@@ -1,34 +1,25 @@
-const steps = [
-  {
-    title: "Conversation",
-    body: "A short call about your business, your customers, and what you want the website to do. No pressure and no jargon.",
-  },
-  {
-    title: "Review & plan",
-    body: "We look at your current site (if you have one) and your market, then propose a clear scope, timeline, and price before any work starts.",
-  },
-  {
-    title: "Design & build",
-    body: "You see the design early and give feedback before it's built. We build it fast, accessible, and mobile-first.",
-  },
-  {
-    title: "Launch & measure",
-    body: "We handle domain, hosting, analytics, and search setup, then make sure calls and form submissions are being tracked.",
-  },
+import { CARE_MINIMUM_MONTHS } from "@/lib/billing/plans";
+
+/** The order flow, from deposit to launch. Shared by the pricing and services pages so they never disagree. */
+export const ORDER_STEPS = [
+  { title: "Deposit", body: "Choose a package, review the service agreement, and pay the 50% deposit on Stripe's secure checkout." },
+  { title: "Onboarding", body: "Tell us about your business, services, and style, and upload your logo and photos in your client portal." },
+  { title: "Design & build", body: "We design and build your site, with two rounds of revisions on each. Your dashboard shows progress at every stage." },
+  { title: "Final balance", body: "When your site is approved and ready for launch, we send the remaining 50% as an invoice." },
+  { title: "Launch", body: `You authorize the monthly Website Care plan and we launch. ${CARE_MINIMUM_MONTHS}-month minimum, then month to month.` },
 ];
 
-/* Four ruled columns with large numerals; stacks on small screens. */
+/* Ruled rows with wide capitals, the same rhythm as the homepage's project list. */
 export function Process() {
   return (
-    <ol className="grid border-t border-ink md:grid-cols-2 lg:grid-cols-4">
-      {steps.map((step, index) => (
-        <li
-          key={step.title}
-          className="border-b border-line-strong py-8 md:border-b-0 md:py-10 md:pr-8 lg:border-l lg:border-line-strong lg:pl-6 lg:first:border-l-0 lg:first:pl-0"
-        >
-          <span className="display block text-[3.5rem] text-accent sm:text-[4.5rem]">{index + 1}</span>
-          <h3 className="mt-6 text-xl font-semibold tracking-tight text-ink">{step.title}</h3>
-          <p className="mt-2 max-w-[38ch] text-[15px] leading-relaxed text-ink-soft">{step.body}</p>
+    <ol className="border-b border-ink">
+      {ORDER_STEPS.map((step, index) => (
+        <li key={step.title} className="read-in grid items-baseline gap-2 border-t border-ink py-5 sm:py-6 md:grid-cols-12 md:gap-8">
+          <span className="display text-[2.1rem] uppercase sm:text-[clamp(2.6rem,5vw,4.6rem)] md:col-span-7">
+            <span className="mr-4 align-top font-sans text-xs font-medium tracking-normal text-muted">{String(index + 1).padStart(2, "0")}</span>
+            {step.title}
+          </span>
+          <span className="max-w-[40ch] text-[15px] leading-relaxed text-ink-soft md:col-span-5">{step.body}</span>
         </li>
       ))}
     </ol>

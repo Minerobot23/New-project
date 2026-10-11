@@ -77,7 +77,7 @@ export function AutoExperience() {
           credit={
             <p className="label text-bone/85">
               Fluxline interactive concept ·{" "}
-              <Link href="/request-a-call?from=automotive" className="border-b border-bone/50 text-bone hover:border-bone">
+              <Link href="/pricing" className="border-b border-bone/50 text-bone hover:border-bone">
                 Want this for your business?
               </Link>
             </p>
@@ -121,7 +121,7 @@ export function AutoExperience() {
             {
               id: "fluxline",
               label: "Want this for your business?",
-              onSelect: () => window.location.assign("/request-a-call?from=automotive"),
+              onSelect: () => window.location.assign("/pricing"),
             },
           ]}
           sticky={scene !== "schedule" ? { id: "schedule", label: "Schedule", onSelect: jump("schedule") } : undefined}

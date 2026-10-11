@@ -9,10 +9,10 @@ const base =
   "group relative inline-flex items-center justify-center gap-3 whitespace-nowrap font-medium transition-[background-color,color,box-shadow] duration-200 active:translate-y-px focus-visible:outline-offset-2";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-accent text-white hover:bg-ink",
+  primary: "bg-ink text-bone hover:bg-ink-soft",
   secondary: "text-ink shadow-[inset_0_0_0_1.5px_var(--color-ink)] hover:bg-ink hover:text-white",
-  inverse: "bg-white text-ink hover:bg-accent hover:text-white",
-  "ghost-inverse": "text-white shadow-[inset_0_0_0_1.5px_rgba(255,255,255,0.6)] hover:bg-white hover:text-ink",
+  inverse: "bg-bone text-ink hover:bg-white",
+  "ghost-inverse": "text-bone shadow-[inset_0_0_0_1.5px_rgba(239,234,226,0.55)] hover:bg-bone hover:text-ink",
 };
 
 const sizes: Record<Size, string> = {

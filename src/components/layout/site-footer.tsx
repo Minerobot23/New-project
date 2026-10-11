@@ -1,15 +1,14 @@
 import Link from "next/link";
 import { CookieSettingsButton } from "@/components/analytics/advertising";
 import { brandFont } from "@/components/brand/fonts";
-import { CALL_CTA_LABEL, CALL_PATH, CHECK_PATH, industryLinks, locationLinks, site } from "@/lib/site";
+import { CHECK_PATH, ORDER_CTA_LABEL, ORDER_PATH, industryLinks, locationLinks, site } from "@/lib/site";
 
 const companyLinks = [
   { href: "/experiences", label: "Experiences" },
   { href: "/services", label: "Services" },
   { href: "/resources", label: "Resources" },
-  { href: "/pricing", label: "Pricing" },
   { href: CHECK_PATH, label: "Website Check" },
-  { href: CALL_PATH, label: CALL_CTA_LABEL },
+  { href: ORDER_PATH, label: ORDER_CTA_LABEL },
 ];
 
 function FooterList({ title, links }: { title: string; links: readonly { href: string; label: string }[] }) {

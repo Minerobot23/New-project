@@ -1,24 +1,67 @@
 import Link from "next/link";
-import { ArrowRight, Check, Search, Smartphone, Target } from "lucide-react";
-import { Container } from "@/components/ui/container";
-import { SectionHeading } from "@/components/ui/section-heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { FaqList } from "@/components/ui/faq-list";
 import { PageHeader } from "@/components/shared/page-header";
-import { CheckPromo } from "@/components/shared/check-promo";
+import { OrderPromo } from "@/components/shared/order-promo";
+import { DemoStrip } from "@/components/shared/demo-strip";
 import { ClosingCta } from "@/components/shared/closing-cta";
 import { IndustriesGrid } from "@/components/shared/industries-grid";
-import { SimulatorSection } from "@/components/simulator/simulator-section";
 import { JsonLd } from "@/components/seo/json-ld";
 import { TrackPageView } from "@/components/analytics/track-page-view";
 import type { IndustryPage } from "@/content/industries";
 import { getArticle } from "@/content/resources/registry";
 import { INDUSTRY_IMAGES } from "@/lib/images";
 import { pageMetadata, serviceSchema } from "@/lib/seo";
-import { CALL_CTA_LABEL, CALL_PATH } from "@/lib/site";
+import { ORDER_CTA_LABEL, ORDER_PATH } from "@/lib/site";
 
 export const industryMetadata = (page: IndustryPage) =>
   pageMetadata({ title: page.metaTitle, description: page.metaDescription, path: page.path });
+
+const wrap = "mx-auto max-w-[90rem] px-5 sm:px-8";
+
+/** A two-column editorial section: wide capitals on the left, the content on the right. */
+function Section({ id, title, intro, children }: { id: string; title: string; intro?: string; children: React.ReactNode }) {
+  return (
+    <section aria-labelledby={id} className="border-t border-ink">
+      <div className={`${wrap} grid gap-10 py-20 sm:py-28 lg:grid-cols-12 lg:gap-8`}>
+        <div className="lg:col-span-4">
+          <h2 id={id} className="display max-w-[14ch] text-balance text-[2rem] uppercase sm:text-[2.6rem]">
+            {title}
+          </h2>
+          {intro && <p className="mt-5 max-w-[40ch] text-lg leading-relaxed text-ink-soft">{intro}</p>}
+        </div>
+        <div className="lg:col-span-7 lg:col-start-6">{children}</div>
+      </div>
+    </section>
+  );
+}
+
+/** Ruled rows: a short title and its explanation, the same rhythm as the homepage's project list. */
+function RuledList({ items }: { items: { title: string; body: string }[] }) {
+  return (
+    <ul className="border-b border-ink">
+      {items.map((item) => (
+        <li key={item.title} className="grid gap-2 border-t border-ink py-5 sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] sm:gap-8 sm:py-6">
+          <h3 className="display-tight text-xl text-ink">{item.title}</h3>
+          <p className="text-[15px] leading-relaxed text-ink-soft">{item.body}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function PointList({ points }: { points: string[] }) {
+  return (
+    <ul className="mt-5 border-b border-line-strong">
+      {points.map((point) => (
+        <li key={point} className="flex gap-4 border-t border-line-strong py-3 text-[15px] leading-snug text-ink">
+          <span aria-hidden="true" className="text-muted">—</span>
+          {point}
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export function IndustryPageTemplate({ page }: { page: IndustryPage }) {
   const articles = page.articles.map(getArticle).filter((article) => article !== undefined);
@@ -42,149 +85,103 @@ export function IndustryPageTemplate({ page }: { page: IndustryPage }) {
         intro={<p>{page.intro}</p>}
         image={INDUSTRY_IMAGES[page.path]}
       >
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <ButtonLink href={CALL_PATH} size="lg" withArrow>
-            {CALL_CTA_LABEL}
+        <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+          <ButtonLink href={ORDER_PATH} size="lg" variant="inverse" withArrow>
+            {ORDER_CTA_LABEL}
           </ButtonLink>
-          {page.simulator && (
-            <ButtonLink href="#demo" size="lg" variant="secondary">
-              See the Difference
-            </ButtonLink>
-          )}
+          <ButtonLink href="#demos" size="lg" variant="ghost-inverse">
+            Explore the demos
+          </ButtonLink>
         </div>
       </PageHeader>
 
-      <section aria-labelledby="journey-title" className="py-16 sm:py-20">
-        <Container className="max-w-[90rem]">
-          <SectionHeading id="journey-title" title={page.journey.title} intro={<p>{page.journey.intro}</p>} />
-          <ol
-            className={`mt-10 grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2 ${
-              page.journey.steps.length === 4 ? "lg:grid-cols-4" : page.journey.steps.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-5"
-            }`}
-          >
+      <section aria-labelledby="journey-title">
+        <div className={`${wrap} pb-20 pt-20 sm:pb-28 sm:pt-28`}>
+          <p className="label text-muted">How customers decide</p>
+          <h2 id="journey-title" className="display mt-5 max-w-[18ch] text-balance text-[2.3rem] uppercase sm:text-[clamp(3rem,5.4vw,5rem)]">
+            {page.journey.title}
+          </h2>
+          <p className="mt-8 max-w-[44ch] font-serif text-[1.6rem] italic leading-[1.2] text-ink sm:text-[2rem]">{page.journey.intro}</p>
+          <ol className="mt-14 border-b border-ink">
             {page.journey.steps.map((step, index) => (
-              <li key={step.label} className="bg-surface p-5">
-                <span className="font-mono text-xs font-medium text-accent">{String(index + 1).padStart(2, "0")}</span>
-                <h3 className="mt-2 text-[15px] font-semibold text-ink">{step.label}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">{step.body}</p>
+              <li key={step.label} className="read-in grid items-baseline gap-2 border-t border-ink py-5 sm:py-6 md:grid-cols-12 md:gap-8">
+                <span className="display text-[2.1rem] uppercase sm:text-[clamp(2.6rem,5vw,4.6rem)] md:col-span-7">
+                  <span className="mr-4 align-top font-sans text-xs font-medium tracking-normal text-muted">{String(index + 1).padStart(2, "0")}</span>
+                  {step.label}
+                </span>
+                <span className="max-w-[38ch] text-[15px] leading-relaxed text-ink-soft md:col-span-5">{step.body}</span>
               </li>
             ))}
           </ol>
-        </Container>
+        </div>
       </section>
 
-      <section aria-labelledby="problems-title" className="border-y border-line bg-surface py-16 sm:py-20">
-        <Container className="max-w-[90rem]">
-          <SectionHeading id="problems-title" title="What usually gets in the way." />
-          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {page.problems.map((problem) => (
-              <li key={problem.title} className="border border-line bg-paper p-5">
-                <h3 className="text-[15px] font-semibold text-ink">{problem.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">{problem.body}</p>
-              </li>
-            ))}
-          </ul>
-        </Container>
-      </section>
+      <Section id="problems-title" title="What usually gets in the way.">
+        <RuledList items={page.problems} />
+      </Section>
 
-      {page.simulator && (
-        <SimulatorSection
-          id="demo"
-          industries={page.simulator}
-          title={page.simulator.length > 1 ? "See the difference across industries." : "See the difference for yourself."}
-          intro="Switch between Before and After, and between desktop and mobile. Every example is a fictional business built to demonstrate the approach."
-          note={page.simulatorNote}
-        />
-      )}
+      <div id="demos" className="scroll-mt-16">
+        <DemoStrip />
+      </div>
 
-      <section aria-labelledby="build-title" className="py-16 sm:py-20">
-        <Container className="grid max-w-[90rem] gap-12 lg:grid-cols-[1fr_2fr] lg:gap-16">
-          <div>
-            <SectionHeading id="build-title" title="Recommended website features." />
-            <div className="mt-8 border border-line bg-surface p-5">
-              <p className="flex items-center gap-2 text-sm font-semibold text-ink">
-                <Target aria-hidden="true" className="size-4 text-accent" /> {page.conversions.title}
-              </p>
-              <ul className="mt-3 space-y-2">
-                {page.conversions.items.map((item) => (
-                  <li key={item} className="flex gap-2.5 text-sm leading-snug text-ink-soft">
-                    <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-accent" strokeWidth={2.5} />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          <ul className="grid gap-4 sm:grid-cols-2">
-            {page.features.map((feature) => (
-              <li key={feature.title} className="border border-line bg-surface p-5">
-                <h3 className="text-[15px] font-semibold text-ink">{feature.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">{feature.body}</p>
-              </li>
-            ))}
-          </ul>
-        </Container>
-      </section>
+      <Section id="build-title" title="What the website should do." intro={page.conversions.title}>
+        <ul className="mb-12 grid gap-x-8 sm:grid-cols-2">
+          {page.conversions.items.map((item) => (
+            <li key={item} className="flex gap-4 border-t border-ink py-3 text-[15px] leading-snug text-ink">
+              <span aria-hidden="true">→</span>
+              {item}
+            </li>
+          ))}
+        </ul>
+        <RuledList items={page.features} />
+      </Section>
 
-      <section aria-label="Mobile and search considerations" className="border-y border-line bg-surface py-16 sm:py-20">
-        <Container className="grid max-w-[90rem] gap-6 md:grid-cols-2">
-          {[
-            { icon: Smartphone, block: page.mobile },
-            { icon: Search, block: page.seo },
-          ].map(({ icon: Icon, block }) => (
-            <div key={block.title} className="border border-line bg-paper p-6 sm:p-7">
-              <Icon aria-hidden="true" className="size-5 text-accent" />
-              <h2 className="mt-3 text-xl font-semibold tracking-tight text-ink">{block.title}</h2>
-              <ul className="mt-4 space-y-2.5">
-                {block.points.map((point) => (
-                  <li key={point} className="flex gap-2.5 text-[15px] leading-snug text-ink-soft">
-                    <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-accent" strokeWidth={2.5} />
-                    {point}
-                  </li>
-                ))}
-              </ul>
+      <section aria-label="Mobile and search considerations" className="border-t border-ink">
+        <div className={`${wrap} grid gap-14 py-20 sm:py-28 md:grid-cols-2 md:gap-8`}>
+          {[page.mobile, page.seo].map((block) => (
+            <div key={block.title}>
+              <h2 className="display-tight text-2xl text-ink sm:text-3xl">{block.title}</h2>
+              <PointList points={block.points} />
             </div>
           ))}
-        </Container>
+        </div>
       </section>
 
-      <section aria-labelledby="approach-title" className="py-16 sm:py-20">
-        <Container className="grid max-w-[90rem] gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
-          <SectionHeading id="approach-title" title="How Fluxline approaches it." />
-          <div className="space-y-4 text-[17px] leading-relaxed text-ink-soft">
-            {page.approach.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
+      <Section id="approach-title" title="How Fluxline approaches it.">
+        <div className="space-y-4 text-[17px] leading-relaxed text-ink-soft">
+          {page.approach.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+        </div>
+        {page.extra && (
+          <div className="mt-10 border-t border-ink pt-6">
+            <h3 className="display-tight text-xl text-ink">{page.extra.title}</h3>
+            {page.extra.body.map((paragraph) => (
+              <p key={paragraph} className="mt-3 text-[15px] leading-relaxed text-ink-soft">
+                {paragraph}
+              </p>
             ))}
-            {page.extra && (
-              <div className="mt-8 border border-line bg-surface p-6">
-                <h3 className="text-base font-semibold text-ink">{page.extra.title}</h3>
-                {page.extra.body.map((paragraph) => (
-                  <p key={paragraph} className="mt-2 text-[15px]">
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
-            )}
-            <div className="pt-4">
-              <CheckPromo title={`Want a second opinion on your ${page.name.toLowerCase()} website?`} />
-            </div>
           </div>
-        </Container>
-      </section>
+        )}
+      </Section>
 
-      <section aria-labelledby="industry-faq-title" className="border-t border-line bg-surface py-16 sm:py-20">
-        <Container className="grid max-w-[90rem] gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
-          <div>
-            <SectionHeading id="industry-faq-title" title="Questions we hear often." />
+      <OrderPromo title={`Start your ${page.name.toLowerCase()} website.`} />
+
+      <section aria-labelledby="industry-faq-title">
+        <div className={`${wrap} grid gap-12 py-20 sm:py-28 lg:grid-cols-12 lg:gap-8`}>
+          <div className="lg:col-span-4">
+            <h2 id="industry-faq-title" className="display-tight text-[2.25rem] sm:text-[2.75rem]">
+              Questions we hear often.
+            </h2>
             {articles.length > 0 && (
-              <div className="mt-8">
-                <p className="text-sm font-medium text-muted">Related reading</p>
-                <ul className="mt-3 space-y-2.5">
+              <div className="mt-10">
+                <p className="label text-muted">Related reading</p>
+                <ul className="mt-4 border-t border-ink">
                   {articles.map((article) => (
-                    <li key={article.slug}>
-                      <Link href={`/resources/${article.slug}`} className="group inline-flex items-start gap-1.5 text-[15px] font-medium text-ink hover:text-accent">
+                    <li key={article.slug} className="border-b border-line-strong">
+                      <Link href={`/resources/${article.slug}`} className="group flex items-start justify-between gap-4 py-3 text-[15px] font-medium text-ink hover:text-accent">
                         {article.title}
-                        <ArrowRight aria-hidden="true" className="mt-1 size-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" />
+                        <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                       </Link>
                     </li>
                   ))}
@@ -192,19 +189,21 @@ export function IndustryPageTemplate({ page }: { page: IndustryPage }) {
               </div>
             )}
           </div>
-          <FaqList faqs={page.faqs} />
-        </Container>
+          <div className="lg:col-span-7 lg:col-start-6">
+            <FaqList faqs={page.faqs} />
+          </div>
+        </div>
       </section>
 
-      <section aria-labelledby="other-industries-title" className="py-16 sm:py-20">
-        <Container className="max-w-[90rem]">
-          <h2 id="other-industries-title" className="text-xl font-semibold tracking-tight text-ink">
+      <section aria-labelledby="other-industries-title" className="border-t border-ink">
+        <div className={`${wrap} py-20 sm:py-24`}>
+          <p id="other-industries-title" className="label text-muted">
             Other industries we work with
-          </h2>
+          </p>
           <div className="mt-6">
             <IndustriesGrid exclude={page.path} />
           </div>
-        </Container>
+        </div>
       </section>
 
       <ClosingCta />

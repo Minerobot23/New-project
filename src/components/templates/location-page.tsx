@@ -1,18 +1,16 @@
 import Link from "next/link";
-import { ArrowUpRight, Check } from "lucide-react";
-import { Container } from "@/components/ui/container";
-import { SectionHeading } from "@/components/ui/section-heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { FaqList } from "@/components/ui/faq-list";
 import { PageHeader } from "@/components/shared/page-header";
-import { CheckPromo } from "@/components/shared/check-promo";
+import { OrderPromo } from "@/components/shared/order-promo";
+import { DemoStrip } from "@/components/shared/demo-strip";
 import { ClosingCta } from "@/components/shared/closing-cta";
 import { JsonLd } from "@/components/seo/json-ld";
 import { TrackPageView } from "@/components/analytics/track-page-view";
 import type { LocationPage } from "@/content/locations";
 import { LOCATION_IMAGES } from "@/lib/images";
 import { pageMetadata, serviceSchema } from "@/lib/seo";
-import { CALL_CTA_LABEL, CALL_PATH, industryLinks, locationLinks, site } from "@/lib/site";
+import { ORDER_CTA_LABEL, ORDER_PATH, industryLinks, locationLinks, site } from "@/lib/site";
 
 export const locationMetadata = (page: LocationPage) =>
   pageMetadata({ title: page.metaTitle, description: page.metaDescription, path: page.path });
@@ -36,78 +34,91 @@ export function LocationPageTemplate({ page }: { page: LocationPage }) {
         })}
       />
       <PageHeader crumbs={[{ name: `Web Design ${page.place}`, path: page.path }]} eyebrow={`Web design · ${page.place}`} title={page.h1} intro={<p>{page.intro}</p>} image={LOCATION_IMAGES[page.path]}>
-        <p className="mt-5 max-w-2xl text-sm leading-relaxed text-muted">
+        <p className="mt-5 max-w-2xl text-sm leading-relaxed text-bone/55">
           Whether your business is in {listFormat.format(page.communities)}, we can help. {site.serviceArea}
         </p>
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <ButtonLink href={CALL_PATH} size="lg" withArrow>
-            {CALL_CTA_LABEL}
+        <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+          <ButtonLink href={ORDER_PATH} size="lg" variant="inverse" withArrow>
+            {ORDER_CTA_LABEL}
           </ButtonLink>
-          <ButtonLink href="/experiences" size="lg" variant="secondary">
-            See the experiences
+          <ButtonLink href="/experiences" size="lg" variant="ghost-inverse">
+            Explore the demos
           </ButtonLink>
         </div>
       </PageHeader>
 
-      <section aria-label={`Web design in ${page.place}`} className="py-16 sm:py-20">
-        <Container className="max-w-3xl space-y-14">
-          {page.sections.map((section) => (
-            <div key={section.heading}>
-              <h2 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">{section.heading}</h2>
-              <div className="mt-4 space-y-4 text-[17px] leading-relaxed text-ink-soft">
+      {page.sections.map((section, index) => (
+        <section key={section.heading} aria-labelledby={`section-${index}`} className={index > 0 ? "border-t border-ink" : ""}>
+          <div className="mx-auto grid max-w-[90rem] gap-10 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-12 lg:gap-8">
+            <h2 id={`section-${index}`} className="display max-w-[14ch] text-balance text-[2rem] uppercase sm:text-[2.6rem] lg:col-span-5">
+              {section.heading}
+            </h2>
+            <div className="lg:col-span-6 lg:col-start-7">
+              <div className="space-y-4 text-[17px] leading-relaxed text-ink-soft">
                 {section.paragraphs.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
               </div>
               {section.bullets && (
-                <ul className="mt-5 space-y-2.5">
+                <ul className="mt-6 border-b border-ink">
                   {section.bullets.map((bullet) => (
-                    <li key={bullet} className="flex gap-2.5 text-[15px] leading-snug text-ink">
-                      <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-accent" strokeWidth={2.5} />
+                    <li key={bullet} className="flex gap-4 border-t border-ink py-3 text-[15px] leading-snug text-ink">
+                      <span aria-hidden="true">→</span>
                       {bullet}
                     </li>
                   ))}
                 </ul>
               )}
             </div>
-          ))}
-          <CheckPromo title={`Have a ${page.place} business website we should look at?`} />
-        </Container>
-      </section>
+          </div>
+        </section>
+      ))}
 
-      <section aria-labelledby="location-industries-title" className="border-y border-line bg-surface py-16 sm:py-20">
-        <Container className="max-w-[90rem]">
-          <SectionHeading id="location-industries-title" title={`Websites for ${page.place} businesses like yours.`} />
-          <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <DemoStrip title={`What a ${page.place} business website could feel like.`} />
+
+      <section aria-labelledby="location-industries-title">
+        <div className="mx-auto max-w-[90rem] px-5 py-20 sm:px-8 sm:py-24">
+          <p className="label text-muted">Industries</p>
+          <h2 id="location-industries-title" className="display mt-5 max-w-[20ch] text-balance text-[2rem] uppercase sm:text-[2.6rem]">
+            Websites for {page.place} businesses like yours.
+          </h2>
+          <ul className="mt-10 grid gap-x-12 border-b border-ink md:grid-cols-2">
             {industries.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} className="group flex items-center justify-between border border-line bg-paper p-5 text-[15px] font-medium text-ink hover:border-ink/30">
+              <li key={link.href} className="border-t border-ink">
+                <Link href={link.href} className="group flex items-center justify-between py-4 text-lg text-ink hover:text-accent">
                   Websites for {link.label}
-                  <ArrowUpRight aria-hidden="true" className="size-4 text-muted group-hover:text-ink" />
+                  <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                 </Link>
               </li>
             ))}
           </ul>
-        </Container>
+        </div>
       </section>
 
-      <section aria-labelledby="location-faq-title" className="py-16 sm:py-20">
-        <Container className="grid max-w-[90rem] gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
-          <div>
-            <SectionHeading id="location-faq-title" title={`Questions from ${page.place} business owners.`} />
-            <p className="mt-8 text-sm font-medium text-muted">Other areas we serve</p>
-            <ul className="mt-3 space-y-2">
+      <OrderPromo title={`Start your ${page.place} website.`} />
+
+      <section aria-labelledby="location-faq-title">
+        <div className="mx-auto grid max-w-[90rem] gap-12 px-5 py-20 sm:px-8 sm:py-28 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-4">
+            <h2 id="location-faq-title" className="display-tight text-[2.25rem] sm:text-[2.75rem]">
+              Questions from {page.place} business owners.
+            </h2>
+            <p className="label mt-10 text-muted">Other areas we serve</p>
+            <ul className="mt-4 border-t border-ink">
               {otherLocations.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="text-[15px] font-medium text-ink hover:text-accent">
+                <li key={link.href} className="border-b border-line-strong">
+                  <Link href={link.href} className="group flex items-center justify-between py-3 text-[15px] font-medium text-ink hover:text-accent">
                     Web design in {link.label}
+                    <span aria-hidden="true">→</span>
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
-          <FaqList faqs={page.faqs} />
-        </Container>
+          <div className="lg:col-span-7 lg:col-start-6">
+            <FaqList faqs={page.faqs} />
+          </div>
+        </div>
       </section>
 
       <ClosingCta />

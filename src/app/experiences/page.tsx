@@ -122,7 +122,6 @@ export default function ExperiencesPage() {
       </div>
       <ClosingCta
         title="Your business could be the next experience here."
-        body="Tell us about the place and what you want customers to do. We'll tell you what we'd capture and how we'd build it."
       />
     </>
   );

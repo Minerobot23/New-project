@@ -220,7 +220,6 @@ export default function PortfolioPage() {
 
       <ClosingCta
         title="Let's Build Something Better."
-        body="Every project here started with a conversation about the business: who the customers are, what they need to see, and what they should do next. Tell us about yours."
       />
     </>
   );

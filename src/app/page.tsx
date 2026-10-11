@@ -7,6 +7,9 @@ import { FaqList, type Faq } from "@/components/ui/faq-list";
 import { JsonLd } from "@/components/seo/json-ld";
 import { organizationSchema, websiteSchema } from "@/lib/seo";
 import { industryLinks, locationLinks } from "@/lib/site";
+import { PLANS, formatCents, type PlanId } from "@/lib/billing/plans";
+
+const price = (id: PlanId) => formatCents(PLANS[id].devPriceCents, { whole: true });
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
@@ -29,7 +32,7 @@ const faqs: Faq[] = [
   },
   {
     q: "How much does a website cost?",
-    a: "It depends on the number of pages, the features you need (like booking, ordering, or quote forms), and how much content needs to be written. After a short call we give you a clear scope and price before any work begins.",
+    a: `Prices are listed on the pricing page: Essential is ${price("essential")}, Business is ${price("business")}, and Premium starts at ${price("premium")}, each paid as a 50% deposit to start and the balance before launch, plus a monthly Website Care plan after launch. You can choose a package and pay the deposit online.`,
   },
   {
     q: "How long does it take to build a website?",
@@ -149,7 +152,6 @@ export default function HomePage() {
 
       <ClosingCta
         title="Your business is an experience. Let's build the website."
-        body="Tell us about the place: what customers see when they walk in, and what you want them to do next. We'll tell you what we'd capture and how we'd build it."
       />
     </>
   );

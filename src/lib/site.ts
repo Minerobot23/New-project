@@ -29,6 +29,9 @@ export const site = {
 
 export const CALL_PATH = "/request-a-call";
 export const CALL_CTA_LABEL = "Request a Call";
+/** The primary action across the site: choose a package and pay the deposit. */
+export const ORDER_PATH = "/pricing";
+export const ORDER_CTA_LABEL = "Start your website";
 export const CHECK_PATH = "/website-check";
 export const CHECK_CTA_LABEL = "Get a Free Website Check";
 

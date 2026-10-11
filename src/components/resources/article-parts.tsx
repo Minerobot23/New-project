@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight, Lightbulb, MonitorSmartphone, PhoneCall, ScanSearch } from "lucide-react";
-import { CALL_PATH, CHECK_PATH } from "@/lib/site";
+import { CHECK_PATH, ORDER_PATH } from "@/lib/site";
 
 /** Small building blocks used inside article bodies. */
 
@@ -27,10 +27,10 @@ const CTA_VARIANTS = {
   },
   call: {
     icon: PhoneCall,
-    title: "Talk it through with us",
-    body: "Tell us about your business and what you want your website to do. No pressure, no obligation.",
-    href: CALL_PATH,
-    label: "Request a Call",
+    title: "Ready to start your website?",
+    body: "Compare the three packages, see exactly what each includes, and pay the deposit online to begin.",
+    href: ORDER_PATH,
+    label: "Start your website",
   },
   simulator: {
     icon: MonitorSmartphone,
@@ -45,9 +45,9 @@ export function ArticleCta({ kind, href }: { kind: keyof typeof CTA_VARIANTS; hr
   const cta = CTA_VARIANTS[kind];
   const Icon = cta.icon;
   return (
-    <aside className="not-prose my-10 flex flex-col gap-4 border border-accent/25 bg-accent-soft/60 p-5 sm:flex-row sm:items-center sm:justify-between" data-track-location="article-cta">
+    <aside className="not-prose my-10 flex flex-col gap-4 border-y border-ink py-6 sm:flex-row sm:items-center sm:justify-between" data-track-location="article-cta">
       <div className="flex gap-3.5">
-        <Icon aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-accent" />
+        <Icon aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-ink" />
         <div>
           <p className="font-semibold text-ink">{cta.title}</p>
           <p className="mt-1 text-sm leading-relaxed text-ink-soft">{cta.body}</p>
@@ -55,7 +55,7 @@ export function ArticleCta({ kind, href }: { kind: keyof typeof CTA_VARIANTS; hr
       </div>
       <Link
         href={href ?? cta.href}
-        className="inline-flex shrink-0 items-center gap-1.5 bg-accent px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-strong"
+        className="inline-flex shrink-0 items-center gap-1.5 bg-ink px-4 py-2.5 text-sm font-medium text-bone transition-colors hover:bg-ink-soft"
       >
         {cta.label}
         <ArrowRight aria-hidden="true" className="size-4" />
@@ -69,7 +69,7 @@ export function Checklist({ items }: { items: ReactNode[] }) {
     <ul className="not-prose my-6 space-y-2.5">
       {items.map((item, index) => (
         <li key={index} className="flex gap-3 text-[16px] leading-relaxed text-ink-soft">
-          <span aria-hidden="true" className="mt-[7px] size-3.5 shrink-0 rounded-[4px] border-2 border-accent" />
+          <span aria-hidden="true" className="mt-[7px] size-3.5 shrink-0 border-2 border-ink" />
           <span>{item}</span>
         </li>
       ))}

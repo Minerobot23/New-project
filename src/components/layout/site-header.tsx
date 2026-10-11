@@ -7,7 +7,7 @@ import { ChevronDown } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Wordmark } from "@/components/layout/wordmark";
-import { CALL_CTA_LABEL, CALL_PATH, CHECK_PATH, industryLinks, navLinks } from "@/lib/site";
+import { ORDER_CTA_LABEL, ORDER_PATH, industryLinks, navLinks } from "@/lib/site";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -66,7 +66,7 @@ export function SiteHeader() {
     return () => observer.disconnect();
   }, [pathname]);
 
-  const onCallPage = pathname === CALL_PATH;
+  const ordering = pathname.startsWith("/checkout");
   const isActive = (href: string) => !href.includes("#") && (pathname === href || pathname.startsWith(`${href}/`));
   /* Active page gets an underline in the accent; hover draws the same line in ink. */
   const linkClass =
@@ -143,13 +143,10 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-6">
-          <Link href={CHECK_PATH} className={`hidden xl:block ${linkClass} ${linkTone(CHECK_PATH)}`}>
-            Website Check
-          </Link>
-          {!onCallPage && (
+          {!ordering && (
             <div className="hidden sm:block">
-              <ButtonLink href={CALL_PATH} variant={dark ? "ghost-inverse" : "secondary"}>
-                {CALL_CTA_LABEL}
+              <ButtonLink href={ORDER_PATH} variant={dark ? "inverse" : "primary"} withArrow>
+                {ORDER_CTA_LABEL}
               </ButtonLink>
             </div>
           )}
@@ -207,13 +204,13 @@ export function SiteHeader() {
             </ul>
           </nav>
           <div className="mt-5 grid gap-2.5">
-            {!onCallPage && (
-              <ButtonLink href={CALL_PATH} onClick={() => setOpen(false)} size="lg" className="w-full">
-                {CALL_CTA_LABEL}
+            {!ordering && (
+              <ButtonLink href={ORDER_PATH} onClick={() => setOpen(false)} size="lg" className="w-full" withArrow>
+                {ORDER_CTA_LABEL}
               </ButtonLink>
             )}
-            <ButtonLink href={CHECK_PATH} onClick={() => setOpen(false)} size="lg" variant="secondary" className="w-full">
-              Get a Free Website Check
+            <ButtonLink href="/experiences" onClick={() => setOpen(false)} size="lg" variant="secondary" className="w-full">
+              Explore the demos
             </ButtonLink>
           </div>
         </Container>

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { buttonClasses } from "@/components/ui/button-link";
 import { LIMITS } from "@/lib/leads/fields";
 import { BUSINESS_TYPE_LABELS, websiteCheckSchema } from "@/lib/leads/schemas";
-import { CALL_PATH } from "@/lib/site";
+import { ORDER_CTA_LABEL, ORDER_PATH } from "@/lib/site";
 import { FormAlert, Honeypot, PrivacyNote, SelectField, SubmitButton, SuccessPanel, TextField } from "./fields";
 import { useLeadForm } from "./use-lead-form";
 
@@ -24,11 +24,11 @@ export function WebsiteCheckForm() {
       <SuccessPanel
         headingRef={successRef}
         title="Request received."
-        body="Thanks. We'll personally review your website and follow up with what we'd improve. If you'd rather talk it through, you can also request a call."
+        body="Thanks. We'll personally review your website and follow up with what we'd improve. If you're ready to start now, you can choose a package and pay the deposit online."
       >
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <Link href={CALL_PATH} className={buttonClasses("primary", "md")}>
-            Request a Call
+          <Link href={ORDER_PATH} className={buttonClasses("primary", "md")}>
+            {ORDER_CTA_LABEL}
           </Link>
           <Link href="/" className={buttonClasses("secondary", "md")}>
             Back to homepage

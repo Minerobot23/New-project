@@ -20,7 +20,7 @@ export function SectionHeading({
   const dark = tone === "dark";
   return (
     <div className={`max-w-3xl ${align === "center" ? "mx-auto text-center" : ""}`}>
-      {eyebrow && <p className={`text-sm font-medium ${dark ? "text-accent-on-night" : "text-accent"}`}>{eyebrow}</p>}
+      {eyebrow && <p className={`label ${dark ? "text-bone/60" : "text-muted"}`}>{eyebrow}</p>}
       <h2
         id={id}
         className={`display-tight ${eyebrow ? "mt-4" : ""} text-balance text-[2rem] sm:text-[2.75rem] ${dark ? "text-white" : "text-ink"}`}

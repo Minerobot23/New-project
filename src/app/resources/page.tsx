@@ -1,12 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { Container } from "@/components/ui/container";
 import { PageHeader } from "@/components/shared/page-header";
-import { CheckPromo } from "@/components/shared/check-promo";
+import { OrderPromo } from "@/components/shared/order-promo";
 import { ClosingCta } from "@/components/shared/closing-cta";
 import { ARTICLES, type ArticleCategory } from "@/content/resources/registry";
-import { ARTICLE_IMAGES } from "@/lib/images";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -27,54 +23,29 @@ export default function ResourcesPage() {
         title="Straight answers about business websites."
         intro={<p>Practical guides for owners deciding what their website needs, what it should cost, and how to get more from it.</p>}
       />
-      <div className="py-14 sm:py-16">
-        <Container className="max-w-[90rem] space-y-14">
-          {CATEGORIES.map((category) => (
-            <section key={category} aria-labelledby={`cat-${category}`}>
-              <h2 id={`cat-${category}`} className="text-sm font-medium text-muted">
-                {category}
-              </h2>
-              <ul className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {ARTICLES.filter((article) => article.category === category).map((article) => {
-                  const cover = ARTICLE_IMAGES[article.slug];
-                  return (
-                    <li key={article.slug}>
-                      <Link
-                        href={`/resources/${article.slug}`}
-                        className="group flex h-full flex-col overflow-hidden border border-line bg-surface transition-colors hover:border-ink/30"
-                      >
-                        {cover && (
-                          <span className="relative block aspect-[16/9] overflow-hidden bg-sunken">
-                            <Image
-                              src={cover.src}
-                              alt=""
-                              fill
-                              sizes="(min-width: 1024px) 400px, (min-width: 768px) 50vw, 100vw"
-                              placeholder="blur"
-                              className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                            />
-                          </span>
-                        )}
-                        <span className="flex flex-1 flex-col p-6">
-                          <span className="text-lg font-semibold leading-snug text-ink">{article.title}</span>
-                          <span className="mt-3 flex-1 text-[15px] leading-relaxed text-ink-soft">{article.description}</span>
-                          <span className="mt-5 flex items-center justify-between text-sm">
-                            <span className="text-muted">{article.readingMinutes} min read</span>
-                            <span className="inline-flex items-center gap-1 font-semibold text-accent">
-                              Read <ArrowRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-0.5" />
-                            </span>
-                          </span>
-                        </span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          ))}
-          <CheckPromo />
-        </Container>
-      </div>
+      {CATEGORIES.map((category, index) => (
+        <section key={category} aria-labelledby={`cat-${index}`} className={index > 0 ? "border-t border-ink" : ""}>
+          <div className="mx-auto grid max-w-[90rem] gap-10 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-12 lg:gap-8">
+            <h2 id={`cat-${index}`} className="display max-w-[12ch] text-[2rem] uppercase sm:text-[2.6rem] lg:col-span-4">
+              {category}
+            </h2>
+            <ul className="border-b border-ink lg:col-span-8">
+              {ARTICLES.filter((article) => article.category === category).map((article) => (
+                <li key={article.slug} className="border-t border-ink">
+                  <Link href={`/resources/${article.slug}`} className="group grid gap-2 py-6 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-x-10">
+                    <span className="display-tight text-xl text-ink transition-colors group-hover:text-accent sm:text-2xl">{article.title}</span>
+                    <span className="label self-center text-muted sm:row-span-2">
+                      {article.readingMinutes} min read <span aria-hidden="true" className="ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+                    </span>
+                    <span className="max-w-[62ch] text-[15px] leading-relaxed text-ink-soft">{article.description}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      ))}
+      <OrderPromo />
       <ClosingCta />
     </>
   );

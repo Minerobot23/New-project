@@ -5,7 +5,7 @@ import mainRoom from "../../../public/experiences/restaurant/interior/main-room.
 import house from "../../../public/experiences/home/arrival/house-dusk.webp";
 import garage from "../../../public/experiences/automotive/arrival/garage-door.webp";
 
-type Demo = {
+export type Demo = {
   id: string;
   /** The fictional business the demo is built around. */
   name: string;
@@ -17,7 +17,7 @@ type Demo = {
   href: string;
 };
 
-const DEMOS: Demo[] = [
+export const DEMOS: Demo[] = [
   {
     id: "restaurant",
     name: "Maison Arden",
@@ -74,8 +74,8 @@ export function EnvironmentChooser() {
           <ButtonLink href="#demos" variant="inverse" size="lg">
             Explore the demos
           </ButtonLink>
-          <ButtonLink href="/request-a-call" variant="ghost-inverse" size="lg">
-            Request a call
+          <ButtonLink href="/pricing" variant="ghost-inverse" size="lg">
+            See packages and start
           </ButtonLink>
         </div>
       </div>

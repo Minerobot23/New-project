@@ -80,7 +80,7 @@ export function HomeExperience() {
           credit={
             <p className="label text-bone/85">
               Fluxline interactive concept ·{" "}
-              <Link href="/request-a-call?from=home" className="border-b border-bone/50 text-bone hover:border-bone">
+              <Link href="/start/contractors" className="border-b border-bone/50 text-bone hover:border-bone">
                 Want this for your business?
               </Link>
             </p>
@@ -117,7 +117,7 @@ export function HomeExperience() {
             {
               id: "fluxline",
               label: "Want this for your business?",
-              onSelect: () => window.location.assign("/request-a-call?from=home"),
+              onSelect: () => window.location.assign("/start/contractors"),
             },
           ]}
           sticky={scene !== "estimate" ? { id: "estimate", label: "Estimate", onSelect: jump("estimate") } : undefined}

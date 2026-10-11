@@ -9,6 +9,7 @@ import { COMPARISON, PRICING_FAQS } from "@/content/pricing";
 import { CARE_MINIMUM_MONTHS, PLANS, PLAN_ORDER, formatCents, priceSummary, type Plan } from "@/lib/billing/plans";
 import { pageMetadata } from "@/lib/seo";
 import { CALL_PATH } from "@/lib/site";
+import { Process } from "@/components/shared/process";
 
 const description =
   "Website packages from Fluxline Solutions: Essential $700, Business $1,300, and Premium from $2,200, each with a 50% deposit to start and a required monthly Website Care plan after launch.";
@@ -21,12 +22,12 @@ function PlanCard({ plan }: { plan: Plan }) {
   return (
     <article
       aria-labelledby={`plan-${plan.id}`}
-      className={`relative flex flex-col border p-6 sm:p-7 ${featured ? "border-accent-on-night bg-night-soft lg:-my-4 lg:py-10" : "border-night-line bg-night"}`}
+      className={`relative flex flex-col border p-6 sm:p-7 ${featured ? "border-bone/70 bg-stage-soft lg:-my-4 lg:py-10" : "border-night-line bg-stage"}`}
     >
       {plan.badge && (
-        <p className="absolute -top-px left-6 -translate-y-1/2 bg-accent px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-white">{plan.badge}</p>
+        <p className="absolute -top-px left-6 -translate-y-1/2 bg-bone px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink">{plan.badge}</p>
       )}
-      <h3 id={`plan-${plan.id}`} className="display-tight text-2xl text-white">
+      <h3 id={`plan-${plan.id}`} className="display text-[1.9rem] uppercase text-bone">
         {plan.name}
       </h3>
       <p className="mt-2 min-h-[3em] text-[15px] leading-relaxed text-white/65">{plan.tagline}</p>
@@ -43,11 +44,11 @@ function PlanCard({ plan }: { plan: Plan }) {
       </div>
 
       <dl className="mt-6 grid grid-cols-2 gap-px border border-night-line bg-night-line text-sm">
-        <div className="bg-night px-3 py-3">
+        <div className="bg-stage px-3 py-3">
           <dt className="text-white/55">{plan.quoteRequired ? "Deposit from" : "Deposit to start"}</dt>
           <dd className="mt-0.5 font-semibold tabular-nums text-white">{formatCents(summary.depositCents, { whole: true })}</dd>
         </div>
-        <div className="bg-night px-3 py-3">
+        <div className="bg-stage px-3 py-3">
           <dt className="text-white/55">{plan.quoteRequired ? "Balance from" : "Before launch"}</dt>
           <dd className="mt-0.5 font-semibold tabular-nums text-white">{formatCents(summary.balanceCents, { whole: true })}</dd>
         </div>
@@ -56,7 +57,7 @@ function PlanCard({ plan }: { plan: Plan }) {
       <ul className="mt-6 flex-1 space-y-2.5 text-[15px] text-white/85">
         {plan.features.map((feature) => (
           <li key={feature} className="flex gap-3">
-            <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-accent-on-night" />
+            <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-bone/70" />
             {feature}
           </li>
         ))}
@@ -89,7 +90,7 @@ function Cell({ value }: { value: string }) {
   if (value === "yes")
     return (
       <>
-        <Check aria-hidden="true" className="mx-auto size-4 text-accent" />
+        <Check aria-hidden="true" className="mx-auto size-4 text-ink" />
         <span className="sr-only">Included</span>
       </>
     );
@@ -103,22 +104,15 @@ function Cell({ value }: { value: string }) {
   return <span>{value}</span>;
 }
 
-const STEPS = [
-  { title: "Pay the 50% deposit", body: "Choose a package, review the service agreement, and pay the deposit on Stripe's secure checkout." },
-  { title: "Onboarding", body: "Tell us about your business, services, and style, and upload your logo and photos in your client portal." },
-  { title: "Design and build", body: "We design and build your site, with two rounds of revisions on each. Your dashboard shows progress at every stage." },
-  { title: "Final balance", body: "When your site is approved and ready for launch, we send the remaining 50% as an invoice." },
-  { title: "Launch and Website Care", body: `You review and authorize the monthly Website Care plan, and we launch. ${CARE_MINIMUM_MONTHS}-month minimum, then month to month.` },
-];
 
 export default function PricingPage() {
   return (
     <>
       <TrackPageView event="pricing_view" page="/pricing" />
-      <section data-tone="dark" className="bg-night text-white">
+      <section data-tone="dark" className="bg-stage text-bone">
         <Container className="pb-16 pt-14 sm:pb-24 sm:pt-20">
-          <p className="text-sm font-medium text-accent-on-night">Pricing</p>
-          <h1 className="display mt-4 max-w-[16ch] text-balance text-[2.5rem] sm:text-[clamp(3rem,5.4vw,4.75rem)]">
+          <p className="label text-bone/60">Pricing</p>
+          <h1 className="display mt-5 max-w-[16ch] text-balance text-[2.4rem] uppercase sm:text-[clamp(3rem,5.4vw,4.75rem)]">
             Clear prices. A website you own.
           </h1>
           <p className="mt-6 max-w-[60ch] text-pretty text-lg leading-relaxed text-white/70">
@@ -141,15 +135,9 @@ export default function PricingPage() {
       <section aria-labelledby="how-payment-works" className="border-b border-ink">
         <Container className="py-16 sm:py-24">
           <SectionHeading id="how-payment-works" eyebrow="How payment works" title="From deposit to launch, in five steps." />
-          <ol className="mt-12 grid gap-px border border-ink bg-ink sm:grid-cols-2 lg:grid-cols-5">
-            {STEPS.map((step, index) => (
-              <li key={step.title} className="bg-paper p-6">
-                <p className="font-mono text-sm text-accent">0{index + 1}</p>
-                <h3 className="mt-3 text-lg font-semibold text-ink">{step.title}</h3>
-                <p className="mt-2 text-[15px] leading-relaxed text-ink-soft">{step.body}</p>
-              </li>
-            ))}
-          </ol>
+          <div className="mt-12">
+            <Process />
+          </div>
         </Container>
       </section>
 
@@ -167,7 +155,7 @@ export default function PricingPage() {
                   {PLAN_ORDER.map((id) => (
                     <th key={id} scope="col" className="px-3 py-4 text-center text-base font-semibold text-ink">
                       {PLANS[id].name}
-                      {PLANS[id].badge && <span className="mt-1 block text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">{PLANS[id].badge}</span>}
+                      {PLANS[id].badge && <span className="mt-1 block text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">{PLANS[id].badge}</span>}
                     </th>
                   ))}
                 </tr>
@@ -175,7 +163,7 @@ export default function PricingPage() {
               {COMPARISON.map((group) => (
                 <tbody key={group.group}>
                   <tr>
-                    <th scope="colgroup" colSpan={4} className="pb-2 pt-8 text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+                    <th scope="colgroup" colSpan={4} className="pb-2 pt-8 text-xs font-semibold uppercase tracking-[0.18em] text-muted">
                       {group.group}
                     </th>
                   </tr>
@@ -185,7 +173,7 @@ export default function PricingPage() {
                         {row.label}
                       </th>
                       {PLAN_ORDER.map((id) => (
-                        <td key={id} className={`px-3 py-3.5 text-center text-ink ${id === "business" ? "bg-accent-soft/40" : ""}`}>
+                        <td key={id} className={`px-3 py-3.5 text-center text-ink ${id === "business" ? "bg-sunken/60" : ""}`}>
                           <Cell value={row.values[id]} />
                         </td>
                       ))}
@@ -214,11 +202,11 @@ export default function PricingPage() {
           <div className="lg:col-span-4">
             <SectionHeading id="pricing-faq" eyebrow="Questions" title="Payment, ownership, and Website Care." />
             <p className="mt-6 text-[15px] leading-relaxed text-ink-soft">
-              Still deciding?{" "}
-              <Link href={CALL_PATH} className="font-medium text-accent underline underline-offset-4 hover:text-ink">
-                Request a call
+              Still deciding? Try the{" "}
+              <Link href="/experiences" className="font-medium text-ink underline underline-offset-4 hover:text-accent">
+                interactive demos
               </Link>{" "}
-              and we&apos;ll help you choose.
+              or email us with any question before you start.
             </p>
           </div>
           <div className="lg:col-span-8">

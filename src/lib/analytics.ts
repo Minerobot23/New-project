@@ -6,6 +6,7 @@ import { track as vercelTrack } from "@vercel/analytics";
  */
 export type AnalyticsEvent =
   | "request_call_click"
+  | "start_website_click"
   | "website_check_click"
   | "website_check_started"
   | "website_check_submitted"
@@ -13,11 +14,6 @@ export type AnalyticsEvent =
   | "call_form_submitted"
   | "phone_click"
   | "email_click"
-  | "simulator_started"
-  | "simulator_industry_changed"
-  | "simulator_before_viewed"
-  | "simulator_after_viewed"
-  | "simulator_mobile_viewed"
   | "portfolio_view"
   | "service_page_view"
   | "pricing_view"

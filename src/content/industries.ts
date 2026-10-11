@@ -1,4 +1,3 @@
-import type { IndustryId } from "@/components/simulator/types";
 import type { Faq } from "@/components/ui/faq-list";
 
 export type IndustryPage = {
@@ -8,9 +7,6 @@ export type IndustryPage = {
   metaDescription: string;
   h1: string;
   intro: string;
-  /** Simulator industries to embed; omit for none. */
-  simulator?: IndustryId[];
-  simulatorNote?: string;
   journey: { title: string; intro: string; steps: { label: string; body: string }[] };
   problems: { title: string; body: string }[];
   conversions: { title: string; items: string[] };
@@ -33,9 +29,6 @@ export const INDUSTRY_PAGES: Record<string, IndustryPage> = {
     h1: "Websites for contractors and remodelers that turn browsing into estimate requests.",
     intro:
       "Homeowners planning a kitchen, bath, addition, or renovation compare contractors carefully. Your website is often where that comparison is won or lost, usually before you ever hear from them.",
-    simulator: ["home"],
-    simulatorNote:
-      "This demo is an HVAC company, but the same principles apply to remodelers: obvious next steps, organized services, visible proof, and a phone-first layout.",
     journey: {
       title: "How homeowners choose a contractor",
       intro: "Remodeling decisions are slow, visual, and high-stakes. Most homeowners shortlist two or three contractors before asking anyone for a price.",
@@ -124,7 +117,6 @@ export const INDUSTRY_PAGES: Record<string, IndustryPage> = {
     h1: "HVAC websites built for the moment the AC quits.",
     intro:
       "HVAC customers arrive in two very different moods: urgent, because something stopped working, or deliberate, because they're planning a replacement. A good HVAC website serves both without making either one work for it.",
-    simulator: ["home"],
     journey: {
       title: "Two customer journeys, one website",
       intro: "The same homeowner may be urgent in July and deliberate in October. Your website has to handle both.",
@@ -213,9 +205,6 @@ export const INDUSTRY_PAGES: Record<string, IndustryPage> = {
     h1: "Plumbing websites that earn the call, and the trust to let you in.",
     intro:
       "A burst pipe and a water heater replacement are very different visits, but both depend on the same thing: a homeowner deciding quickly that you're reliable and trustworthy enough to let into their home.",
-    simulator: ["home"],
-    simulatorNote:
-      "This demo shows a home-service company. Plumbing sites follow the same pattern: call first, services organized by need, and trust built early.",
     journey: {
       title: "How customers choose a plumber",
       intro: "Most plumbing searches start with a problem, not a plan.",
@@ -303,9 +292,6 @@ export const INDUSTRY_PAGES: Record<string, IndustryPage> = {
     h1: "Roofing websites built for big decisions and skeptical homeowners.",
     intro:
       "A new roof is one of the largest purchases a homeowner makes, and after a storm they're often wary of companies they don't know. Your website has to establish credibility quickly and explain the process clearly.",
-    simulator: ["home"],
-    simulatorNote:
-      "This home-service demo shows the patterns roofing sites need too: an obvious inspection or estimate request, trust signals, financing, and service areas.",
     journey: {
       title: "How homeowners choose a roofer",
       intro: "Roofing decisions are usually triggered by a leak, storm damage, or an aging roof, and they're rarely rushed into once the immediate problem is handled.",
@@ -394,7 +380,6 @@ export const INDUSTRY_PAGES: Record<string, IndustryPage> = {
     h1: "Restaurant websites that fill tables, not just inboxes.",
     intro:
       "Diners decide fast. They want the menu, the hours, the location, and a way to reserve or order, usually on a phone and often minutes before they leave. Every extra tap is a reason to choose somewhere else.",
-    simulator: ["restaurant"],
     journey: {
       title: "How diners choose where to eat",
       intro: "Restaurant decisions are quick, visual, and often made in a group chat.",
@@ -484,7 +469,6 @@ export const INDUSTRY_PAGES: Record<string, IndustryPage> = {
     h1: "Salon and wellness websites that make booking feel effortless.",
     intro:
       "Clients choose a salon, barbershop, spa, or med spa based on trust in the people and the results. They want to see the work, understand the services and prices, and book without a phone call. Your website should do all three beautifully.",
-    simulator: ["salon"],
     journey: {
       title: "How new clients choose",
       intro: "Beauty and wellness decisions are personal. New clients are looking for reassurance as much as information.",
@@ -581,7 +565,6 @@ export const INDUSTRY_PAGES: Record<string, IndustryPage> = {
     h1: "Auto repair websites that earn trust before the first oil change.",
     intro:
       "Most drivers already worry about being upsold. A clear, professional website that explains your services, warranty, and process, and makes it easy to schedule, can be what tips a first-time customer toward your shop.",
-    simulator: ["auto"],
     journey: {
       title: "How drivers choose a shop",
       intro: "Auto repair often starts with uncertainty: a warning light, a noise, or a car that won't start.",
@@ -677,7 +660,6 @@ export const INDUSTRY_PAGES: Record<string, IndustryPage> = {
     h1: "Websites for local businesses that customers can actually use.",
     intro:
       "Whether you run a café, a gym, a boutique, a landscaping company, or a professional practice, customers come to your website with a few practical questions and one next step in mind. We design around both.",
-    simulator: ["home", "restaurant", "salon", "auto"],
     journey: {
       title: "What every local customer wants to know",
       intro: "The details change by business, but the pattern is remarkably consistent.",

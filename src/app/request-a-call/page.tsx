@@ -1,11 +1,9 @@
-import Image from "next/image";
-import { Clock, MessageSquare, PhoneCall } from "lucide-react";
+import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { RequestCallForm } from "@/components/forms/request-call-form";
 import { pageMetadata } from "@/lib/seo";
-import { PHOTOS } from "@/lib/images";
-import { site } from "@/lib/site";
+import { ORDER_PATH, site } from "@/lib/site";
 
 export const metadata = pageMetadata({
   title: "Request a Call",
@@ -16,17 +14,14 @@ export const metadata = pageMetadata({
 
 const expectations = [
   {
-    icon: MessageSquare,
     title: "A practical conversation",
     body: "We'll talk about your business, your customers, and what you want your website to do.",
   },
   {
-    icon: PhoneCall,
     title: "We reach out to you",
     body: "We'll review your business first, then contact you to find a time that works.",
   },
   {
-    icon: Clock,
     title: "No pressure",
     body: "No obligation and nothing to prepare. If we're not the right fit, we'll say so.",
   },
@@ -34,50 +29,44 @@ const expectations = [
 
 export default function RequestCallPage() {
   return (
-    <section aria-labelledby="call-title" className="py-10 sm:py-14 lg:py-16">
-      <Container className="max-w-[90rem]">
-        <Breadcrumbs items={[{ name: "Request a Call", path: "/request-a-call" }]} />
-        <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:gap-16">
-          <div className="lg:pt-2">
-            <p className="text-sm font-medium text-accent">Talk to Fluxline</p>
-            <h1 id="call-title" className="mt-3 display text-balance text-[2.5rem] text-ink sm:text-[3.5rem]">
-              Request a Call
+    <section aria-labelledby="call-title" data-tone="dark" className="bg-stage text-bone">
+      <Container className="max-w-[90rem] pb-16 pt-8 sm:pb-24">
+        <Breadcrumbs items={[{ name: "Request a Call", path: "/request-a-call" }]} tone="dark" />
+        <div className="mt-12 grid gap-12 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-5">
+            <p className="label text-bone/60">Talk to Fluxline</p>
+            <h1 id="call-title" className="display mt-5 text-balance text-[2.4rem] uppercase sm:text-[3.6rem]">
+              Request a call.
             </h1>
-            <p className="mt-5 max-w-md text-lg leading-relaxed text-ink-soft">
+            <p className="mt-6 max-w-md text-lg leading-relaxed text-bone/75">
               Tell us a little about your business. We&apos;ll follow up to coordinate a time to talk.
             </p>
-            <div className="relative mt-8 hidden aspect-[16/9] overflow-hidden bg-sunken sm:block">
-              <Image src={PHOTOS.ownerCall.src} alt={PHOTOS.ownerCall.alt} fill sizes="(min-width: 1024px) 40vw, 90vw" placeholder="blur" className="object-cover" />
-            </div>
-            <ul className="mt-10 hidden space-y-6 sm:block">
-              {expectations.map(({ icon: Icon, title, body }) => (
-                <li key={title} className="flex gap-4">
-                  <span className="flex size-9 shrink-0 items-center justify-center border border-line bg-surface text-accent">
-                    <Icon aria-hidden="true" className="size-[18px]" />
-                  </span>
-                  <div>
-                    <p className="text-[15px] font-semibold text-ink">{title}</p>
-                    <p className="mt-0.5 text-[15px] leading-relaxed text-ink-soft">{body}</p>
-                  </div>
+            <ul className="mt-10 border-b border-bone/25">
+              {expectations.map(({ title, body }) => (
+                <li key={title} className="border-t border-bone/25 py-4">
+                  <p className="label text-bone">{title}</p>
+                  <p className="mt-2 text-[15px] leading-relaxed text-bone/70">{body}</p>
                 </li>
               ))}
             </ul>
-            <p className="mt-10 hidden border-t border-line pt-6 text-sm text-muted lg:block">
+            <div className="mt-8 border-l-2 border-bone/60 pl-5">
+              <p className="text-[15px] leading-relaxed text-bone/80">
+                Ready to start now? Essential and Business can be ordered online with a 50% deposit. No call needed.
+              </p>
+              <Link href={ORDER_PATH} className="label mt-3 inline-flex items-center gap-3 text-bone hover:text-bone/80">
+                See packages and start <span aria-hidden="true">→</span>
+              </Link>
+            </div>
+            <p className="mt-8 text-sm text-bone/55">
               Prefer email?{" "}
-              <a href={`mailto:${site.contact.email}`} className="font-medium text-ink underline underline-offset-4">
+              <a href={`mailto:${site.contact.email}`} className="text-bone underline underline-offset-4">
                 {site.contact.email}
               </a>
             </p>
           </div>
-          <div className="border border-ink bg-surface p-5 sm:p-8">
+          <div className="bg-paper p-5 text-ink sm:p-8 lg:col-span-6 lg:col-start-7">
             <RequestCallForm />
           </div>
-          <p className="text-sm text-muted lg:hidden">
-            Prefer email?{" "}
-            <a href={`mailto:${site.contact.email}`} className="font-medium text-ink underline underline-offset-4">
-              {site.contact.email}
-            </a>
-          </p>
         </div>
       </Container>
     </section>

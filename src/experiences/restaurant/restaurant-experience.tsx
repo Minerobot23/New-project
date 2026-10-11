@@ -141,7 +141,7 @@ export function RestaurantExperience() {
           credit={
             <p className="label text-bone/85">
               Fluxline interactive concept ·{" "}
-              <Link href="/request-a-call?from=restaurant" className="border-b border-bone/50 text-bone hover:border-bone">
+              <Link href="/start/restaurants" className="border-b border-bone/50 text-bone hover:border-bone">
                 Want this for your business?
               </Link>
             </p>
@@ -235,7 +235,7 @@ export function RestaurantExperience() {
             {
               id: "fluxline",
               label: "Want this for your business?",
-              onSelect: () => window.location.assign("/request-a-call?from=restaurant"),
+              onSelect: () => window.location.assign("/start/restaurants"),
             },
           ]}
           sticky={scene !== "reserve" ? { id: "reserve", label: "Reserve", onSelect: jump("reserve") } : undefined}

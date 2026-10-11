@@ -41,7 +41,7 @@ export function buildCsp(nonce: string, env: Record<string, string | undefined> 
     "img-src": ["'self'", "data:", "blob:", "https://www.facebook.com", "https://www.googleadservices.com", "https://googleads.g.doubleclick.net", "https://www.google.com", ...(preview ? ["https://vercel.live", "https://vercel.com"] : [])],
     "font-src": ["'self'", ...(preview ? ["https://vercel.live"] : [])],
     "media-src": ["'self'", "blob:"],
-    "connect-src": ["'self'", "https://www.facebook.com", "https://connect.facebook.net", "https://www.googletagmanager.com", "https://www.googleadservices.com", "https://googleads.g.doubleclick.net", "https://www.google.com", ...(preview ? ["https://vercel.live", "wss://ws-us3.pusher.com"] : []), ...(dev ? ["ws:"] : [])],
+    "connect-src": ["'self'", "https://*.clarity.ms", "https://www.facebook.com", "https://connect.facebook.net", "https://www.googletagmanager.com", "https://www.googleadservices.com", "https://googleads.g.doubleclick.net", "https://www.google.com", ...(preview ? ["https://vercel.live", "wss://ws-us3.pusher.com"] : []), ...(dev ? ["ws:"] : [])],
     "frame-src": preview ? ["https://vercel.live"] : ["'none'"],
     "worker-src": ["'self'", "blob:"],
     "object-src": ["'none'"],

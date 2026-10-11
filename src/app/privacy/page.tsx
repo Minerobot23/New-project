@@ -49,6 +49,7 @@ export default function PrivacyPage() {
 
       <section>
         <h2>How we use information</h2>
+        <p>With your permission, Microsoft Clarity records clicks, scrolling, and page interactions on selected public pages to help us identify usability problems. Clarity receives technical visit information and may use cookies. Page text and form fields are masked; checkout, sign-in, admin, and client pages are excluded from recordings. We do not send contact details, payment details, or private project content to Clarity. You can decline or withdraw measurement through Privacy choices. See <a href="https://privacy.microsoft.com/en-us/privacystatement">Microsoft&apos;s Privacy Statement</a> for how Microsoft handles this information.</p>
         <ul>
           <li>To respond to your request, review your website if you asked us to, and coordinate a call.</li>
           <li>To communicate with you about our services when you have contacted us.</li>

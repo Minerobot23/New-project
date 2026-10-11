@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { connection } from "next/server";
 import { headers } from "next/headers";
 import { Advertising } from "@/components/analytics/advertising";
+import { BehaviorAnalytics } from "@/components/analytics/behavior";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -59,7 +60,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       data-scroll-behavior="smooth"
       className={`${GeistSans.variable} ${GeistMono.variable} ${displayFont.variable} ${serifFont.variable} antialiased`}
     >
-      <body className="flex min-h-dvh flex-col font-sans">
+      <body data-clarity-mask="true" className="flex min-h-dvh flex-col font-sans">
         <a
           href="#main"
           className="sr-only z-[60] bg-ink px-4 py-2 text-sm font-medium text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
@@ -77,6 +78,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         </HideOnImmersive>
         <SiteAnalytics />
         <Advertising nonce={nonce} googleId={process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? ""} pixelId={process.env.NEXT_PUBLIC_META_PIXEL_ID ?? ""} />
+        <BehaviorAnalytics nonce={nonce} projectId={process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID ?? ""} />
       </body>
     </html>
   );

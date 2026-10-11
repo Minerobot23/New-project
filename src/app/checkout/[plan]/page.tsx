@@ -7,6 +7,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { PLANS, formatCents, isPlanId } from "@/lib/billing/plans";
 import { CALL_PATH } from "@/lib/site";
 import { CheckoutView } from "../checkout-view";
+import { TrackPageView } from "@/components/analytics/track-page-view";
 
 export const metadata: Metadata = { title: "Checkout", robots: { index: false, follow: false } };
 
@@ -42,5 +43,5 @@ export default async function PlanCheckoutPage({ params, searchParams }: PagePro
     );
   }
 
-  return <CheckoutView plan={plan} amounts={PLANS[plan]} cancelled={cancelled === "1"} />;
+  return <><TrackPageView event="checkout_started" page={`/checkout/${plan}`} /><CheckoutView plan={plan} amounts={PLANS[plan]} cancelled={cancelled === "1"} /></>;
 }

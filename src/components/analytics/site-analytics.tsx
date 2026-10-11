@@ -16,6 +16,7 @@ export function SiteAnalytics() {
 
   useEffect(() => {
     captureAttribution();
+    if (pathname === "/pricing") track("pricing_view", { page: pathname });
   }, [pathname]);
 
   useEffect(() => {
@@ -24,7 +25,8 @@ export function SiteAnalytics() {
       if (!anchor) return;
       const href = anchor.getAttribute("href") ?? "";
       const location = anchor.closest("[data-track-location]")?.getAttribute("data-track-location") ?? window.location.pathname;
-      if (href.startsWith("tel:")) track("phone_click", { location });
+      if (href.startsWith("/checkout/")) track("deposit_button_click", { page: window.location.pathname });
+      else if (href.startsWith("tel:")) track("phone_click", { location });
       else if (href.startsWith("mailto:")) track("email_click", { location });
       else if (href === CALL_PATH || href.startsWith(`${CALL_PATH}?`)) track("request_call_click", { location });
       else if (href === CHECK_PATH || href.startsWith(`${CHECK_PATH}?`)) track("website_check_click", { location });

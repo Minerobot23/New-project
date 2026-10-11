@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";
 import { PLANS, CARE_MINIMUM_MONTHS, formatCents } from "@/lib/billing/plans";
+import { TrackPageView } from "@/components/analytics/track-page-view";
 
 const offers = {
   contractors: { title: "Make it easy to choose your business.", intro: "A clear contractor website shows your work, explains your services, and gives customers an obvious way to request an estimate.", features: ["Present services and project photos clearly", "Make phone calls and estimate requests easy on mobile", "Give local customers a clear next step"] },
@@ -14,6 +15,7 @@ export default async function StartPage({ params }: PageProps<"/start/[industry]
   const offer = offers[industry];
   const plan = PLANS.essential;
   return <section className="bg-night py-16 text-white sm:py-24"><Container>
+    <TrackPageView event="sales_page_view" page={`/start/${industry}`} />
     <p className="text-sm uppercase tracking-widest text-white/65">Fluxline websites for {industry}</p>
     <h1 className="display-tight mt-6 max-w-3xl text-4xl sm:text-6xl">{offer.title}</h1>
     <p className="mt-6 max-w-2xl text-lg text-white/75">{offer.intro}</p>

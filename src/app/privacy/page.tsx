@@ -44,7 +44,7 @@ export default function PrivacyPage() {
             advertisers.
           </li>
         </ul>
-        <p>This website does not use advertising cookies or tracking pixels.</p>
+        <p>With your permission, we use Google Ads and, when configured, Meta advertising measurement. These providers may use cookies and receive technical visit information and a paid deposit&apos;s value, currency, and anonymous transaction identifier to measure advertising. We do not send your name, email, phone number, card details, or project content through these tags. Measurement is off until you choose “Allow measurement”; use “Privacy choices” to withdraw permission. Checkout works if you decline.</p>
       </section>
 
       <section>

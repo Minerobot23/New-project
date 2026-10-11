@@ -7,6 +7,7 @@ import { billingStatus, stripeMode } from "@/lib/billing/config";
 import { checkoutStatus, startDepositCheckout, type CheckoutInput } from "@/lib/billing/checkout";
 import { PLANS, priceSummary } from "@/lib/billing/plans";
 import { processStripeEvent } from "@/lib/billing/webhook";
+import { confirmedPurchase } from "@/lib/billing/purchase";
 import type { Db } from "@/lib/db";
 import * as t from "@/lib/db/schema";
 import { depositSession, event, makeDb, makeStripe, subscriptionFixture, closeDbs } from "./helpers";
@@ -133,6 +134,25 @@ async function paidProject(stripe = makeStripe().stripe) {
 }
 
 describe("webhook: deposit confirmation", () => {
+  test("ad purchases require a webhook-confirmed live payment, use paid value, and omit personal data", async () => {
+    assert.equal(await confirmedPurchase(db, "invented"), null);
+    const { stripe } = makeStripe();
+    const data = input();
+    await startDepositCheckout(db, stripe, data, req);
+    const [intent] = await db.select().from(t.checkoutIntents);
+    assert.equal(await confirmedPurchase(db, intent.stripeSessionId!), null);
+    await processStripeEvent(db, stripe, event("checkout.session.completed", await sessionFor(data.intentId)));
+    assert.equal(await confirmedPurchase(db, intent.stripeSessionId!), null, "test payments must not become ad conversions");
+    // Model persisted production state without making a live payment.
+    await db.update(t.checkoutIntents).set({ livemode: true }).where(eq(t.checkoutIntents.id, data.intentId));
+    await db.update(t.projects).set({ livemode: true }).where(eq(t.projects.checkoutIntentId, data.intentId));
+    const [payment] = await db.select().from(t.payments);
+    const purchase = await confirmedPurchase(db, intent.stripeSessionId!);
+    assert.deepEqual(purchase, { transactionId: payment.id, value: 650, currency: "USD" });
+    assert.deepEqual(await confirmedPurchase(db, intent.stripeSessionId!), purchase, "reload uses the same transaction id");
+    await db.update(t.payments).set({ status: "refunded", refundedCents: 65000 }).where(eq(t.payments.id, payment.id));
+    assert.equal(await confirmedPurchase(db, intent.stripeSessionId!), null);
+  });
   test("a success redirect alone confirms nothing", async () => {
     const { stripe } = makeStripe();
     const data = input();

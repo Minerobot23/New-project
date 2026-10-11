@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { connection } from "next/server";
+import { headers } from "next/headers";
+import { Advertising } from "@/components/analytics/advertising";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -50,6 +52,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   // Every page renders per request so Next.js can apply the CSP nonce from src/proxy.ts to its scripts.
   await connection();
+  const nonce = (await headers()).get("x-nonce") ?? "";
   return (
     <html
       lang="en"
@@ -73,6 +76,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <SiteFooter />
         </HideOnImmersive>
         <SiteAnalytics />
+        <Advertising nonce={nonce} googleId={process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? ""} pixelId={process.env.NEXT_PUBLIC_META_PIXEL_ID ?? ""} />
       </body>
     </html>
   );

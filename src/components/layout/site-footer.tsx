@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CookieSettingsButton } from "@/components/analytics/advertising";
 import { brandFont } from "@/components/brand/fonts";
 import { CALL_CTA_LABEL, CALL_PATH, CHECK_PATH, industryLinks, locationLinks, site } from "@/lib/site";
 
@@ -82,6 +83,9 @@ export function SiteFooter() {
             <Link href="/privacy" className="transition-colors hover:text-white">
               Privacy
             </Link>
+          </li>
+          <li>
+            <CookieSettingsButton className="transition-colors hover:text-white" />
           </li>
           <li>
             <Link href="/terms" className="transition-colors hover:text-white">

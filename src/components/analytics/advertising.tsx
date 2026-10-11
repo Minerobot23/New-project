@@ -10,6 +10,7 @@ import { track } from "@/lib/analytics";
 const CONSENT = "fluxline-ad-measurement-v2";
 const CHANGE = "fluxline-ad-consent";
 const READY = "fluxline-ad-ready";
+const OPEN = "fluxline-cookie-settings";
 type Tracker = (...args: unknown[]) => void;
 declare global {
   interface Window { dataLayer?: unknown[]; gtag?: Tracker; _fbq?: Tracker; fbq?: Tracker & { queue?: unknown[][]; push?: Tracker; loaded?: boolean; version?: string; callMethod?: Tracker }; }
@@ -21,10 +22,18 @@ export function subscribeMeasurement(callback: () => void) {
 }
 export function consent() { try { return localStorage.getItem(CONSENT) ?? "unset"; } catch { return "unset"; } }
 function choose(value: "yes" | "no") {
+  const withdrawn = consent() === "yes" && value === "no";
   try { localStorage.setItem(CONSENT, value); } catch { /* unavailable storage: default to no tracking */ }
   window.dispatchEvent(new Event(CHANGE));
-  // Reload also removes third-party scripts after consent is withdrawn.
-  window.location.reload();
+  // Only a withdrawal needs a reload, to remove third-party scripts already on the page.
+  if (withdrawn) window.location.reload();
+}
+const configured = /^AW-\d+$/.test(process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "") || /^\d+$/.test(process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "");
+
+/** Reopens the cookie banner; placed in the footer and privacy policy so a choice can be changed later. */
+export function CookieSettingsButton({ className }: { className?: string }) {
+  if (!configured) return null;
+  return <button type="button" onClick={() => window.dispatchEvent(new Event(OPEN))} className={className}>Cookie settings</button>;
 }
 function cleanUrl() { return window.location.origin + window.location.pathname; }
 
@@ -35,6 +44,12 @@ export function Advertising({ nonce, googleId, pixelId }: { nonce: string; googl
   const google = /^AW-\d+$/.test(googleId) ? googleId : "";
   const pixel = /^\d+$/.test(pixelId) ? pixelId : "";
   const enabled = Boolean(google || pixel);
+
+  useEffect(() => {
+    const open = () => setSettings(true);
+    window.addEventListener(OPEN, open);
+    return () => window.removeEventListener(OPEN, open);
+  }, []);
 
   useEffect(() => {
     if (choice !== "yes") return;
@@ -69,11 +84,11 @@ export function Advertising({ nonce, googleId, pixelId }: { nonce: string; googl
   return <>
     {choice === "yes" && google && <Script id="fluxline-google" nonce={nonce} src={`https://www.googletagmanager.com/gtag/js?id=${google}`} onReady={() => { window.dispatchEvent(new Event(READY)); }} />}
     {choice === "yes" && pixel && <Script id="fluxline-meta" nonce={nonce} src="https://connect.facebook.net/en_US/fbevents.js" onReady={() => { window.dispatchEvent(new Event(READY)); }} />}
-    {(choice === "unset" || settings) ? <aside aria-label="Advertising measurement choices" className="fixed bottom-4 left-4 right-4 z-[80] max-w-xl border border-night-line bg-night p-5 text-white shadow-xl">
-      <p className="font-semibold">Allow website and advertising measurement?</p>
-      <p className="mt-2 text-sm">With your permission, Google and Meta measure our ads, and Microsoft Clarity records clicks and scrolling on public pages to help us improve the site. Recordings mask page text and form fields and exclude checkout and private pages. These services may use cookies. We do not send your name, email, or card details through these tools. Your choice does not affect checkout. <Link href="/privacy" className="underline">Privacy policy</Link></p>
-      <div className="mt-4 flex gap-4"><button onClick={() => choose("no")} className="border px-4 py-2">Decline</button><button onClick={() => choose("yes")} className="border px-4 py-2">Allow measurement</button></div>
-    </aside> : <button onClick={() => setSettings(true)} className="fixed bottom-2 left-2 z-[70] bg-night px-3 py-2 text-xs text-white">Privacy choices</button>}
+    {(choice === "unset" || settings) && <aside aria-label="Cookie choices" className="fixed bottom-4 left-4 right-4 z-[80] max-w-xl border border-night-line bg-night p-5 text-white shadow-xl">
+      <p className="font-semibold">This site uses cookies</p>
+      <p className="mt-2 text-sm">We use cookies to understand how the site is used and to improve it. You can accept or decline, and change your choice any time from the footer. <Link href="/privacy" className="underline">Privacy policy</Link></p>
+      <div className="mt-4 flex gap-4"><button onClick={() => { setSettings(false); choose("no"); }} className="border px-4 py-2">Decline</button><button onClick={() => { setSettings(false); choose("yes"); }} className="border px-4 py-2">Accept cookies</button></div>
+    </aside>}
   </>;
 }
 

@@ -21,6 +21,9 @@ export type AnalyticsEvent =
   | "portfolio_view"
   | "service_page_view"
   | "pricing_view"
+  | "sales_page_view"
+  | "deposit_button_click"
+  | "deposit_paid"
   | "checkout_started";
 
 type EventProps = Record<string, string | number | boolean | null>;
@@ -39,6 +42,8 @@ export function track(event: AnalyticsEvent, props?: EventProps) {
       };
     }
     vercelTrack(event, props);
+    // Fixed event names only; no properties or form values are forwarded to session replay.
+    if (typeof window !== "undefined") window.clarity?.("event", event);
   } catch {
     // Analytics must never break the page.
   }

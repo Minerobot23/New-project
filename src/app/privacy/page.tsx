@@ -44,11 +44,12 @@ export default function PrivacyPage() {
             advertisers.
           </li>
         </ul>
-        <p>This website does not use advertising cookies or tracking pixels.</p>
+        <p>With your permission, we use Google Ads and, when configured, Meta advertising measurement. These providers may use cookies and receive technical visit information and a paid deposit&apos;s value, currency, and anonymous transaction identifier to measure advertising. We do not send your name, email, phone number, card details, or project content through these tags. Measurement is off until you choose “Allow measurement”; use “Privacy choices” to withdraw permission. Checkout works if you decline.</p>
       </section>
 
       <section>
         <h2>How we use information</h2>
+        <p>With your permission, Microsoft Clarity records clicks, scrolling, and page interactions on selected public pages to help us identify usability problems. Clarity receives technical visit information and may use cookies. Page text and form fields are masked; checkout, sign-in, admin, and client pages are excluded from recordings. We do not send contact details, payment details, or private project content to Clarity. You can decline or withdraw measurement through Privacy choices. See <a href="https://privacy.microsoft.com/en-us/privacystatement">Microsoft&apos;s Privacy Statement</a> for how Microsoft handles this information.</p>
         <ul>
           <li>To respond to your request, review your website if you asked us to, and coordinate a call.</li>
           <li>To communicate with you about our services when you have contacted us.</li>

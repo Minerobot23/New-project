@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CheckCircle2, Loader2, Mail } from "lucide-react";
 import { Notice } from "@/components/billing/ui";
+import { PurchaseMeasurement } from "@/components/analytics/advertising";
 
 type Status = "unknown" | "pending" | "confirmed" | "expired";
 
@@ -45,6 +46,7 @@ export function PaymentStatus({ sessionId, initial }: { sessionId: string; initi
   if (status === "confirmed") {
     return (
       <div aria-live="polite" className="max-w-2xl">
+        <PurchaseMeasurement sessionId={sessionId} confirmed googleDestination={process.env.NEXT_PUBLIC_GOOGLE_ADS_PURCHASE_DESTINATION ?? ""} pixelId={process.env.NEXT_PUBLIC_META_PIXEL_ID ?? ""} />
         <CheckCircle2 aria-hidden="true" className="size-10 text-emerald-300" />
         <h1 className="display-tight mt-6 text-[2.25rem] sm:text-5xl">Your deposit is confirmed.</h1>
         <p className="mt-6 text-lg leading-relaxed text-white/75">
